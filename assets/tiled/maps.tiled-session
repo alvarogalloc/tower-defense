@@ -1,0 +1,57 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "1.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "1.tmx": {
+            "scale": 0.97,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 885.5670103092784,
+                "y": 559.7938144329897
+            }
+        },
+        "floor.tsx": {
+            "scaleInDock": 3.6708,
+            "scaleInEditor": 2.2
+        },
+        "ground.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "objects.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "walls.tsx": {
+            "scaleInDock": 1.54,
+            "scaleInEditor": 2.2
+        }
+    },
+    "last.imagePath": "/Users/macuser/code/tower-defense/assets",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 32,
+    "map.tileWidth": 32,
+    "map.width": 20,
+    "openFiles": [
+        "1.tmx"
+    ],
+    "project": "maps.tiled-project",
+    "recentFiles": [
+        "1.tmx",
+        "ground.tsx",
+        "objects.tsx",
+        "floor.tsx",
+        "walls.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 32,
+        "width": 32
+    }
+}

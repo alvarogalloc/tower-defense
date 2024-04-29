@@ -1,0 +1,26 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "description": "Default preset",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "hidden": true,
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    },
+    {
+      "inherits": "default",
+      "name": "dev",
+      "description": "Development preset",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ]
+}
