@@ -23,6 +23,10 @@ export
 
         Tilemap(std::string_view path, assets &manager);
         void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+        auto get_map() const -> const tmx_map *
+        {
+            return m_map.get();
+        }
 
       private:
         std::unordered_map<std::string, std::shared_ptr<sf::Texture>> m_textures;
