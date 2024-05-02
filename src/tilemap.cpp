@@ -1,82 +1,118 @@
-module;
-#include <cstddef>
-#include <cassert>
 module tilemap;
+import fmt;
+import assets;
 
-tilemap::tilemap(const tilemap_def &definition, sf::Texture *texture) {
-  assert(texture != nullptr && "Texture is null");
-  assert(definition.rows > 0 && "Rows must be greater than 0");
-  assert(definition.columns > 0 && "Columns must be greater than 0");
-  // assert(definition.tiles.size() == definition.rows * definition.columns &&
-  //        "Tiles size must be equal to rows * columns");
-  tileset = texture;
-  create_map(definition);
+void Tilemap::load_tilesets(assets &manager)
+{
+    auto head = m_map->ts_head;
+    while (head)
+    {
+        fmt::println("loading tileset {} from {}", head->tileset->name, head->tileset->image->source);
+        auto texture = manager.get<sf::Texture>(head->tileset->image->source);
+        m_textures.emplace(head->tileset->name, texture);
+        head = head->next;
+    }
 }
-void tilemap::create_map(const tilemap_def &definition) {
-  // resize the vertex array to fit the level size
-  vertices.setPrimitiveType(sf::Triangles);
-  // this means two triangles per tile
-  vertices.resize(definition.columns * definition.rows * 6);
+void Tilemap::create_layer(tmx_layer *layer)
+{
+    if (layer->type != L_LAYER)
+        return;
+    sf::Sprite sprite;
+    sf::Texture *current_texture;
+    for (std::size_t i = 0; i < m_map->width; i++)
+    {
+        for (std::size_t j = 0; j < m_map->height; j++)
+        {
+            const auto gid = layer->content.gids[(i * m_map->width) + j] & tmx_flip_bits_removal;
+            if (m_map->tiles[gid] == nullptr)
+            {
+                continue;
+            }
+            current_texture = m_textures.at(m_map->tiles[gid]->tileset->name).get();
+            sprite.setTexture(*current_texture);
+            sprite.setTextureRect(sf::IntRect(m_map->tiles[gid]->ul_x, m_map->tiles[gid]->ul_y,
+                                              m_map->tiles[gid]->tileset->tile_width,
+                                              m_map->tiles[gid]->tileset->tile_height));
+            sprite.setPosition(j * m_map->tiles[gid]->tileset->tile_width, i * m_map->tiles[gid]->tileset->tile_height);
+            m_render_texture.draw(sprite);
+        }
+    }
+}
+void Tilemap::draw_object_layer(tmx_layer *layer)
+{
+    if (layer->type != L_OBJGR)
+        return;
 
-  auto make_tile = [&](std::size_t i, std::size_t j) {
-    // get the current tile number
-    std::size_t tileNumber = definition.tiles[i + j * definition.columns] -definition.start_gid;
-    if (tileNumber == 0)
-      return;
-    tileNumber--;
-
-    // find its position in the tileset tileset
-    const std::size_t n_tiles_per_row =
-        static_cast<std::size_t>(tileset->getSize().x) /
-        static_cast<std::size_t>(definition.tile_size.x);
-    const std::size_t tileset_column = tileNumber % n_tiles_per_row;
-    const std::size_t tileset_row = tileNumber / n_tiles_per_row;
-
-    // get a pointer to the triangles' vertices of the current tile
-    sf::Vertex *triangles = &vertices[(i + j * definition.columns) * 6];
-
-    // define the 6 corners of the two triangles
-    const sf::Vector2f first_position{
-        static_cast<float>(i) * definition.tile_size.x,
-        static_cast<float>(j) * definition.tile_size.y};
-
-    triangles[0].position = first_position;
-    triangles[1].position =
-        first_position + sf::Vector2f{definition.tile_size.x, 0};
-    triangles[2].position =
-        first_position + sf::Vector2f{0, definition.tile_size.y};
-    triangles[3].position = triangles[2].position;
-    triangles[4].position = triangles[1].position;
-    triangles[5].position = first_position + definition.tile_size;
-
-    const sf::Vector2f total_separation = {
-        static_cast<float>(tileset_column * definition.tile_separation),
-        static_cast<float>(tileset_row * definition.tile_separation)};
-
-    const auto start_position =
-        sf::Vector2f{static_cast<float>(tileset_column) *
-                         definition.tile_size.x,
-                     static_cast<float>(tileset_row) * definition.tile_size.y} +
-        total_separation;
-
-    // first triangle
-    triangles[0].texCoords = start_position;
-    triangles[1].texCoords =
-        start_position + sf::Vector2f{definition.tile_size.x, 0};
-    triangles[2].texCoords =
-        start_position + sf::Vector2f{0, definition.tile_size.y};
-    // second triangle
-    triangles[3].texCoords = triangles[2].texCoords;
-    triangles[4].texCoords = triangles[1].texCoords;
-    triangles[5].texCoords = start_position + definition.tile_size;
-  };
-  for (std::size_t i = 0; i < definition.columns; ++i)
-    for (std::size_t j = 0; j < definition.rows; ++j)
-      make_tile(i, j);
+    sf::VertexArray array;
+    array.setPrimitiveType(sf::PrimitiveType::LineStrip);
+    auto current_object = layer->content.objgr->head;
+    while (current_object)
+    {
+        array.append(
+            sf::Vertex{sf::Vector2f{static_cast<float>(current_object->x), static_cast<float>(current_object->y)},
+                       sf::Color::Red});
+        m_render_texture.draw(array);
+        current_object = current_object->next;
+    }
 }
 
-void tilemap::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-  states.transform = getTransform();
-  states.texture = tileset;
-  target.draw(vertices, states);
+void Tilemap::create_layers()
+{
+    m_render_texture.create(m_map->width * m_map->tile_width, m_map->height * m_map->tile_height);
+    constexpr auto ARGB_to_RGBA = [](std::uint32_t color) -> sf::Color {
+        sf::Color c;
+        c.r = (color & 0xff0000) >> 16;
+        c.g = (color & 0xff00) >> 8;
+        c.b = color & 0xff;
+        c.a = (color & 0xff000000) >> 24;
+        return c;
+    };
+    if (m_map->backgroundcolor != 0)
+    {
+
+        m_render_texture.clear(ARGB_to_RGBA(m_map->backgroundcolor));
+    }
+    else
+    {
+
+        m_render_texture.clear();
+    }
+    auto current_layer = m_map->ly_head;
+    while (current_layer)
+    {
+        switch (current_layer->type)
+        {
+        case L_LAYER:
+            create_layer(current_layer);
+            break;
+        case L_OBJGR:
+            draw_object_layer(current_layer);
+            break;
+        default:
+            fmt::println("unsupported layer type");
+            break;
+        }
+        current_layer = current_layer->next;
+    }
+}
+
+Tilemap::Tilemap(std::unique_ptr<tmx_map, decltype(&tmx_map_free)> map, assets &manager) : m_map{std::move(map)}
+{
+    load_tilesets(manager);
+    create_layers();
+}
+
+Tilemap::Tilemap(std::string_view path, assets &manager) : m_map{tmx_load(path.data()), tmx_map_free}
+{
+    load_tilesets(manager);
+    create_layers();
+}
+
+void Tilemap::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    sf::Sprite sprite(m_render_texture.getTexture());
+    // it is drawing upside down
+    sprite.setScale(1, -1);
+    sprite.setPosition(0, m_map->height * m_map->tile_height);
+    target.draw(sprite, states);
 }
