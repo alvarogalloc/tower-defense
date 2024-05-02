@@ -7,6 +7,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 find_package(fmt CONFIG REQUIRED)
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 file(GLOB APP_MODULE_FILES "modules/*.cppm")
 file(GLOB APP_SOURCE_FILES "src/*.cpp")
@@ -15,7 +16,8 @@ add_executable(app ${APP_SOURCE_FILES} ${APP_MODULE_FILES})
 target_link_libraries(app PRIVATE sfml-system sfml-network sfml-graphics sfml-window)
 target_link_libraries(app PRIVATE fmt::fmt)
 target_link_libraries(app PRIVATE tmx)
-# target_link_libraries(app PRIVATE STDEXEC::stdexec)
+target_link_libraries(app PRIVATE nlohmann_json::nlohmann_json)
+
 target_sources(app PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
   ${APP_MODULE_FILES})
 

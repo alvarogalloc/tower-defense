@@ -21,6 +21,7 @@ using ::std::make_shared;
 using ::std::make_unique;
 using ::std::move;
 using ::std::ofstream;
+using ::std::pair;
 using ::std::pow;
 using ::std::runtime_error;
 using ::std::shared_ptr;

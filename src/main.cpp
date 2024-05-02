@@ -1,5 +1,5 @@
-#include <algorithm>
 #include <ios>
+#include <nlohmann/json.hpp>
 #include <source_location>
 import sfml;
 import fmt;
@@ -19,15 +19,42 @@ void my_assert(bool condition, std::string_view message = "",
     if (!condition)
     {
 
-        fmt::print("assertion failed: {} at: ({}:{})", message, loc.file_name(), loc.line());
+        fmt::println("assertion failed: {} (at {}:{})", message, loc.file_name(), loc.line());
         throw std::runtime_error("assertion failed");
     }
 }
 
-constexpr std::vector<sf::Vector2f> get_turning_points(const tmx_layer *layer)
+auto sprite_center(const sf::Sprite &sprite)
 {
+    return sf::Vector2f{sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2};
+}
+
+auto load_frames_json(const nlohmann::json &parent_node, std::string_view name)
+{
+    my_assert(parent_node[name].is_array());
+    std::vector<sf::IntRect> frames;
+    for (auto &&rect : parent_node[name])
+    {
+        auto res = frames.emplace_back(rect[0], rect[1], rect[2], rect[3]);
+    }
+    return frames;
+}
+
+constexpr std::vector<sf::Vector2f> get_turning_points(tmx_layer *layer_head)
+{
+    my_assert(layer_head != nullptr, "no layers found");
+    while (layer_head)
+    {
+        if (layer_head->type == L_OBJGR)
+        {
+            break;
+        }
+        layer_head = layer_head->next;
+    }
+    my_assert(layer_head != nullptr, "no object layer found");
+
     std::vector<sf::Vector2f> points;
-    auto current_object = layer->content.objgr->head;
+    auto current_object = layer_head->content.objgr->head;
     while (current_object)
     {
         points.emplace_back(sf::Vector2f{static_cast<float>(current_object->x), static_cast<float>(current_object->y)});
@@ -40,33 +67,14 @@ constexpr std::vector<sf::Vector2f> get_turning_points(const tmx_layer *layer)
 struct Animation : public sf::Sprite
 {
     std::vector<sf::IntRect> frame_rects;
+    float frame_duration_seconds;
     std::size_t current_frame = 0;
     float acc_time_seconds = 0;
-    float frame_duration_seconds;
-    Animation(std::string_view t_name, std::ifstream &frames_file, sf::Texture &text, float frame_duration)
-        : frame_duration_seconds(frame_duration)
+    Animation(std::vector<sf::IntRect> frames, sf::Texture &text, float frame_duration)
+        : frame_rects(frames), frame_duration_seconds(frame_duration)
     {
-        if (!frames_file.is_open())
-            throw;
-        frames_file.seekg(std::ios_base::beg);
-        while (!frames_file.eof())
-        {
-            // the order of the line is
-            std::string name;
-            int top, left, width, height;
-            frames_file >> name;
-            // fix when last is also counted
-            if (!name.size())
-                break;
-            if (!name.contains(t_name))
-                continue;
-
-            frames_file >> top >> left >> width >> height;
-            auto rect = frame_rects.emplace_back(top, left, width, height);
-            fmt::println("loaded frame {} with rect ({})", name, to_string(rect));
-        }
         this->setTexture(text);
-        this->setTextureRect(frame_rects[current_frame]);
+        this->setTextureRect(frame_rects.at(current_frame));
     }
     void update(const float delta)
     {
@@ -94,7 +102,7 @@ void update_zombie(Animation &zombie, std::span<sf::Vector2f> directions, const 
                    std::size_t &current_goal_point)
 {
     // move the zombie to the next point
-    const float velocity = 100.f;
+    const float velocity = 200.f;
 
     // get unit vector pointing to the next point
     my_assert(current_goal_point < directions.size(), "current goal point is out of bounds");
@@ -102,9 +110,10 @@ void update_zombie(Animation &zombie, std::span<sf::Vector2f> directions, const 
         float length = std::sqrt(std::pow(vec.x, 2) + std::pow(vec.y, 2));
         return {vec.x / length, vec.y / length};
     };
-    float distance = std::sqrt(std::pow(directions[current_goal_point].x - zombie.getPosition().x, 2) +
-                               std::pow(directions[current_goal_point].y - zombie.getPosition().y, 2));
-    if (distance < 1)
+    const auto center = sprite_center(zombie);
+    float distance = std::sqrt(std::pow(directions[current_goal_point].x - center.x - zombie.getPosition().x, 2) +
+                               std::pow(directions[current_goal_point].y - center.y - zombie.getPosition().y, 2));
+    if (distance < 3)
     {
         if (current_goal_point == directions.size() - 1)
         {
@@ -115,57 +124,39 @@ void update_zombie(Animation &zombie, std::span<sf::Vector2f> directions, const 
             ++current_goal_point;
         }
     }
-    auto move_vector = normalize(directions[current_goal_point] - zombie.getPosition()) * velocity;
+    auto move_vector = normalize(directions[current_goal_point] - center - zombie.getPosition()) * velocity;
     zombie.move(move_vector * delta);
 }
+
+void show_health_bar(const Animation &enemy);
 
 int main(int argc, char *argv[])
 {
     sf::RenderWindow win{sf::VideoMode{win_size.x, win_size.y}, "window"};
-    std::ifstream file{"./assets/characters-tiles.txt"};
-
     const auto middle_screen = sf::VideoMode::getDesktopMode().width / 4;
     win.setPosition({static_cast<int>(middle_screen), 0});
-
     win.setFramerateLimit(60);
+    win.setKeyRepeatEnabled(false);
 
     assets manager{"./assets/tiled"};
     auto text = manager.get<sf::Texture>("../characters.png");
-    Animation zombie{"big_zombie_idle_anim", file, *text, 0.1f};
-    zombie.setScale(1.8, 1.8);
-    Tilemap map{"./assets/tiled/1.tmx", manager};
+    Tilemap map{"./assets/tiled/2.tmx", manager};
+    auto enemies_turning_points = get_turning_points(map.get_map()->ly_head);
+    std::ifstream anim_frames_file{"./assets/frames.json"};
+    auto frames_json = nlohmann::json::parse(anim_frames_file);
+    auto demon_frames = load_frames_json(frames_json, "big_demon_idle_anim");
+    auto zombie_frames = load_frames_json(frames_json, "lizard_f_run_anim");
+
+    std::vector<std::pair<Animation, std::size_t>> zombies;
+    std::vector<std::pair<Animation, std::size_t>> demons;
 
     sf::Font f;
     if (!f.loadFromFile(font_path))
-        throw;
-
-    const tmx_map *raw_map = map.get_map();
-    // spawn the player to the first object
-    auto *obj_layer = raw_map->ly_head;
-    my_assert(obj_layer != nullptr, "no layers found");
-    while (obj_layer)
-    {
-        if (obj_layer->type == L_OBJGR)
-        {
-            break;
-        }
-        obj_layer = obj_layer->next;
-    }
-    my_assert(obj_layer != nullptr, "no object layer found");
-
-    auto turning_points = get_turning_points(obj_layer);
-    for (auto &&point : turning_points)
-    {
-        fmt::print("turning point: {}\n", to_string(point));
-    }
-    // set center of the sprite
-    zombie.setOrigin(zombie.getLocalBounds().width / 2, zombie.getLocalBounds().height / 2);
-    zombie.setPosition(turning_points.front());
+        throw std::runtime_error{"failed to load font"};
 
     sf::Event ev;
     sf::Clock clock;
     float delta = 0;
-    std::size_t current_point = 1;
     while (win.isOpen())
     {
         while (win.pollEvent(ev))
@@ -174,21 +165,63 @@ int main(int argc, char *argv[])
             {
                 win.close();
             }
+            if (ev.type == sf::Event::KeyPressed)
+            {
+                if (ev.key.code == sf::Keyboard::S)
+                {
+                    auto &[zombie, _] = zombies.emplace_back(Animation{zombie_frames, *text, 0.1f}, 1);
+                    zombie.setScale(1.5, 1.5f);
+                    zombie.setPosition(enemies_turning_points.front() - sprite_center(zombie));
+                }
+                else if (ev.key.code == sf::Keyboard::D)
+                {
+                    auto &[demon, _] = demons.emplace_back(Animation{demon_frames, *text, 0.1f}, 1);
+                    demon.setScale(1.5, 1.5f);
+                    demon.setPosition(enemies_turning_points.front() - sprite_center(demon));
+                }
+            }
         }
         delta = clock.restart().asSeconds();
-        zombie.update(delta);
-        update_zombie(zombie, turning_points, delta, current_point);
-        // draw bounding box
-        sf::RectangleShape rect;
-        rect.setSize({zombie.getLocalBounds().width, zombie.getLocalBounds().height});
-        rect.setPosition(zombie.getPosition());
-        rect.setFillColor(sf::Color::Transparent);
-        rect.setOutlineColor(sf::Color::Blue);
-        rect.setOutlineThickness(2);
+        for (auto &&[zombie, goal] : zombies)
+        {
+            zombie.update(delta);
+            update_zombie(zombie, enemies_turning_points, delta, goal);
+        }
+        for (auto &&[demon, goal] : demons)
+        {
+            demon.update(delta);
+            update_zombie(demon, enemies_turning_points, delta, goal);
+        }
+
         win.clear();
         win.draw(map);
-        win.draw(rect);
-        win.draw(zombie);
+        for (auto &&[demon, _] : demons)
+        {
+            // draw bounding box
+            sf::RectangleShape rect;
+            rect.setSize({demon.getGlobalBounds().width, demon.getGlobalBounds().height});
+            rect.setPosition(demon.getPosition());
+            rect.setFillColor(sf::Color::Transparent);
+            rect.setOutlineColor(sf::Color::Red);
+            rect.setOutlineThickness(2);
+
+            win.draw(demon);
+            win.draw(rect);
+        }
+
+        for (auto &&[zombie, _] : zombies)
+        {
+            // draw bounding box
+            sf::RectangleShape rect;
+            rect.setSize({zombie.getGlobalBounds().width, zombie.getGlobalBounds().height});
+            rect.setPosition(zombie.getPosition());
+            rect.setFillColor(sf::Color::Transparent);
+            rect.setOutlineColor(sf::Color::Blue);
+            rect.setOutlineThickness(2);
+
+            win.draw(zombie);
+            win.draw(rect);
+        }
         win.display();
     }
 }
