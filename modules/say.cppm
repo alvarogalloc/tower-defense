@@ -7,52 +7,41 @@ export module say;
 
 void _log(const fmt::color color, const std::string_view message)
 {
-    switch (color)
-    {
-    case fmt::color::red:
-        fmt::print(fmt::emphasis::bold | fg(color), "[ERROR]: {}\n", message);
-        break;
-    case fmt::color::yellow:
-        fmt::print(fmt::emphasis::bold | fg(color), "[DEBUG]: {}\n", message);
-        break;
-    case fmt::color::royal_blue:
-        fmt::print(fmt::emphasis::bold | fg(color), "[INFO]: {}\n", message);
-        break;
-    case fmt::color::orange:
-        fmt::print(fmt::emphasis::bold | fg(color), "[WARN]: {}\n", message);
-        break;
+  switch (color)
+  {
+  case fmt::color::red:
+    fmt::print(fmt::emphasis::bold | fg(color), "[ERROR]: {}\n", message);
+    break;
+  case fmt::color::yellow:
+    fmt::print(fmt::emphasis::bold | fg(color), "[DEBUG]: {}\n", message);
+    break;
+  case fmt::color::royal_blue:
+    fmt::print(fmt::emphasis::bold | fg(color), "[INFO]: {}\n", message);
+    break;
+  case fmt::color::orange:
+    fmt::print(fmt::emphasis::bold | fg(color), "[WARN]: {}\n", message);
+    break;
 
-    default:
-        fmt::print(fmt::emphasis::bold | fg(color), "[UNKNOWN]: {}\n", message);
-        break;
-    }
+  default:
+    fmt::print(fmt::emphasis::bold | fg(color), "[UNKNOWN]: {}\n", message);
+    break;
+  }
 }
-export namespace say
-{
+export namespace say {
 
 void debug([[maybe_unused]] std::string_view message)
 {
 #ifndef NDEBUG
-    _log(fmt::color::yellow, message);
-#endif // NDEBUG
+  _log(fmt::color::yellow, message);
+#endif// NDEBUG
 }
-void info(std::string_view message)
-{
-    _log(fmt::color::royal_blue, message);
-}
-void warn(std::string_view message)
-{
-    _log(fmt::color::orange, message);
-}
-void error(std::string_view message)
-{
-    _log(fmt::color::red, message);
-}
-} // namespace say
+void info(std::string_view message) { _log(fmt::color::royal_blue, message); }
+void warn(std::string_view message) { _log(fmt::color::orange, message); }
+void error(std::string_view message) { _log(fmt::color::red, message); }
+}// namespace say
 
-export namespace fmt
-{
+export namespace fmt {
 using ::fmt::format;
 using ::fmt::print;
 using ::fmt::println;
-} // namespace fmt
+}// namespace fmt

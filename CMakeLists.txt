@@ -8,6 +8,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 find_package(fmt CONFIG REQUIRED)
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(tmx CONFIG REQUIRED)
 
 file(GLOB APP_MODULE_FILES "modules/*.cppm")
 file(GLOB APP_SOURCE_FILES "src/*.cpp")
@@ -17,19 +18,11 @@ target_link_libraries(app PRIVATE sfml-system sfml-network sfml-graphics sfml-wi
 target_link_libraries(app PRIVATE fmt::fmt)
 target_link_libraries(app PRIVATE tmx)
 target_link_libraries(app PRIVATE nlohmann_json::nlohmann_json)
+#ignore deprecated declarations
+target_compile_options(app PRIVATE -Wno-deprecated-declarations)
 
 target_sources(app PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
   ${APP_MODULE_FILES})
-
-find_package(tmx CONFIG REQUIRED)
-find_package(SDL2 CONFIG REQUIRED)
-find_package(SDL2_image CONFIG REQUIRED)
-add_executable(tmxtest tmxtest.c)
-target_link_libraries(tmxtest PRIVATE tmx)
-target_link_libraries(tmxtest PRIVATE $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
-target_link_libraries(tmxtest PRIVATE $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>)
-# target_link_libraries(tmxtest PRIVATE fmt::fmt sfml-system sfml-network sfml-graphics sfml-window)
-
 
 # if option TESTS is enabled
 # add test for each file in test folder

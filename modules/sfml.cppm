@@ -2,8 +2,7 @@ module;
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 export module sfml;
-export namespace sf
-{
+export namespace sf {
 using sf::CircleShape;
 using sf::Clock;
 using sf::Color;
@@ -51,4 +50,4 @@ using sf::operator/;
 using sf::operator/=;
 using sf::operator==;
 using sf::operator!=;
-} // namespace sf
+}// namespace sf
