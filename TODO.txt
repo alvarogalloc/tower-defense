@@ -1,1 +1,9 @@
-make healthbar for enemies
+DONE make healthbar for enemies
+fix rotation of player
+autofire
+better maps
+levels defined in json
+port frames file to json
+reestructure code
+make entity factory more generic
+destroy bullets when they are offscreen
