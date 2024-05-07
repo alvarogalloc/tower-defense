@@ -9,6 +9,7 @@ module;
 export module assets;
 import sfml;
 import say;
+import fmt;
 
 export
 {
@@ -62,7 +63,7 @@ export
 
       if (!container->contains(path))
       {
-        say::debug("asset not loaded, loading");
+        say::debug(fmt::format("asset {} not loaded, loading", path));
         if (!load(path, *container))
         {
           throw std::runtime_error{ "error loading asset" };

@@ -1,6 +1,6 @@
 module;
 #include <random>
-export module Random;
+export module random;
 
 export
 {

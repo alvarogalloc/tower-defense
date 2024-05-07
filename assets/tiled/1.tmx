@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#7e4700" nextlayerid="4" nextobjectid="16">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#7e4700" nextlayerid="4" nextobjectid="20">
  <tileset firstgid="1" source="ground.tsx"/>
  <tileset firstgid="157" source="objects.tsx"/>
  <layer id="1" name="grass" width="20" height="20" locked="1">
@@ -50,7 +50,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="2" name="turningpoints" locked="1">
+ <objectgroup id="2" name="turningpoints">
   <object id="8" x="30.9278" y="303.093">
    <point/>
   </object>

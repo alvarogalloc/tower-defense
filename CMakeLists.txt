@@ -24,6 +24,9 @@ target_compile_options(app PRIVATE -Wno-deprecated-declarations)
 target_sources(app PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
   ${APP_MODULE_FILES})
 
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address,undefined")
+set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address,undefined")
+
 # if option TESTS is enabled
 # add test for each file in test folder
 option(BUILD_TESTING "Enable Test Builds" OFF)
