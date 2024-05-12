@@ -1,6 +1,7 @@
 module tilemap;
 import fmt;
 import assets;
+import stdutils;
 
 void Tilemap::load_tilesets(assets &manager)
 {
@@ -24,7 +25,7 @@ void Tilemap::create_layer(tmx_layer *layer)
       const auto gid =
           layer->content.gids[(i * m_map->width) + j] & tmx_flip_bits_removal;
       if (m_map->tiles[gid] == nullptr) { continue; }
-      current_texture = m_textures.at(m_map->tiles[gid]->tileset->name).get();
+      current_texture = m_textures.at(m_map->tiles[gid]->tileset->name);
       sprite.setTexture(*current_texture);
       sprite.setTextureRect(sf::IntRect(m_map->tiles[gid]->ul_x,
           m_map->tiles[gid]->ul_y,
@@ -98,6 +99,7 @@ Tilemap::Tilemap(std::unique_ptr<tmx_map, decltype(&tmx_map_free)> map,
     assets &manager)
   : m_map{ std::move(map) }
 {
+if (m_map == nullptr) throw std::runtime_error("tilemap is invalid");
   load_tilesets(manager);
   create_layers();
 }

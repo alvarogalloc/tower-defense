@@ -1,13 +1,10 @@
-module;
-#include <fmt/color.h>
-#include <fmt/core.h>
-#include <string_view>
-
 export module say;
+import stdutils;
+export import fmt;
 
 void _log(const fmt::color color, const std::string_view message)
 {
-    fmt::print(fmt::emphasis::bold | fg(color), "{}\n", message);
+    fmt::print(fmt::emphasis::bold | fmt::fg(color), "{}\n", message);
 }
 export namespace say {
 
@@ -31,9 +28,3 @@ void error(std::string_view message)
     _log(fmt::color::red, fmt::format("[ERROR]: {}", message));
 }
 }// namespace say
-
-export namespace fmt {
-using ::fmt::format;
-using ::fmt::print;
-using ::fmt::println;
-}// namespace fmt

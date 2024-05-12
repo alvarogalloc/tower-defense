@@ -1,6 +1,9 @@
 module;
+#include <SFML/Audio/Music.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
 export module sfml;
 export namespace sf {
 using sf::CircleShape;

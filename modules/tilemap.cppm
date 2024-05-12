@@ -27,7 +27,7 @@ export
     auto get_map() const -> const tmx_map * { return m_map.get(); }
 
   private:
-    std::unordered_map<std::string, std::shared_ptr<sf::Texture>> m_textures;
+    std::unordered_map<std::string, sf::Texture*> m_textures;
     std::unique_ptr<tmx_map, decltype(&tmx_map_free)> m_map;
     sf::RenderTexture m_render_texture;
   };

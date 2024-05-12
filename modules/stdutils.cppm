@@ -1,6 +1,7 @@
 module;
-#include <exception>
 #include <algorithm>
+#include <concepts>
+#include <exception>
 #include <fstream>
 #include <memory>
 #include <source_location>
@@ -14,7 +15,15 @@ module;
 export module stdutils;
 
 export namespace std {
-    using std::exception;
+using std::is_same_v;
+namespace filesystem {
+
+    using std::filesystem::exists;
+}
+using std::convertible_to;
+using std::is_same;
+using std::convertible_to;
+using std::exception;
 using std::span;
 #ifndef _LIBCPP_HAS_NO_LOCALIZATION
 using std::basic_filebuf;
@@ -76,52 +85,52 @@ using std::addressof;
 using std::uninitialized_default_construct;
 using std::uninitialized_default_construct_n;
 namespace ranges {
-  using std::ranges::uninitialized_default_construct;
-  using std::ranges::uninitialized_default_construct_n;
+    using std::ranges::uninitialized_default_construct;
+    using std::ranges::uninitialized_default_construct_n;
 }// namespace ranges
 using std::uninitialized_value_construct;
 using std::uninitialized_value_construct_n;
 
 namespace ranges {
-  using std::ranges::uninitialized_value_construct;
-  using std::ranges::uninitialized_value_construct_n;
+    using std::ranges::uninitialized_value_construct;
+    using std::ranges::uninitialized_value_construct_n;
 }// namespace ranges
 
 using std::uninitialized_copy;
 using std::uninitialized_copy_n;
 
 namespace ranges {
-  using std::ranges::uninitialized_copy;
-  using std::ranges::uninitialized_copy_result;
+    using std::ranges::uninitialized_copy;
+    using std::ranges::uninitialized_copy_result;
 
-  using std::ranges::uninitialized_copy_n;
-  using std::ranges::uninitialized_copy_n_result;
+    using std::ranges::uninitialized_copy_n;
+    using std::ranges::uninitialized_copy_n_result;
 }// namespace ranges
 
 using std::uninitialized_move;
 using std::uninitialized_move_n;
 
 namespace ranges {
-  using std::ranges::uninitialized_move;
-  using std::ranges::uninitialized_move_result;
+    using std::ranges::uninitialized_move;
+    using std::ranges::uninitialized_move_result;
 
-  using std::ranges::uninitialized_move_n;
-  using std::ranges::uninitialized_move_n_result;
+    using std::ranges::uninitialized_move_n;
+    using std::ranges::uninitialized_move_n_result;
 }// namespace ranges
 
 using std::uninitialized_fill;
 using std::uninitialized_fill_n;
 
 namespace ranges {
-  using std::ranges::uninitialized_fill;
-  using std::ranges::uninitialized_fill_n;
+    using std::ranges::uninitialized_fill;
+    using std::ranges::uninitialized_fill_n;
 }// namespace ranges
 
 // [specialized.construct], construct_at
 using std::construct_at;
 
 namespace ranges {
-  using std::ranges::construct_at;
+    using std::ranges::construct_at;
 }
 // [specialized.destroy], destroy
 using std::destroy;
@@ -129,9 +138,9 @@ using std::destroy_at;
 using std::destroy_n;
 
 namespace ranges {
-  using std::ranges::destroy;
-  using std::ranges::destroy_at;
-  using std::ranges::destroy_n;
+    using std::ranges::destroy;
+    using std::ranges::destroy_at;
+    using std::ranges::destroy_n;
 }// namespace ranges
 
 // [unique.ptr], class template unique_ptr
@@ -235,15 +244,15 @@ using std::to_wstring;
 #endif
 
 namespace pmr {
-  using std::pmr::basic_string;
-  using std::pmr::string;
-  using std::pmr::u16string;
-  using std::pmr::u32string;
+    using std::pmr::basic_string;
+    using std::pmr::string;
+    using std::pmr::u16string;
+    using std::pmr::u32string;
 #ifndef _LIBCPP_HAS_NO_CHAR8_T
-  using std::pmr::u8string;
+    using std::pmr::u8string;
 #endif
 #ifndef _LIBCPP_HAS_NO_WIDE_CHARACTERS
-  using std::pmr::wstring;
+    using std::pmr::wstring;
 #endif
 }// namespace pmr
 
@@ -251,10 +260,10 @@ namespace pmr {
 using std::hash;
 
 inline namespace literals {
-  inline namespace string_literals {
-    // [basic.string.literals], suffix for basic_string literals
-    using std::literals::string_literals::operator""s;
-  }// namespace string_literals
+    inline namespace string_literals {
+        // [basic.string.literals], suffix for basic_string literals
+        using std::literals::string_literals::operator""s;
+    }// namespace string_literals
 }// namespace literals
 }// namespace std
 export namespace std {
@@ -272,8 +281,8 @@ using std::swap;
 using std::erase_if;
 
 namespace pmr {
-  using std::pmr::unordered_map;
-  using std::pmr::unordered_multimap;
+    using std::pmr::unordered_map;
+    using std::pmr::unordered_multimap;
 }// namespace pmr
 }// namespace std
 
@@ -289,43 +298,43 @@ namespace pmr {
 
 export namespace std {
 namespace ranges {
-  // [algorithms.results], algorithm result types
-  using std::ranges::in_found_result;
-  using std::ranges::in_fun_result;
-  using std::ranges::in_in_out_result;
-  using std::ranges::in_in_result;
-  using std::ranges::in_out_out_result;
-  using std::ranges::in_out_result;
+    // [algorithms.results], algorithm result types
+    using std::ranges::in_found_result;
+    using std::ranges::in_fun_result;
+    using std::ranges::in_in_out_result;
+    using std::ranges::in_in_result;
+    using std::ranges::in_out_out_result;
+    using std::ranges::in_out_result;
 #if _LIBCPP_STD_VER >= 23
-  using std::ranges::in_value_result;
+    using std::ranges::in_value_result;
 #endif
-  using std::ranges::min_max_result;
-  // using std::ranges::out_value_result;
+    using std::ranges::min_max_result;
+    // using std::ranges::out_value_result;
 }// namespace ranges
 
 // [alg.nonmodifying], non-modifying sequence operations
 // [alg.all.of], all of
 using std::all_of;
 namespace ranges {
-  using std::ranges::all_of;
+    using std::ranges::all_of;
 }
 
 // [alg.any.of], any of
 using std::any_of;
 namespace ranges {
-  using std::ranges::any_of;
+    using std::ranges::any_of;
 }
 
 // [alg.none.of], none of
 using std::none_of;
 namespace ranges {
-  using std::ranges::none_of;
+    using std::ranges::none_of;
 }
 
 #if _LIBCPP_STD_VER >= 23
 // [alg.contains], contains
 namespace ranges {
-  using std::ranges::contains;
+    using std::ranges::contains;
 }// namespace ranges
 #endif// _LIBCPP_STD_VER >= 23
 
@@ -333,16 +342,16 @@ namespace ranges {
 using std::for_each;
 
 namespace ranges {
-  using std::ranges::for_each;
-  using std::ranges::for_each_result;
+    using std::ranges::for_each;
+    using std::ranges::for_each_result;
 }// namespace ranges
 
 using std::for_each_n;
 
 namespace ranges {
-  using std::ranges::for_each_n_result;
+    using std::ranges::for_each_n_result;
 
-  using std::ranges::for_each_n;
+    using std::ranges::for_each_n;
 }// namespace ranges
 
 // [alg.find], find
@@ -351,9 +360,9 @@ using std::find_if;
 using std::find_if_not;
 
 namespace ranges {
-  using std::ranges::find;
-  using std::ranges::find_if;
-  using std::ranges::find_if_not;
+    using std::ranges::find;
+    using std::ranges::find_if;
+    using std::ranges::find_if_not;
 }// namespace ranges
 
 namespace ranges {
@@ -368,21 +377,21 @@ namespace ranges {
 using std::find_end;
 
 namespace ranges {
-  using std::ranges::find_end;
+    using std::ranges::find_end;
 }
 
 // [alg.find.first.of], find first
 using std::find_first_of;
 
 namespace ranges {
-  using std::ranges::find_first_of;
+    using std::ranges::find_first_of;
 }
 
 // [alg.adjacent.find], adjacent find
 using std::adjacent_find;
 
 namespace ranges {
-  using std::ranges::adjacent_find;
+    using std::ranges::adjacent_find;
 }
 
 // [alg.count], count
@@ -390,58 +399,58 @@ using std::count;
 using std::count_if;
 
 namespace ranges {
-  using std::ranges::count;
-  using std::ranges::count_if;
+    using std::ranges::count;
+    using std::ranges::count_if;
 }// namespace ranges
 
 // [mismatch], mismatch
 using std::mismatch;
 
 namespace ranges {
-  using std::ranges::mismatch_result;
+    using std::ranges::mismatch_result;
 
-  using std::ranges::mismatch;
+    using std::ranges::mismatch;
 }// namespace ranges
 
 // [alg.equal], equal
 using std::equal;
 
 namespace ranges {
-  using std::ranges::equal;
+    using std::ranges::equal;
 }
 
 // [alg.is.permutation], is permutation
 using std::is_permutation;
 
 namespace ranges {
-  using std::ranges::is_permutation;
+    using std::ranges::is_permutation;
 }
 
 // [alg.search], search
 using std::search;
 
 namespace ranges {
-  using std::ranges::search;
+    using std::ranges::search;
 }
 
 using std::search_n;
 
 namespace ranges {
-  using std::ranges::search_n;
+    using std::ranges::search_n;
 }
 
 namespace ranges {
 #if _LIBCPP_STD_VER >= 23
-  // [alg.starts.with], starts with
-  using std::ranges::starts_with;
+    // [alg.starts.with], starts with
+    using std::ranges::starts_with;
 
-  // [alg.ends.with], ends with
-  using std::ranges::ends_with;
+    // [alg.ends.with], ends with
+    using std::ranges::ends_with;
 
-  // [alg.fold], fold
-  using std::ranges::fold_left;
-  using std::ranges::fold_left_with_iter;
-  using std::ranges::fold_left_with_iter_result;
+    // [alg.fold], fold
+    using std::ranges::fold_left;
+    using std::ranges::fold_left_with_iter;
+    using std::ranges::fold_left_with_iter_result;
 #if 0
     using std::ranges::fold_left_first;
     using std::ranges::fold_right;
@@ -458,52 +467,52 @@ namespace ranges {
 using std::copy;
 
 namespace ranges {
-  using std::ranges::copy;
-  using std::ranges::copy_result;
+    using std::ranges::copy;
+    using std::ranges::copy_result;
 }// namespace ranges
 
 using std::copy_n;
 
 namespace ranges {
-  using std::ranges::copy_n;
-  using std::ranges::copy_n_result;
+    using std::ranges::copy_n;
+    using std::ranges::copy_n_result;
 }// namespace ranges
 
 using std::copy_if;
 
 namespace ranges {
-  using std::ranges::copy_if;
-  using std::ranges::copy_if_result;
+    using std::ranges::copy_if;
+    using std::ranges::copy_if_result;
 }// namespace ranges
 
 using std::copy_backward;
 
 namespace ranges {
-  using std::ranges::copy_backward;
-  using std::ranges::copy_backward_result;
+    using std::ranges::copy_backward;
+    using std::ranges::copy_backward_result;
 }// namespace ranges
 
 // [alg.move], move
 using std::move;
 
 namespace ranges {
-  using std::ranges::move;
-  using std::ranges::move_result;
+    using std::ranges::move;
+    using std::ranges::move_result;
 }// namespace ranges
 
 using std::move_backward;
 
 namespace ranges {
-  using std::ranges::move_backward;
-  using std::ranges::move_backward_result;
+    using std::ranges::move_backward;
+    using std::ranges::move_backward_result;
 }// namespace ranges
 
 // [alg.swap], swap
 using std::swap_ranges;
 
 namespace ranges {
-  using std::ranges::swap_ranges;
-  using std::ranges::swap_ranges_result;
+    using std::ranges::swap_ranges;
+    using std::ranges::swap_ranges_result;
 }// namespace ranges
 
 using std::iter_swap;
@@ -512,10 +521,10 @@ using std::iter_swap;
 using std::transform;
 
 namespace ranges {
-  using std::ranges::binary_transform_result;
-  using std::ranges::unary_transform_result;
+    using std::ranges::binary_transform_result;
+    using std::ranges::unary_transform_result;
 
-  using std::ranges::transform;
+    using std::ranges::transform;
 
 }// namespace ranges
 
@@ -523,18 +532,18 @@ using std::replace;
 using std::replace_if;
 
 namespace ranges {
-  using std::ranges::replace;
-  using std::ranges::replace_if;
+    using std::ranges::replace;
+    using std::ranges::replace_if;
 }// namespace ranges
 
 using std::replace_copy;
 using std::replace_copy_if;
 
 namespace ranges {
-  using std::ranges::replace_copy;
-  using std::ranges::replace_copy_if;
-  using std::ranges::replace_copy_if_result;
-  using std::ranges::replace_copy_result;
+    using std::ranges::replace_copy;
+    using std::ranges::replace_copy_if;
+    using std::ranges::replace_copy_if_result;
+    using std::ranges::replace_copy_result;
 }// namespace ranges
 
 // [alg.fill], fill
@@ -542,8 +551,8 @@ using std::fill;
 using std::fill_n;
 
 namespace ranges {
-  using std::ranges::fill;
-  using std::ranges::fill_n;
+    using std::ranges::fill;
+    using std::ranges::fill_n;
 }// namespace ranges
 
 // [alg.generate], generate
@@ -551,8 +560,8 @@ using std::generate;
 using std::generate_n;
 
 namespace ranges {
-  using std::ranges::generate;
-  using std::ranges::generate_n;
+    using std::ranges::generate;
+    using std::ranges::generate_n;
 }// namespace ranges
 
 // [alg.remove], remove
@@ -560,86 +569,86 @@ using std::remove;
 using std::remove_if;
 
 namespace ranges {
-  using std::ranges::remove;
-  using std::ranges::remove_if;
+    using std::ranges::remove;
+    using std::ranges::remove_if;
 }// namespace ranges
 
 using std::remove_copy;
 using std::remove_copy_if;
 namespace ranges {
-  using std::ranges::remove_copy;
-  using std::ranges::remove_copy_if;
-  using std::ranges::remove_copy_if_result;
-  using std::ranges::remove_copy_result;
+    using std::ranges::remove_copy;
+    using std::ranges::remove_copy_if;
+    using std::ranges::remove_copy_if_result;
+    using std::ranges::remove_copy_result;
 }// namespace ranges
 
 // [alg.unique], unique
 using std::unique;
 
 namespace ranges {
-  using std::ranges::unique;
+    using std::ranges::unique;
 }
 
 using std::unique_copy;
 
 namespace ranges {
-  using std::ranges::unique_copy;
-  using std::ranges::unique_copy_result;
+    using std::ranges::unique_copy;
+    using std::ranges::unique_copy_result;
 }// namespace ranges
 
 // [alg.reverse], reverse
 using std::reverse;
 
 namespace ranges {
-  using std::ranges::reverse;
+    using std::ranges::reverse;
 }
 
 using std::reverse_copy;
 
 namespace ranges {
-  using std::ranges::reverse_copy;
-  using std::ranges::reverse_copy_result;
+    using std::ranges::reverse_copy;
+    using std::ranges::reverse_copy_result;
 }// namespace ranges
 
 // [alg.rotate], rotate
 using std::rotate;
 
 namespace ranges {
-  using std::ranges::rotate;
+    using std::ranges::rotate;
 }
 
 using std::rotate_copy;
 
 namespace ranges {
-  using std::ranges::rotate_copy;
-  using std::ranges::rotate_copy_result;
+    using std::ranges::rotate_copy;
+    using std::ranges::rotate_copy_result;
 }// namespace ranges
 
 // [alg.random.sample], sample
 using std::sample;
 
 namespace ranges {
-  using std::ranges::sample;
+    using std::ranges::sample;
 }
 
 // [alg.random.shuffle], shuffle
 using std::shuffle;
 
 namespace ranges {
-  using std::ranges::shuffle;
+    using std::ranges::shuffle;
 }
 
 // [alg.shift], shift
 using std::shift_left;
 
 namespace ranges {
-  // using std::ranges::shift_left;
+    // using std::ranges::shift_left;
 }
 
 using std::shift_right;
 
 namespace ranges {
-  // using std::ranges::shift_right;
+    // using std::ranges::shift_right;
 }
 
 // [alg.sorting], sorting and related operations
@@ -647,234 +656,234 @@ namespace ranges {
 using std::sort;
 
 namespace ranges {
-  using std::ranges::sort;
+    using std::ranges::sort;
 }
 
 using std::stable_sort;
 
 namespace ranges {
-  using std::ranges::stable_sort;
+    using std::ranges::stable_sort;
 }
 
 using std::partial_sort;
 
 namespace ranges {
-  using std::ranges::partial_sort;
+    using std::ranges::partial_sort;
 }
 using std::partial_sort_copy;
 
 namespace ranges {
-  using std::ranges::partial_sort_copy;
-  using std::ranges::partial_sort_copy_result;
+    using std::ranges::partial_sort_copy;
+    using std::ranges::partial_sort_copy_result;
 }// namespace ranges
 
 using std::is_sorted;
 using std::is_sorted_until;
 
 namespace ranges {
-  using std::ranges::is_sorted;
-  using std::ranges::is_sorted_until;
+    using std::ranges::is_sorted;
+    using std::ranges::is_sorted_until;
 }// namespace ranges
 
 // [alg.nth.element], Nth element
 using std::nth_element;
 
 namespace ranges {
-  using std::ranges::nth_element;
+    using std::ranges::nth_element;
 }
 
 // [alg.binary.search], binary search
 using std::lower_bound;
 
 namespace ranges {
-  using std::ranges::lower_bound;
+    using std::ranges::lower_bound;
 }
 
 using std::upper_bound;
 
 namespace ranges {
-  using std::ranges::upper_bound;
+    using std::ranges::upper_bound;
 }
 
 using std::equal_range;
 
 namespace ranges {
-  using std::ranges::equal_range;
+    using std::ranges::equal_range;
 }
 
 using std::binary_search;
 
 namespace ranges {
-  using std::ranges::binary_search;
+    using std::ranges::binary_search;
 }
 
 // [alg.partitions], partitions
 using std::is_partitioned;
 
 namespace ranges {
-  using std::ranges::is_partitioned;
+    using std::ranges::is_partitioned;
 }
 
 using std::partition;
 
 namespace ranges {
-  using std::ranges::partition;
+    using std::ranges::partition;
 }
 
 using std::stable_partition;
 
 namespace ranges {
-  using std::ranges::stable_partition;
+    using std::ranges::stable_partition;
 }
 
 using std::partition_copy;
 
 namespace ranges {
-  using std::ranges::partition_copy;
-  using std::ranges::partition_copy_result;
+    using std::ranges::partition_copy;
+    using std::ranges::partition_copy_result;
 }// namespace ranges
 
 using std::partition_point;
 
 namespace ranges {
-  using std::ranges::partition_point;
+    using std::ranges::partition_point;
 }
 // [alg.merge], merge
 using std::merge;
 namespace ranges {
-  using std::ranges::merge;
-  using std::ranges::merge_result;
+    using std::ranges::merge;
+    using std::ranges::merge_result;
 }// namespace ranges
 
 using std::inplace_merge;
 
 namespace ranges {
-  using std::ranges::inplace_merge;
+    using std::ranges::inplace_merge;
 }
 
 // [alg.set.operations], set operations
 using std::includes;
 namespace ranges {
-  using std::ranges::includes;
+    using std::ranges::includes;
 }
 
 using std::set_union;
 
 namespace ranges {
-  using std::ranges::set_union;
-  using std::ranges::set_union_result;
+    using std::ranges::set_union;
+    using std::ranges::set_union_result;
 }// namespace ranges
 
 using std::set_intersection;
 namespace ranges {
-  using std::ranges::set_intersection;
-  using std::ranges::set_intersection_result;
+    using std::ranges::set_intersection;
+    using std::ranges::set_intersection_result;
 }// namespace ranges
 
 using std::set_difference;
 
 namespace ranges {
-  using std::ranges::set_difference;
-  using std::ranges::set_difference_result;
+    using std::ranges::set_difference;
+    using std::ranges::set_difference_result;
 }// namespace ranges
 
 using std::set_symmetric_difference;
 
 namespace ranges {
-  using std::ranges::set_symmetric_difference_result;
+    using std::ranges::set_symmetric_difference_result;
 
-  using std::ranges::set_symmetric_difference;
+    using std::ranges::set_symmetric_difference;
 }// namespace ranges
 
 // [alg.heap.operations], heap operations
 using std::push_heap;
 
 namespace ranges {
-  using std::ranges::push_heap;
+    using std::ranges::push_heap;
 }
 
 using std::pop_heap;
 
 namespace ranges {
-  using std::ranges::pop_heap;
+    using std::ranges::pop_heap;
 }
 
 using std::make_heap;
 
 namespace ranges {
-  using std::ranges::make_heap;
+    using std::ranges::make_heap;
 }
 
 using std::sort_heap;
 
 namespace ranges {
-  using std::ranges::sort_heap;
+    using std::ranges::sort_heap;
 }
 
 using std::is_heap;
 
 namespace ranges {
-  using std::ranges::is_heap;
+    using std::ranges::is_heap;
 }
 
 using std::is_heap_until;
 
 namespace ranges {
-  using std::ranges::is_heap_until;
+    using std::ranges::is_heap_until;
 }
 
 // [alg.min.max], minimum and maximum
 using std::min;
 
 namespace ranges {
-  using std::ranges::min;
+    using std::ranges::min;
 }
 
 using std::max;
 
 namespace ranges {
-  using std::ranges::max;
+    using std::ranges::max;
 }
 
 using std::minmax;
 
 namespace ranges {
-  using std::ranges::minmax_result;
+    using std::ranges::minmax_result;
 
-  using std::ranges::minmax;
+    using std::ranges::minmax;
 }// namespace ranges
 
 using std::min_element;
 
 namespace ranges {
-  using std::ranges::min_element;
+    using std::ranges::min_element;
 }
 
 using std::max_element;
 
 namespace ranges {
-  using std::ranges::max_element;
+    using std::ranges::max_element;
 }
 
 using std::minmax_element;
 
 namespace ranges {
-  using std::ranges::minmax_element_result;
+    using std::ranges::minmax_element_result;
 
-  using std::ranges::minmax_element;
+    using std::ranges::minmax_element;
 }// namespace ranges
  // [alg.clamp], bounded value
 using std::clamp;
 
 namespace ranges {
-  using std::ranges::clamp;
+    using std::ranges::clamp;
 }
 
 // [alg.lex.comparison], lexicographical comparison
 using std::lexicographical_compare;
 
 namespace ranges {
-  using std::ranges::lexicographical_compare;
+    using std::ranges::lexicographical_compare;
 }
 
 // [alg.three.way], three-way comparison algorithms
@@ -884,17 +893,17 @@ using std::lexicographical_compare_three_way;
 using std::next_permutation;
 
 namespace ranges {
-  using std::ranges::next_permutation_result;
+    using std::ranges::next_permutation_result;
 
-  using std::ranges::next_permutation;
+    using std::ranges::next_permutation;
 }// namespace ranges
 
 using std::prev_permutation;
 
 namespace ranges {
-  using std::ranges::prev_permutation_result;
+    using std::ranges::prev_permutation_result;
 
-  using std::ranges::prev_permutation;
+    using std::ranges::prev_permutation;
 }// namespace ranges
 
 }// namespace std

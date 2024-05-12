@@ -1,170 +1,20 @@
-#include <concepts>
 import sfml;
-import fmt;
 import stdutils;
-import tmx;
 import assets;
-import stringables;
-import tilemap;
+import utils;
 import json;
-import ginseng;
+import tilemap;
+import say;
 import random;
-
-void my_assert(bool condition,
-  std::string_view message = "",
-  std::source_location loc = std::source_location::current())
-{
-    if (!condition)
-    {
-
-        auto msg = fmt::format("assertion failed: {} (at {}:{})",
-          message,
-          loc.file_name(),
-          loc.line());
-        throw std::runtime_error(msg);
-    }
-}
-
-template<typename T>
-concept with_bounds =
-  std::convertible_to<T, sf::Transformable> && requires(T t) {
-      { t.getGlobalBounds() } -> std::convertible_to<sf::FloatRect>;
-      { t.getLocalBounds() } -> std::convertible_to<sf::FloatRect>;
-  };
-
-namespace components {
-
-struct Animation : public sf::Sprite
-{
-    float frame_duration_seconds;
-    std::size_t current_frame = 0;
-    float acc_time_seconds = 0;
-    std::vector<sf::IntRect> *frames;
-    Animation(std::vector<sf::IntRect> *frames,
-      sf::Texture &text,
-      float frame_duration)
-      : frame_duration_seconds(frame_duration), frames(frames)
-    {
-        this->setTexture(text);
-        this->setTextureRect(frames->at(current_frame));
-    }
-    void update(const float delta)
-    {
-        acc_time_seconds += delta;
-
-        if (acc_time_seconds >= frame_duration_seconds)
-        {
-            if (current_frame == frames->size() - 1)
-            {
-                current_frame = 0;
-            } else
-            {
-                // intentional, is more readable
-                ++current_frame;
-            }
-            this->setTextureRect(frames->at(current_frame));
-            acc_time_seconds = 0;
-        }
-    }
-};
-
-struct Health
-{
-    float max_health;
-    float health;
-};
-
-struct Velocity
-{
-    // velocity is the same always in xy
-    float magnitude;
-};
-
-using draw_bounding_box = ginseng::tag<struct draw_bounding_box_t>;
-
-struct BoundingBox : public sf::RectangleShape
-{
-    BoundingBox(const with_bounds auto &sprite)
-    {
-        setSize(
-          { sprite.getGlobalBounds().width, sprite.getGlobalBounds().height });
-        setPosition(sprite.getPosition() - sprite.getOrigin());
-        setFillColor(sf::Color::Transparent);
-        setOutlineColor(sf::Color::Red);
-        setOutlineThickness(2);
-    }
-};
-
-
-struct EnemyPath
-{
-    std::size_t current_point = 0;
-};
-
-struct Projectile : public sf::RectangleShape
-{
-    sf::Vector2f direction;
-    float speed;
-    float damage;
-};
-using player_tag = ginseng::tag<struct player_tag_t>;
-}// namespace components
+import components;
+import EntityFactory;
 
 
 using namespace components;
 
 const sf::Vector2u win_size{ 640, 704 };
-
 constexpr auto font_path = "/System/Library/Fonts/Times.ttc";
 
-
-auto sprite_center(const with_bounds auto &sprite)
-{
-    return sf::Vector2f{ sprite.getGlobalBounds().width / 2,
-        sprite.getGlobalBounds().height / 2 };
-}
-
-auto load_animation_frames_json(const nlohmann::json &parent_node,
-  std::string_view name)
-{
-    my_assert(parent_node.contains(name),
-      fmt::format("no suggested key \"{}\" found in the json", name));
-    my_assert(parent_node[name].is_array(), "frames must be an array");
-    std::vector<sf::IntRect> frames;
-    for (auto &&rect : parent_node[name])
-    {
-        frames.push_back({ rect[0], rect[1], rect[2], rect[3] });
-    }
-    return frames;
-}
-
-constexpr std::vector<sf::Vector2f> get_turning_points(tmx_layer *layer_head)
-{
-    my_assert(layer_head != nullptr, "no layers found");
-    while (layer_head)
-    {
-        if (layer_head->type == L_OBJGR) { break; }
-        layer_head = layer_head->next;
-    }
-    my_assert(layer_head != nullptr, "no object layer found");
-
-    std::vector<sf::Vector2f> points;
-    auto current_object = layer_head->content.objgr->head;
-    while (current_object)
-    {
-        points.push_back({ sf::Vector2f{ static_cast<float>(current_object->x),
-          static_cast<float>(current_object->y) } });
-        current_object = current_object->next;
-    }
-    std::reverse(points.begin(), points.end());
-    return points;
-}
-
-auto normalize(sf::Vector2f vec) -> sf::Vector2f
-{
-    float length = std::sqrt(std::pow(vec.x, 2) + std::pow(vec.y, 2));
-    return { vec.x / length, vec.y / length };
-};
 
 // returns whether the enemy should be deleted from the vector
 bool enemy_system(Animation &zombie,
@@ -206,130 +56,104 @@ bool enemy_system(Animation &zombie,
 }
 
 
-class EntityFactory
+enum class shooter_type { none = 0, wizard, big_wizard };
+
+
+class ShooterSelector : public sf::Drawable
 {
-  public:
-    EntityFactory(assets &manager, std::string_view frames_path)
-      : manager(&manager)
+    constexpr static float option_size{ 64.f };
+
+    struct shooter_option : public sf::Drawable
     {
-        std::ifstream anim_frames_file{ frames_path.data() };
-        my_assert(anim_frames_file.is_open(), "failed to open frames file");
-
-        auto frames_json = nlohmann::json::parse(anim_frames_file);
-
-        demon_frames =
-          load_animation_frames_json(frames_json, "big_demon_idle");
-        zombie_frames =
-          load_animation_frames_json(frames_json, "big_zombie_idle");
-        wizard_frames = load_animation_frames_json(frames_json, "wizzard_idle");
+        shooter_option(sf::Color color, shooter_type type, sf::Sprite sprite)
+          : m_color(color), m_type(type), m_sprite(sprite)
+        {}
+        void draw(sf::RenderTarget &target,
+          sf::RenderStates states) const override
         {
-            my_assert(frames_json.contains("wizzard_idle_origin")
-                      && frames_json["wizzard_idle_origin"].is_array());
-            std::vector<float> vecarr = frames_json["wizzard_idle_origin"];
-            wizard_origin.x = vecarr[0];
-            wizard_origin.y = vecarr[1];
+            sf::RectangleShape shooter_selector_bg;
+            shooter_selector_bg.setSize(
+              { ShooterSelector::option_size, ShooterSelector::option_size });
+            shooter_selector_bg.setPosition(m_sprite.getPosition());
+            shooter_selector_bg.setFillColor(m_color);
+            target.draw(shooter_selector_bg, states);
+            target.draw(m_sprite, states);
         }
+        sf::Color m_color;
+        shooter_type m_type;
+        sf::Sprite m_sprite;
+    };
 
-        texture = manager.get<sf::Texture>("../characters.png");
-    }
-
-    void set_enemy_turning_points(std::vector<sf::Vector2f> &&points)
-    {
-        enemies_turning_points = std::move(points);
-    }
-
-    auto spawn_zombie(ginseng::database &db)
-    {
-        auto id = db.create_entity();
-
-        components::Animation anim{ &zombie_frames, *texture, 0.1f };
-        anim.setScale(1.5, 1.5f);
-        anim.setPosition(enemies_turning_points.front() - sprite_center(anim));
-        db.add_component(id, anim);
-        db.add_component(id, components::Velocity{ 100.f });
-        db.add_component(id, components::Health{ 100.f, 100.f });
-        db.add_component(id, components::EnemyPath{});
-        return id;
-    }
-
-    auto spawn_demon(ginseng::database &db)
-    {
-        auto id = db.create_entity();
-        components::Animation anim{ &demon_frames, *texture, 0.1f };
-        anim.setScale(1.5, 1.5f);
-        anim.setPosition(enemies_turning_points.front() - sprite_center(anim));
-        db.add_component(id, anim);
-
-        db.add_component(id, components::Velocity{ 200.f });
-        db.add_component(id, components::Health{ 70.f, 70.f });
-        db.add_component(id, components::EnemyPath{});
-        return id;
-    }
-
-    auto spawn_wizard(ginseng::database &db, sf::Vector2f position = {})
-    {
-        auto id = db.create_entity();
-        components::Animation anim{ &wizard_frames, *texture, 0.1f };
-        anim.setOrigin(wizard_origin);
-        anim.setScale(2.f, 2.f);
-        anim.setPosition(position);
-        db.add_component(id, anim);
-
-        db.add_component(id, components::player_tag{});
-        return id;
-    }
-
-    auto get_zombie_frames() const { return zombie_frames; }
-    auto get_demon_frames() const { return demon_frames; }
-    auto get_wizard_frames() const { return wizard_frames; }
-    auto get_enemy_turning_points() const { return enemies_turning_points; }
-
-  private:
-    assets *manager;
-    std::shared_ptr<sf::Texture> texture;
-
-    // frames of different kinds of enemies, right now only demon and zombie
-    std::vector<sf::IntRect> demon_frames;
-    std::vector<sf::IntRect> wizard_frames;
-    std::vector<sf::IntRect> zombie_frames;
-    sf::Vector2f wizard_origin;
-    std::vector<sf::Vector2f> enemies_turning_points;
-};
-
-enum class shooter_type {
-    none = 0,
-    wizard,
-};
-
-struct shooter_select : public sf::Drawable
-{
-    shooter_select(sf::Color color,
-      shooter_type type,
-      const sf::Texture &text,
-      sf::IntRect rect)
-      : color(color), type(type)
-    {
-        my_assert(text.getSize().x > 0 && text.getSize().y > 0,
-          "texture size must be greater than 0");
-        sprite.setTexture(text);
-        sprite.setTextureRect(rect);
-        sprite.setPosition({ 0, 640 });
-        // scale to be 64x64
-        // auto cal_scale = 64.f / text.getSize().x;
-        sprite.setScale(2, 2);
-    }
+  public:
+    ShooterSelector(sf::Font *font) : m_font(font) {}
+    auto get_current_type() const { return m_current_type; }
+    void add_option(sf::Color, shooter_type, sf::Texture *);
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override
     {
-        sf::RectangleShape shooter_selector_bg;
-        shooter_selector_bg.setSize({ 64, 64 });
-        shooter_selector_bg.setPosition({ 0, 640 });
-        shooter_selector_bg.setFillColor(color);
-        target.draw(shooter_selector_bg, states);
-        target.draw(sprite, states);
+        for (auto option : m_options)
+        {
+            target.draw(option, states);
+            if (option.m_type == m_current_type)
+            {
+                sf::RectangleShape shape;
+                shape.setFillColor(sf::Color{ 0x00000055 });
+                shape.setPosition(option.m_sprite.getPosition());
+                shape.setSize(sf::Vector2f{ option_size, option_size });
+                target.draw(shape, states);
+            }
+        }
     }
-    sf::Color color;
-    shooter_type type;
-    sf::Sprite sprite;
+
+    void add_option(sf::Color color,
+      shooter_type type,
+      const sf::Texture &text,
+      const sf::IntRect &rect)
+    {
+        if (ShooterSelector::option_size * m_options.size() > win_size.x)
+        {
+            say::warn("the shooter selector is full!");
+            return;
+        }
+        for (const auto &[_, opt_type, _s] : m_options)
+        {
+
+            if (type == opt_type)
+            {
+                say::warn("the shooter is already in the selector!");
+                return;
+            }
+        }
+        auto &res = m_options.emplace_back(color, type, sf::Sprite(text, rect));
+
+        sf::Vector2f pos{ option_size * (m_options.size() - 1), 640 };
+        res.m_sprite.setPosition(pos);
+        auto cal_scale = ShooterSelector::option_size / rect.height;
+        res.m_sprite.setScale(cal_scale, cal_scale);
+    }
+    void choose(sf::Vector2f mouse_pos)
+    {
+        if (mouse_pos.y < 640.f) { m_current_type = shooter_type::none; }
+
+        for (const auto &option : m_options)
+        {
+            sf::FloatRect rect{ option.m_sprite.getPosition(),
+                sf::Vector2f{ option_size, option_size } };
+            if (rect.contains(mouse_pos))
+            {
+                m_current_type = option.m_type;
+                return;
+            } else
+            {
+                m_current_type = shooter_type::none;
+            }
+        }
+    }
+
+
+  private:
+    std::vector<shooter_option> m_options;
+    sf::Font *m_font;
+    shooter_type m_current_type = shooter_type::none;
 };
 
 void flip_sprite(sf::Transformable &target, bool flip_x, bool flip_y)
@@ -365,12 +189,49 @@ void draw_select_tile(sf::RenderTarget &target,
     }
 }
 
-void draw_shooter_select(sf::RenderTarget &target,
-  const std::vector<shooter_select> &selectors)
-{
-    for (const auto &selector : selectors)
+enum class enemy_type { zombie, demon };
+
+
+class Level {
+    struct spawn_data {
+        enemy_type type;
+        std::size_t count;
+        float time_for_next_wave;
+    };
+public:
+    static Level from_json(const nlohmann::json& json)
     {
-        target.draw(selector);
+    }
+
+
+    std::vector<sf::IntRect> m_spawning_zones;
+    Tilemap m_map;
+    std::vector <spawn_data> m_enemy_queue;
+    float timer = 0;
+};
+
+class LevelManager {
+public:
+    static auto get()  {
+        static LevelManager instance;
+        return instance;
+    }
+private:
+     // get_spawning_zones()
+    LevelManager() = default;
+};
+
+std::string_view to_string(shooter_type type)
+{
+    using enum shooter_type;
+    switch (type)
+    {
+    case wizard:
+        return "wizard";
+    case big_wizard:
+        return "big wizard";
+    case none:
+        return "none";
     }
 }
 
@@ -380,27 +241,42 @@ int main(int argc, char *argv[])
 
     try
     {
+        fmt::println("path: {}", get_resource_path() + "assets/tiled/");
         sf::RenderWindow win{ sf::VideoMode{ win_size.x, win_size.y },
-            "Tower Defense in the works" };
+            "Tower Defense in the works",
+            sf::Style::None };
         const auto middle_screen = sf::VideoMode::getDesktopMode().width / 4;
         win.setPosition({ static_cast<int>(middle_screen), 0 });
         win.setFramerateLimit(60);
         win.setKeyRepeatEnabled(false);
 
-        assets manager{ "./assets/tiled" };
+        assets manager{ get_resource_path() + "assets/tiled/" };
+        Tilemap map{ get_resource_path() + "assets/tiled/1.tmx", manager };
 
-        Tilemap map{ "./assets/tiled/1.tmx", manager };
 
-
-        EntityFactory factory{ manager, "./assets/frames.json" };
+        EntityFactory factory{ manager,
+            get_resource_path() + "assets/frames.json" };
         factory.set_enemy_turning_points(
           get_turning_points(map.get_map()->ly_head));
 
-        std::vector<shooter_select> shooter_selectors;
-        shooter_selectors.emplace_back(sf::Color::Cyan,
-          shooter_type::wizard,
+        sf::Font font;
+        if (!font.loadFromFile(font_path))
+            throw std::runtime_error{ "failed to load font" };
+
+        ShooterSelector selector(&font);
+
+        for (std::size_t i = 0; i < 5; i++)
+        {
+            selector.add_option(sf::Color::Red,
+              shooter_type::wizard,
+              *manager.get<sf::Texture>("../characters.png"),
+              factory.get_wizard_frames().back());
+        }
+        selector.add_option(sf::Color::Cyan,
+          shooter_type::big_wizard,
           *manager.get<sf::Texture>("../characters.png"),
           factory.get_wizard_frames().back());
+
 
         Random rd;
         // ecs
@@ -410,10 +286,6 @@ int main(int argc, char *argv[])
         factory.spawn_wizard(db, rd.get_vec2<sf::Vector2f>(100, 500));
         factory.spawn_wizard(db, rd.get_vec2<sf::Vector2f>(100, 500));
 
-
-        sf::Font f;
-        if (!f.loadFromFile(font_path))
-            throw std::runtime_error{ "failed to load font" };
 
         sf::Event ev;
         sf::Clock clock;
@@ -455,22 +327,30 @@ int main(int argc, char *argv[])
                 if (ev.type == sf::Event::MouseButtonPressed
                     && ev.mouseButton.button == sf::Mouse::Left)
                 {
-                    db.visit(
-                      [&](components::Animation &anim, components::player_tag) {
-                          auto bullet_id = db.create_entity();
-                          components::Projectile projectile;
-                          // calculate the direction of the bullet with mouse
-                          // position
-                          projectile.direction =
-                            normalize(mouse_pos - anim.getPosition());
-                          projectile.speed = 500;
-                          projectile.damage = 5;
-                          projectile.setSize({ 10, 10 });
-                          // rotate the bullet by a fixed amount
-                          projectile.setPosition(anim.getPosition());
-                          projectile.setOrigin(sprite_center(projectile));
-                          db.add_component(bullet_id, projectile);
-                      });
+                    if (ev.mouseButton.y > 640)
+                    {
+                        // avoid shooting when mouse in menu
+                        selector.choose(mouse_pos);
+                    } else
+                    {
+
+                        db.visit([&](components::Animation &anim,
+                                   components::player_tag) {
+                            auto bullet_id = db.create_entity();
+                            components::Projectile projectile;
+                            // calculate the direction of the bullet with mouse
+                            // position
+                            projectile.direction =
+                              normalize(mouse_pos - anim.getPosition());
+                            projectile.speed = 500;
+                            projectile.damage = 5;
+                            projectile.setSize({ 10, 10 });
+                            // rotate the bullet by a fixed amount
+                            projectile.setPosition(anim.getPosition());
+                            projectile.setOrigin(sprite_center(projectile));
+                            db.add_component(bullet_id, projectile);
+                        });
+                    }
                 }
             }
             delta = clock.restart().asSeconds();
@@ -548,9 +428,9 @@ int main(int argc, char *argv[])
             db.visit([&](components::Projectile &projectile) {
                 win.draw(projectile);
             });
-            draw_shooter_select(win, shooter_selectors);
+            // draw_shooter_select(win, shooter_selectors);
             draw_select_tile(win, mouse_pos);
-
+            win.draw(selector);
             win.display();
         }
     } catch (const std::exception &e)
