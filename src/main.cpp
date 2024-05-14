@@ -199,9 +199,9 @@ class Level {
         float time_for_next_wave;
     };
 public:
-    static Level from_json(const nlohmann::json& json)
-    {
-    }
+    // static Level from_json(const nlohmann::json& json)
+    // {
+    // }
 
 
     std::vector<sf::IntRect> m_spawning_zones;
