@@ -80,7 +80,7 @@ if(BUILD_TESTING)
         target_link_libraries(${TEST_NAME} PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
         target_link_libraries(${TEST_NAME} PRIVATE gamelib)
         target_sources(${TEST_NAME} PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
-            ${APP_MODULE_FILES})
+            ${APP_MODULE_FILES} test/boostut.cppm)
         add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
     endforeach()
 endif()

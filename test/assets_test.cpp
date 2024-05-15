@@ -1,22 +1,22 @@
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/benchmark/catch_benchmark.hpp>
+import stdbridge;
+import boost.ut;
 
-#include <cstdint>
+auto times2(std::uint64_t n) { return n * 2; }
 
-uint64_t fibonacci(uint64_t number) {
-    return number < 2 ? number : fibonacci(number - 1) + fibonacci(number - 2);
-}
 
-TEST_CASE("Benchmark Fibonacci", "[!benchmark]") {
-    REQUIRE(fibonacci(5) == 5);
+int main(int argc, char *argv[])
+{
+    using namespace boost::ut;
+    using namespace boost::ut::spec;
 
-    REQUIRE(fibonacci(20) == 6'765);
-    BENCHMARK("fibonacci 20") {
-        return fibonacci(20);
-    };
+    // use spec
+    describe("vector") = [] {
+        std::vector<int> v(5);
+        expect(fatal(5_ul == std::size(v)));
 
-    REQUIRE(fibonacci(25) == 75'025);
-    BENCHMARK("fibonacci 25") {
-        return fibonacci(25);
+        it("should resize bigger") = [v] {
+            mut(v).resize(10);
+            expect(10_ul == std::size(v));
+        };
     };
 }

@@ -1,6 +1,6 @@
 export module components;
 import sfml;
-import stdutils;
+import stdbridge;
 import json;
 import utils;
 export import ginseng;

@@ -1,11 +1,5 @@
-module;
-#include <algorithm>
-#include <bitset>
-#include <cstddef>
-#include <memory>
-#include <type_traits>
-#include <vector>
 export module ginseng;
+import stdbridge;
 
 export namespace ginseng {
 namespace _detail {

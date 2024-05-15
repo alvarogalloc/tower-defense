@@ -1,0 +1,16 @@
+{
+  "levels" : [
+    {
+      "name": "my first level",
+      "tilemap": "1.tmx",
+      "spawningzones":[
+        []
+      ]
+    },
+    {
+      "name": "my second level",
+      "tilemap": "2.tmx"
+    }
+  ]
+}
+

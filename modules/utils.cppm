@@ -3,7 +3,7 @@ module;
 #include <CoreFoundation/CFBundle.h>
 #endif
 export module utils;
-import stdutils;
+import stdbridge;
 import fmt;
 import sfml;
 import tmx;
@@ -11,6 +11,9 @@ import json;
 
 export
 {
+    const sf::Vector2u win_size{ 640, 704 };
+
+
     auto get_resource_path()
     {
 #ifdef __APPLE__
@@ -32,12 +35,14 @@ export
 #endif
     }
 
+
     template<typename T>
     concept with_bounds =
       std::convertible_to<T, sf::Transformable> && requires(T t) {
           { t.getGlobalBounds() } -> std::convertible_to<sf::FloatRect>;
           { t.getLocalBounds() } -> std::convertible_to<sf::FloatRect>;
       };
+
 
     inline sf::Vector2f normalize(sf::Vector2f vec)
     {
@@ -53,8 +58,19 @@ export
             sprite.getGlobalBounds().height / 2 };
     }
 
+
+    void flip_sprite(sf::Transformable & target, bool flip_x, bool flip_y)
+    {
+        auto g = target.getScale();
+        g.x = std::abs(g.x);
+        g.y = std::abs(g.y);
+        target.setScale(flip_x ? -g.x : g.x, flip_y ? -g.y : g.y);
+    }
+
+
     std::vector<sf::IntRect> load_animation_frames_json(
       const nlohmann::json &parent_node, std::string_view name);
+
 
     void my_assert(bool condition,
       std::string_view message = "",
@@ -91,6 +107,7 @@ export
         return fmt::format("(x: {}, y: {})", v.x, v.y);
     }
 
+
     template<typename T> constexpr auto to_string(const sf::Rect<T> &r)
     {
         return fmt::format("left: {}, top: {}, width: {}, height: {}",
@@ -99,6 +116,7 @@ export
           r.width,
           r.height);
     }
+
 
     constexpr auto to_string(const sf::Sprite &sprite)
     {

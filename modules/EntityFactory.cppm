@@ -1,5 +1,5 @@
 export module EntityFactory;
-import stdutils;
+import stdbridge;
 import components;
 import utils;
 import sfml;

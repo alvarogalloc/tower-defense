@@ -1,5 +1,5 @@
 import sfml;
-import stdutils;
+import stdbridge;
 import assets;
 import utils;
 import json;
@@ -8,11 +8,12 @@ import say;
 import random;
 import components;
 import EntityFactory;
+import ShooterSelector;
+import LevelManager;
 
 
 using namespace components;
 
-const sf::Vector2u win_size{ 640, 704 };
 constexpr auto font_path = "/System/Library/Fonts/Times.ttc";
 
 
@@ -56,114 +57,6 @@ bool enemy_system(Animation &zombie,
 }
 
 
-enum class shooter_type { none = 0, wizard, big_wizard };
-
-
-class ShooterSelector : public sf::Drawable
-{
-    constexpr static float option_size{ 64.f };
-
-    struct shooter_option : public sf::Drawable
-    {
-        shooter_option(sf::Color color, shooter_type type, sf::Sprite sprite)
-          : m_color(color), m_type(type), m_sprite(sprite)
-        {}
-        void draw(sf::RenderTarget &target,
-          sf::RenderStates states) const override
-        {
-            sf::RectangleShape shooter_selector_bg;
-            shooter_selector_bg.setSize(
-              { ShooterSelector::option_size, ShooterSelector::option_size });
-            shooter_selector_bg.setPosition(m_sprite.getPosition());
-            shooter_selector_bg.setFillColor(m_color);
-            target.draw(shooter_selector_bg, states);
-            target.draw(m_sprite, states);
-        }
-        sf::Color m_color;
-        shooter_type m_type;
-        sf::Sprite m_sprite;
-    };
-
-  public:
-    ShooterSelector(sf::Font *font) : m_font(font) {}
-    auto get_current_type() const { return m_current_type; }
-    void add_option(sf::Color, shooter_type, sf::Texture *);
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override
-    {
-        for (auto option : m_options)
-        {
-            target.draw(option, states);
-            if (option.m_type == m_current_type)
-            {
-                sf::RectangleShape shape;
-                shape.setFillColor(sf::Color{ 0x00000055 });
-                shape.setPosition(option.m_sprite.getPosition());
-                shape.setSize(sf::Vector2f{ option_size, option_size });
-                target.draw(shape, states);
-            }
-        }
-    }
-
-    void add_option(sf::Color color,
-      shooter_type type,
-      const sf::Texture &text,
-      const sf::IntRect &rect)
-    {
-        if (ShooterSelector::option_size * m_options.size() > win_size.x)
-        {
-            say::warn("the shooter selector is full!");
-            return;
-        }
-        for (const auto &[_, opt_type, _s] : m_options)
-        {
-
-            if (type == opt_type)
-            {
-                say::warn("the shooter is already in the selector!");
-                return;
-            }
-        }
-        auto &res = m_options.emplace_back(color, type, sf::Sprite(text, rect));
-
-        sf::Vector2f pos{ option_size * (m_options.size() - 1), 640 };
-        res.m_sprite.setPosition(pos);
-        auto cal_scale = ShooterSelector::option_size / rect.height;
-        res.m_sprite.setScale(cal_scale, cal_scale);
-    }
-    void choose(sf::Vector2f mouse_pos)
-    {
-        if (mouse_pos.y < 640.f) { m_current_type = shooter_type::none; }
-
-        for (const auto &option : m_options)
-        {
-            sf::FloatRect rect{ option.m_sprite.getPosition(),
-                sf::Vector2f{ option_size, option_size } };
-            if (rect.contains(mouse_pos))
-            {
-                m_current_type = option.m_type;
-                return;
-            } else
-            {
-                m_current_type = shooter_type::none;
-            }
-        }
-    }
-
-
-  private:
-    std::vector<shooter_option> m_options;
-    sf::Font *m_font;
-    shooter_type m_current_type = shooter_type::none;
-};
-
-void flip_sprite(sf::Transformable &target, bool flip_x, bool flip_y)
-{
-    auto g = target.getScale();
-    g.x = std::abs(g.x);
-    g.y = std::abs(g.y);
-    target.setScale(flip_x ? -g.x : g.x, flip_y ? -g.y : g.y);
-}
-
 void draw_select_tile(sf::RenderTarget &target,
   sf::Vector2f mouse_pos,
   sf::Vector2u grid_space_size = { 32, 32 })
@@ -189,51 +82,6 @@ void draw_select_tile(sf::RenderTarget &target,
     }
 }
 
-enum class enemy_type { zombie, demon };
-
-
-class Level {
-    struct spawn_data {
-        enemy_type type;
-        std::size_t count;
-        float time_for_next_wave;
-    };
-public:
-    // static Level from_json(const nlohmann::json& json)
-    // {
-    // }
-
-
-    std::vector<sf::IntRect> m_spawning_zones;
-    Tilemap m_map;
-    std::vector <spawn_data> m_enemy_queue;
-    float timer = 0;
-};
-
-class LevelManager {
-public:
-    static auto get()  {
-        static LevelManager instance;
-        return instance;
-    }
-private:
-     // get_spawning_zones()
-    LevelManager() = default;
-};
-
-std::string_view to_string(shooter_type type)
-{
-    using enum shooter_type;
-    switch (type)
-    {
-    case wizard:
-        return "wizard";
-    case big_wizard:
-        return "big wizard";
-    case none:
-        return "none";
-    }
-}
 
 
 int main(int argc, char *argv[])
@@ -252,6 +100,7 @@ int main(int argc, char *argv[])
 
         assets manager{ get_resource_path() + "assets/tiled/" };
         Tilemap map{ get_resource_path() + "assets/tiled/1.tmx", manager };
+        LevelManager level_manager {get_resource_path() + "assets/levels.json"};
 
 
         EntityFactory factory{ manager,
