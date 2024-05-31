@@ -10,7 +10,7 @@ export
     enum class shooter_type;
     class ShooterSelector;
 
-    enum class shooter_type { none = 0, wizard, big_wizard };
+    enum class shooter_type { none = 0, wizard, knight };
     constexpr std::string_view to_string(shooter_type type)
     {
         using enum shooter_type;
@@ -18,8 +18,8 @@ export
         {
         case wizard:
             return "wizard";
-        case big_wizard:
-            return "big wizard";
+        case knight:
+            return "knight";
         case none:
             return "none";
         }

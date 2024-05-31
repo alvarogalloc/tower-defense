@@ -4,10 +4,12 @@ import sfml;
 import tilemap;
 import json;
 import utils;
+import components;
+import assets;
+import EntityFactory;
 
 export
 {
-    enum class enemy_type { zombie, demon };
 
     class LevelManager
     {
@@ -15,36 +17,35 @@ export
         {
             struct spawn_data
             {
-                enemy_type type;
+                components::enemy_type type;
                 std::size_t count;
                 float time_for_next_wave;
+                float delay_each;
             };
 
           public:
-            // static Level from_json(const nlohmann::json& json)
-            // {
-            // }
-
-
+            Level(const nlohmann::json &json);
+            components::enemy_type update(float delta);
+            std::string m_name;
+            std::string m_tilemap_name;
             std::vector<sf::IntRect> m_spawning_zones;
-            Tilemap m_map;
-            std::vector<spawn_data> m_enemy_queue;
+            std::vector<spawn_data> m_waves;
             float timer = 0;
         };
 
       public:
-        LevelManager(std::string_view levels_file)
-        {
-            std::ifstream file(levels_file);
-            if (!file.is_open())
-            {
-                my_assert(file.is_open(), "failed to open frames file");
-            }
-            m_levels_data = nlohmann::json::parse(file);
-        }
-
+        LevelManager(std::string_view levels_file, EntityFactory &factory);
+        components::enemy_type update(float delta);
+        auto &get_current_level() { return *m_current_level; }
 
       private:
+        void load_levels();
+
+
         nlohmann::json m_levels_data;
+        EntityFactory &m_factory;
+        std::vector<Level> m_levels;
+        std::unordered_map<std::string, Tilemap> maps;
+        Level *m_current_level;
     };
 };

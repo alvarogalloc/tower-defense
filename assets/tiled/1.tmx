@@ -26,7 +26,7 @@
 66,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,68
 </data>
  </layer>
- <layer id="3" name="objects" width="20" height="20">
+ <layer id="3" name="objects" width="20" height="20" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,161,105,106,107,
 0,0,0,0,0,178,179,0,0,0,0,0,0,0,0,0,0,118,119,120,
@@ -50,8 +50,8 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="2" name="turningpoints" locked="1">
-  <object id="8" x="30.9278" y="303.093">
+ <objectgroup id="2" name="turningpoints">
+  <object id="8" x="35.5036" y="304.808">
    <point/>
   </object>
   <object id="9" x="335.052" y="304.124">

@@ -1,16 +1,59 @@
-{
-  "levels" : [
+[
     {
       "name": "my first level",
       "tilemap": "1.tmx",
       "spawningzones":[
-        []
+        [0, 0, 16, 16],
+        [16, 8, 16, 16]
+      ],
+      "waves": [
+        {
+          "type": 2,
+          "count": 20,
+          "delay_each": 0.3,
+          "time_for_next_wave": 10.0
+        },
+        {
+          "type": 1,
+          "count": 10,
+          "delay_each": 2.9,
+          "time_for_next_wave": 10.0
+        },
+        {
+          "type": 2,
+          "count": 3,
+          "delay_each": 3.0,
+          "time_for_next_wave": 10.0
+        }
       ]
     },
-    {
-      "name": "my second level",
-      "tilemap": "2.tmx"
+{
+      "name": "Second level",
+      "tilemap": "2.tmx",
+      "spawningzones":[
+        [0, 0, 16, 16],
+        [16, 8, 16, 16]
+      ],
+      "waves": [
+        {
+          "type": 2,
+          "count": 10,
+          "delay_each": 0.7,
+          "time_for_next_wave": 3.2
+        },
+        {
+          "type": 2,
+          "count": 10,
+          "delay_each": 0.2,
+          "time_for_next_wave": 3.2
+        },
+        {
+          "type": 2,
+          "count": 10,
+          "delay_each": 1.7,
+          "time_for_next_wave": 3.2
+        }
+      ]
     }
-  ]
-}
+]
 

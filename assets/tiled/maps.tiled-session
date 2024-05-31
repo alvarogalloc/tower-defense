@@ -3,25 +3,25 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "1.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
         "1.tmx": {
-            "scale": 0.8501,
-            "selectedLayer": 1,
+            "scale": 1.2804,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 359.95765204093635,
-                "y": 130.57287377955532
+                "x": -38.26929084661043,
+                "y": 393.6269915651358
             }
         },
         "2.tmx": {
             "scale": 0.8678,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 319.77414150725974,
-                "y": 319.1979718829224
+                "x": 320.35031113159715,
+                "y": 320.35031113159715
             }
         },
         "floor.tsx": {
@@ -47,8 +47,6 @@
     "map.tileWidth": 32,
     "map.width": 20,
     "openFiles": [
-        "1.tmx",
-        "2.tmx"
     ],
     "project": "maps.tiled-project",
     "recentFiles": [

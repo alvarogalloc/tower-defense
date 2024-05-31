@@ -5422,10 +5422,10 @@ export namespace std::inline literals::inline chrono_literals {
   using std::literals::chrono_literals::operator""ns;
 
   // [using std::literals::chrono_literals::.cal.day.nonmembers], non-member functions
-  using std::literals::chrono_literals::operator""d;
-
-  // [using std::literals::chrono_literals::.cal.year.nonmembers], non-member functions
-  using std::literals::chrono_literals::operator""y;
+  // using std::literals::chrono_literals::operator""d;
+  //
+  // // [using std::literals::chrono_literals::.cal.year.nonmembers], non-member functions
+  // using std::literals::chrono_literals::operator""y;
 } // namespace std::inline literals::inline chrono_literals
 
 // -*- C++ -*-

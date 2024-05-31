@@ -65,7 +65,7 @@ IncludeCategories:
   Regex: .*
 IncludeIsMainRegex: (Test)?$
 IndentCaseLabels: false
-IndentWidth: 4
+IndentWidth: 2
 IndentWrappedFunctionNames: true
 JavaScriptQuotes: Leave
 JavaScriptWrapImports: true

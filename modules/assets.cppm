@@ -37,7 +37,7 @@ export
         template<loadable T> [[nodiscard]] T* get(std::string_view path)
         {
             static_assert(std::is_same_v<T, sf::Texture>
-                            // || std::is_same_v<T, sf::Music>
+                            || std::is_same_v<T, sf::Music>
                             || std::is_same_v<T, sf::Font>,
               "Asset Type is not supported");
 
@@ -46,10 +46,10 @@ export
             {
                 target = &textures;
             }
-            // else if constexpr (std::is_same_v<T, sf::Music>)
-            //     {
-            //         target = &music;
-            //     }
+            else if constexpr (std::is_same_v<T, sf::Music>)
+                {
+                    target = &music;
+                }
             else if constexpr (std::is_same_v<T, sf::Font>)
             {
                 target = &fonts;
@@ -72,7 +72,7 @@ export
         {
             auto [res, ok] = storage.insert({ path, std::make_shared<T>() });
             if (!ok) { return false; }
-            ok = res.openFromFile(path.data());
+            ok = res->second->openFromFile(path.data());
             return ok;
         }
         template<asset_like T>
@@ -86,7 +86,7 @@ export
 
 
         asset_storage<sf::Texture> textures;
-        // asset_storage<sf::Music> music;
+        asset_storage<sf::Music> music;
         asset_storage<sf::Font> fonts;
         std::string asset_path;
     };

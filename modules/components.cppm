@@ -81,4 +81,7 @@ struct Projectile : public sf::RectangleShape
     float damage;
 };
 using player_tag = ginseng::tag<struct player_tag_t>;
+
+enum class enemy_type {none,  zombie, demon };
+
 }// namespace components
