@@ -8,3 +8,4 @@ reestructure code
 make entity factory more generic
 destroy bullets when they are offscreen
 README
+support for windows, right now all is invaded by clang and macos stuff (LLD, bundling and frameworks) 
