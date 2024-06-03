@@ -513,10 +513,12 @@ public:
     m_win->clear(sf::Color::Red);
     if (m_curent_map) m_win->draw(*m_curent_map);
   }
-  std::unique_ptr<Scene> on_exit() override {
+  std::unique_ptr<Scene> on_exit() override
+  {
     m_manager->remove<Tilemap>("1.tmx");
     m_manager->remove<Tilemap>("2.tmx");
-    return std::make_unique<Menu>(); }
+    return std::make_unique<Menu>();
+  }
 };
 
 std::unique_ptr<Scene> Menu::on_exit() { return std::make_unique<GameScene>(); }

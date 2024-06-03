@@ -7,3 +7,4 @@ port frames file to json
 reestructure code
 make entity factory more generic
 destroy bullets when they are offscreen
+README

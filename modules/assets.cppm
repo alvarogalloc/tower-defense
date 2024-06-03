@@ -59,7 +59,8 @@ export
       return it->second.get();
     }
 
-    template<typename U> constexpr void remove(std::string_view name)
+    template<typename U>
+    constexpr void remove(std::string_view name)
       requires(std::is_same_v<U, T> || ...)
     {
       if (auto it = std::get<Map<U>>(m_assets).find(name);

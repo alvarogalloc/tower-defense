@@ -8,7 +8,7 @@ void Tilemap::load_tilesets(my_assets &manager)
   auto head = m_map->ts_head;
   while (head)
   {
-    auto texture =  manager.get<sf::Texture>(head->tileset->image->source);
+    auto texture = manager.get<sf::Texture>(head->tileset->image->source);
     m_textures.emplace(head->tileset->name, *texture);
     head = head->next;
   }
@@ -17,7 +17,7 @@ void Tilemap::create_layer(tmx_layer *layer)
 {
   if (layer->type != L_LAYER) return;
   sf::Sprite sprite;
-  sf::Texture * current_texture;
+  sf::Texture *current_texture;
   for (std::size_t i = 0; i < m_map->width; i++)
   {
     for (std::size_t j = 0; j < m_map->height; j++)

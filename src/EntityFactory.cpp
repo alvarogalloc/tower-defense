@@ -41,7 +41,7 @@ ent_id EntityFactory::spawn_enemy(ginseng::database &db,
   switch (type)
   {
   case components::enemy_type::zombie:
-      fmt::print("spawning zombie\n");
+    fmt::print("spawning zombie\n");
     return spawn_zombie(db);
   case components::enemy_type::demon:
     return spawn_demon(db);
