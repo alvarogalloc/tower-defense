@@ -3,7 +3,7 @@ project(magster)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 23)
 # set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+# set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftime-trace -fno-omit-frame-pointer -fsanitize=address,undefined")
 set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address,undefined")
 
@@ -16,7 +16,8 @@ find_package(ImGui-SFML CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 
 file(GLOB GAMELIB_MODULE_FILES "modules/*.cppm")
-set(GAMELIB_SOURCE_FILES "src/tilemap.cpp" "src/LevelManager.cpp")
+file(GLOB GAMELIB_SOURCE_FILES "src/*.cpp")
+list(REMOVE_ITEM GAMELIB_SOURCE_FILES "src/main.cpp")
 
 add_library(gamelib ${GAMELIB_SOURCE_FILES})
 target_compile_features(gamelib PUBLIC cxx_std_23)
@@ -37,6 +38,8 @@ set(GAME_SOURCE_FILES "src/main.cpp")
 file(GLOB_RECURSE GAME_RESOURCES "${CMAKE_SOURCE_DIR}/assets/**")
 
 add_executable(magster ${GAME_SOURCE_FILES} ${GAME_RESOURCES})
+# add a macro with the current path
+add_definitions(-DSRC_DIR="${CMAKE_SOURCE_DIR}")
 target_link_libraries(magster PRIVATE gamelib)
 # configs
 option(BUILD_BUNDLE "Build bundle" OFF)

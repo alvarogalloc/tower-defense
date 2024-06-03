@@ -5,7 +5,6 @@ import tilemap;
 import json;
 import utils;
 import components;
-import assets;
 import EntityFactory;
 
 export

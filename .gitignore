@@ -1,7 +1,9 @@
-# Xmake cache
+# build & cache
 build/
 .cache/
+.xmake/
 
-# MacOS Cache
+# MacOS & stubs
 .DS_Store
 compile_commands.json
+imgui.ini

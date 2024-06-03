@@ -2,92 +2,84 @@ export module assets;
 import sfml;
 import say;
 import stdbridge;
+import tilemap;
 
 export
 {
-    class assets;
+  template<typename... T> class assets
+  {
 
-    template<typename T>
-    concept asset_like = requires(T t) {
-        { t.loadFromFile("") } -> std::convertible_to<bool>;
-    };
-    template<typename T>
-    concept stream_like = requires(T t) {
-        { t.openFromFile("") } -> std::convertible_to<bool>;
-    };
 
-    template<typename T>
-    concept loadable = stream_like<T> || asset_like<T>;
-
-    class assets
+  public:
+    template<typename Contained>
+    using Map =
+      std::unordered_map<std::string_view, std::unique_ptr<Contained>>;
+    template<typename Contained>
+    using Loader = std::function<void(Contained *, std::string_view)>;
+    constexpr explicit assets(std::string_view path) : m_path(path)
     {
-        template<typename T> using ptr = std::shared_ptr<T>;
+      namespace fs = std::filesystem;
+      if (!fs::exists(m_path))
+      {
+        throw std::runtime_error("Path does not exist");
+      }
+      if (!m_path.ends_with('/')) { m_path += '/'; }
+    }
+    constexpr auto get_path() const { return m_path; }
 
-        template<typename T>
-        using asset_storage = std::unordered_map<std::string_view, ptr<T>>;
+    template<typename U>
+    constexpr void set_loader(Loader<U> loader)
+      requires(std::is_same_v<U, T> || ...)
+    {
+      std::get<Loader<U>>(m_loaders) = loader;
+    }
 
+    template<typename U>
+    [[nodiscard]] constexpr U *get(std::string_view name)
+      requires(std::is_same_v<U, T> || ...)
+    {
+      if (auto it = std::get<Map<U>>(m_assets).find(name);
+          it != std::get<Map<U>>(m_assets).end())
+      {
+        return it->second.get();
+      }
+      auto [it, success] =
+        std::get<Map<U>>(m_assets).insert({ name, std::make_unique<U>() });
 
-      public:
-        explicit assets(std::string_view _asset_path) : asset_path(_asset_path)
-        {
-            namespace fs = std::filesystem;
-            if (!fs::exists(asset_path)) { say::error("Path does not exist"); }
-            if (!asset_path.ends_with('/')) { asset_path += '/'; }
-        }
-        template<loadable T> [[nodiscard]] T* get(std::string_view path)
-        {
-            static_assert(std::is_same_v<T, sf::Texture>
-                            || std::is_same_v<T, sf::Music>
-                            || std::is_same_v<T, sf::Font>,
-              "Asset Type is not supported");
+      // check if loader is set
+      if (!std::get<Loader<U>>(m_loaders))
+      {
+        throw std::runtime_error(
+          fmt::format("Loader for this type is not set, please set "
+                      "using the set_loader<{}> method",
+            typeid(U).name()));
+      }
+      std::invoke(
+        std::get<Loader<U>>(m_loaders), it->second.get(), m_path + name.data());
+      return it->second.get();
+    }
 
-            asset_storage<T> *target{ nullptr };
-            if constexpr (std::is_same_v<T, sf::Texture>)
-            {
-                target = &textures;
-            }
-            else if constexpr (std::is_same_v<T, sf::Music>)
-                {
-                    target = &music;
-                }
-            else if constexpr (std::is_same_v<T, sf::Font>)
-            {
-                target = &fonts;
-            }
+    template<typename U> constexpr void remove(std::string_view name)
+      requires(std::is_same_v<U, T> || ...)
+    {
+      if (auto it = std::get<Map<U>>(m_assets).find(name);
+          it != std::get<Map<U>>(m_assets).end())
+      {
+        std::get<Map<U>>(m_assets).erase(it);
+      }
+    }
 
-            if (!target->contains(path))
-            {
-                if (!load(path, *target))
-                {
-                    throw std::runtime_error{ fmt::format(
-                      "could not load {}", path) };
-                }
-            }
-            return target->at(path).get();
-        }
+  protected:
+    // Member variables declared but not defined
+    std::tuple<Map<T>...> m_assets;
+    std::tuple<Loader<T>...> m_loaders;
+    std::string m_path;
+  };
 
-      private:
-        template<stream_like T>
-        bool load(std::string_view path, asset_storage<T> &storage)
-        {
-            auto [res, ok] = storage.insert({ path, std::make_shared<T>() });
-            if (!ok) { return false; }
-            ok = res->second->openFromFile(path.data());
-            return ok;
-        }
-        template<asset_like T>
-        bool load(std::string_view path, asset_storage<T> &storage)
-        {
-            auto [res, ok] = storage.insert({ path, std::make_shared<T>() });
-            if (!ok) { return false; }
-            ok = res->second->loadFromFile(asset_path + path.data());
-            return ok;
-        }
-
-
-        asset_storage<sf::Texture> textures;
-        asset_storage<sf::Music> music;
-        asset_storage<sf::Font> fonts;
-        std::string asset_path;
-    };
+  // instantiate the template for sfml types
+  class my_assets : public assets<sf::Texture, sf::Font, sf::Music, Tilemap>
+  {
+  public:
+    my_assets(std::string_view path);
+  };
 }
