@@ -12,3 +12,4 @@ support for windows, right now all is invaded by clang and macos stuff (LLD, bun
 should i stick to my_assets or better to more flexibility and add compatibility between specializations of assets<T>??
 STATE CLEARLY FOR SYSTEMS PURPOSES AND OWNERSHIP OF RESOURCES
 MORE TESTS FOR LEVEL AND LEVEL MANAGER
+SHOULD I USE POLYLINE FOR ENEMY PATH??
