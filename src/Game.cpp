@@ -31,10 +31,10 @@ Game::Game(GameSpec spec)
     throw std::runtime_error{ "failed to initialize imgui" };
   }
   constexpr static auto font_path =
-    "/System/Library/Fonts/Supplemental/Courier New Bold.ttf";
+    "/System/Library/Fonts/Menlo.ttc";
   auto &io = ImGui::GetIO();
-  io.Fonts->AddFontFromFileTTF(font_path, 32.0f);
   io.Fonts->AddFontFromFileTTF(font_path, 16.0f);
+  io.Fonts->AddFontFromFileTTF(font_path, 32.0f);
   my_assert(ImGui::SFML::UpdateFontTexture(), "could not build font atlas");
   m_win.setFramerateLimit(60);
   m_win.setKeyRepeatEnabled(false);

@@ -3,13 +3,12 @@ import sfml;
 import say;
 import stdbridge;
 import tilemap;
+import utils;
 
 export
 {
   template<typename... T> class assets
   {
-
-
   public:
     template<typename Contained>
     using Map =
@@ -41,10 +40,13 @@ export
       if (auto it = std::get<Map<U>>(m_assets).find(name);
           it != std::get<Map<U>>(m_assets).end())
       {
+        fmt::print("Found in cache '{}'\n", name);
         return it->second.get();
       }
+      fmt::print("Inserting '{}'\n", name);
       auto [it, success] =
-        std::get<Map<U>>(m_assets).insert({ name, std::make_unique<U>() });
+        std::get<Map<U>>(m_assets).try_emplace(name, std::make_unique<U>());
+      if (!success) { throw std::runtime_error("Failed to insert asset"); }
 
       // check if loader is set
       if (!std::get<Loader<U>>(m_loaders))
@@ -63,11 +65,22 @@ export
     constexpr void remove(std::string_view name)
       requires(std::is_same_v<U, T> || ...)
     {
-      if (auto it = std::get<Map<U>>(m_assets).find(name);
-          it != std::get<Map<U>>(m_assets).end())
+      auto it = std::get<Map<U>>(m_assets).find(name);
+      my_assert(it != std::get<Map<U>>(m_assets).end(),
+        fmt::format("Asset '{}' not found", name));
+      if (it != std::get<Map<U>>(m_assets).end())
       {
+        fmt::print("Erasing '{}'\n", name);
         std::get<Map<U>>(m_assets).erase(it);
       }
+    }
+
+    // get amount of assets
+    template<typename U>
+    [[nodiscard]] constexpr auto size() const
+      requires(std::is_same_v<U, T> || ...)
+    {
+      return std::get<Map<U>>(m_assets).size();
     }
 
   protected:

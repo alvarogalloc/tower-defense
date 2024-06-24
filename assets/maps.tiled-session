@@ -3,26 +3,30 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "1.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
         "1.tmx": {
-            "scale": 1.2804,
-            "selectedLayer": 2,
+            "scale": 1.1112,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": -38.26929084661043,
-                "y": 393.6269915651358
+                "x": 400.0179985601152,
+                "y": 299.67602591792655
             }
         },
         "2.tmx": {
-            "scale": 0.8678,
-            "selectedLayer": 0,
+            "scale": 0.86,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.35031113159715,
-                "y": 320.35031113159715
+                "x": 249.41860465116278,
+                "y": 250.00000000000006
             }
+        },
+        "chambers.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.81
         },
         "floor.tsx": {
             "scaleInDock": 3.6708,
@@ -30,11 +34,11 @@
         },
         "ground.tsx": {
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 1.29
         },
         "objects.tsx": {
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 1.29
         },
         "walls.tsx": {
             "scaleInDock": 1.54,
@@ -47,19 +51,23 @@
     "map.tileWidth": 32,
     "map.width": 20,
     "openFiles": [
+        "ground.tsx",
+        "objects.tsx",
+        "1.tmx"
     ],
     "project": "maps.tiled-project",
     "recentFiles": [
-        "2.tmx",
-        "1.tmx",
         "ground.tsx",
         "objects.tsx",
+        "1.tmx",
+        "2.tmx",
+        "chambers.tsx",
         "floor.tsx",
         "walls.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 32,
-        "width": 32
+        "height": 16,
+        "width": 16
     }
 }

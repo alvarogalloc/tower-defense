@@ -2,16 +2,18 @@
     {
       "name": "my first level",
       "tilemap": "1.tmx",
-      "spawningzones":[
-        [0, 0, 16, 16],
-        [16, 8, 16, 16]
-      ],
       "waves": [
+        {
+          "type": 1,
+          "count": 0,
+          "delay_each": 0.0,
+          "time_for_next_wave": 3.0
+        },
         {
           "type": 2,
           "count": 20,
-          "delay_each": 0.3,
-          "time_for_next_wave": 10.0
+          "delay_each": 0.5,
+          "time_for_next_wave": 14.0
         },
         {
           "type": 1,

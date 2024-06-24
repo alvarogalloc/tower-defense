@@ -9,3 +9,6 @@ make entity factory more generic
 destroy bullets when they are offscreen
 README
 support for windows, right now all is invaded by clang and macos stuff (LLD, bundling and frameworks) 
+should i stick to my_assets or better to more flexibility and add compatibility between specializations of assets<T>??
+STATE CLEARLY FOR SYSTEMS PURPOSES AND OWNERSHIP OF RESOURCES
+MORE TESTS FOR LEVEL AND LEVEL MANAGER

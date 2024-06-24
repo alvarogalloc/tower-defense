@@ -60,5 +60,7 @@ export
     using ImGui::GetWindowSize;
     using ImGui::CalcTextSize;
     using ImGui::Separator;
+    using ImGui::PushFont;
+    using ImGui::PopFont;
   }// namespace ImGui
 }

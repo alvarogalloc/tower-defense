@@ -76,15 +76,18 @@ export
     std::source_location loc = std::source_location::current());
 
 
-  constexpr std::vector<sf::Vector2f> get_turning_points(tmx_layer * layer_head)
+  constexpr std::vector<sf::Vector2f> get_points(
+    tmx_layer * layer_head, std::string_view layer_name)
   {
     my_assert(layer_head != nullptr, "no layers found");
-    while (layer_head)
+    while (layer_head != nullptr
+           && !std::string(layer_name).starts_with(layer_head->name))
     {
-      if (layer_head->type == L_OBJGR) { break; }
+
       layer_head = layer_head->next;
     }
-    my_assert(layer_head != nullptr, "no object layer found");
+
+    my_assert(layer_head != nullptr, " invalid layer found");
 
     std::vector<sf::Vector2f> points;
     auto current_object = layer_head->content.objgr->head;
@@ -99,7 +102,12 @@ export
   }
 
 
-  template<typename T> constexpr auto to_string(const sf::Vector2<T> &v)
+  template<typename T>
+  constexpr auto to_string(const T &v)
+    requires requires(T t) {
+      { t.x } -> std::convertible_to<float>;
+      { t.y } -> std::convertible_to<float>;
+    }
   {
     return fmt::format("(x: {}, y: {})", v.x, v.y);
   }

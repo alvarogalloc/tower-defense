@@ -3,12 +3,12 @@ import fmt;
 import assets;
 import stdbridge;
 
-void Tilemap::load_tilesets(my_assets &manager)
+void Tilemap::load_tilesets()
 {
   auto head = m_map->ts_head;
   while (head)
   {
-    auto texture = manager.get<sf::Texture>(head->tileset->image->source);
+    auto *texture = m_manager->get<sf::Texture>(head->tileset->image->source);
     m_textures.emplace(head->tileset->name, *texture);
     head = head->next;
   }
@@ -59,7 +59,9 @@ void Tilemap::create_layers()
 {
   m_render_texture.create(
     m_map->width * m_map->tile_width, m_map->height * m_map->tile_height);
-  constexpr auto ARGB_to_RGBA = [](std::uint32_t color) -> sf::Color {
+
+
+  constexpr auto to_sfml_color = [](std::uint32_t color) -> sf::Color {
     sf::Color c;
     c.r = (color & 0xff0000) >> 16;
     c.g = (color & 0xff00) >> 8;
@@ -67,13 +69,12 @@ void Tilemap::create_layers()
     c.a = (color & 0xff000000) >> 24;
     return c;
   };
-  if (m_map->backgroundcolor != 0)
-  {
 
-    m_render_texture.clear(ARGB_to_RGBA(m_map->backgroundcolor));
+  if (m_map->backgroundcolor)
+  {
+    m_render_texture.clear(to_sfml_color(m_map->backgroundcolor));
   } else
   {
-
     m_render_texture.clear();
   }
   auto current_layer = m_map->ly_head;
@@ -85,7 +86,9 @@ void Tilemap::create_layers()
       create_layer(current_layer);
       break;
     case L_OBJGR:
-      if (0) draw_object_layer(current_layer);
+#if 0// flag this when i want to see the path o enemies
+      draw_object_layer(current_layer);
+#endif
       break;
     default:
       fmt::println("unsupported layer type");
@@ -97,28 +100,18 @@ void Tilemap::create_layers()
 
 void Tilemap::load(std::string_view path, my_assets &manager)
 {
+  m_manager = &manager;
   m_map.reset(tmx_load(path.data()));
   if (m_map == nullptr)
     throw std::runtime_error("tilemap is invalid on loading");
-  load_tilesets(manager);
-  create_layers();
-}
-
-Tilemap::Tilemap(std::unique_ptr<tmx_map, decltype(&tmx_map_free)> map,
-  my_assets &manager)
-  : m_map{ std::move(map) }
-{
-  if (m_map == nullptr) throw std::runtime_error("tilemap is invalid");
-  load_tilesets(manager);
+  load_tilesets();
   create_layers();
 }
 
 Tilemap::Tilemap(std::string_view path, my_assets &manager)
-  : m_map{ tmx_load((manager.get_path() + path.data()).c_str()), tmx_map_free }
+  : m_map(nullptr, &tmx_map_free)
 {
-  if (m_map == nullptr) throw std::runtime_error("tilemap is invalid");
-  load_tilesets(manager);
-  create_layers();
+  load(path, manager);
 }
 
 void Tilemap::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -128,4 +121,15 @@ void Tilemap::draw(sf::RenderTarget &target, sf::RenderStates states) const
   sprite.setScale(1, -1);
   sprite.setPosition(0, m_map->height * m_map->tile_height);
   target.draw(sprite, states);
+}
+
+
+Tilemap::~Tilemap()
+{
+  auto head = m_map->ts_head;
+  while (head)
+  {
+    m_manager->remove<sf::Texture>(head->tileset->image->source);
+    head = head->next;
+  }
 }
