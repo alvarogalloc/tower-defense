@@ -1,6 +1,6 @@
 export module assets;
 import sfml;
-import say;
+import fmt;
 import stdbridge;
 import tilemap;
 import utils;
@@ -40,10 +40,10 @@ export
       if (auto it = std::get<Map<U>>(m_assets).find(name);
           it != std::get<Map<U>>(m_assets).end())
       {
-        fmt::print("Found in cache '{}'\n", name);
+        fmt::print(info, "Found in cache '{}'\n", name);
         return it->second.get();
       }
-      fmt::print("Inserting '{}'\n", name);
+      fmt::print(success, "Inserting '{}'\n", name);
       auto [it, success] =
         std::get<Map<U>>(m_assets).try_emplace(name, std::make_unique<U>());
       if (!success) { throw std::runtime_error("Failed to insert asset"); }
@@ -70,7 +70,7 @@ export
         fmt::format("Asset '{}' not found", name));
       if (it != std::get<Map<U>>(m_assets).end())
       {
-        fmt::print("Erasing '{}'\n", name);
+        fmt::print(warn, "Erasing '{}'\n", name);
         std::get<Map<U>>(m_assets).erase(it);
       }
     }

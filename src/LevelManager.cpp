@@ -206,7 +206,6 @@ void LevelManager::update(ginseng::database &db, float delta)
 void LevelManager::next_level()
 {
   m_current_level_index += 1;
-  fmt::println("Loading level {}", m_current_level_index);
   if (m_current_level_index >= m_levels_json.size())
   {
     throw std::runtime_error("No more levels");

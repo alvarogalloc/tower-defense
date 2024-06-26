@@ -2,9 +2,9 @@ module GameScene;
 import utils;
 import imgui;
 import sfml;
-import say;
 import json;
 import EnemySystem;
+import BulletSystem;
 
 #if 0
 using namespace components;
@@ -91,9 +91,9 @@ void GameScene::on_event(const sf::Event &e)
     auto spawn_info = m_shooters->choose_or_place(mouse_pos);
     if (spawn_info)
     {
-      say::info(fmt::format("spawning shooter: {} at {}",
+     fmt::print("spawning shooter: {} at {}",
         to_string(spawn_info->type),
-        to_string(spawn_info->pos)));
+        to_string(spawn_info->pos));
       m_factory->spawn_shooter(
         *m_world, spawn_info->type, m_shaded_tile.getPosition());
       m_shooters->deselect();
@@ -253,12 +253,16 @@ void GameScene::on_start()
     std::make_unique<LevelManager>(levels_json, enemies_json, *m_manager);
   m_levels->set_draw_debug(true);
   m_enemy_system = make_enemy_system(*m_world);
+  m_bullet_system =
+    make_bullet_system(*m_world, sf::Vector2f{ m_win->getSize() });
 }
 void GameScene::on_update(float delta)
 {
   m_levels->update(*m_world, delta);
+  // this should be passed as turning points vary with level
   m_enemy_system(delta, m_levels->get_current_level().m_enemies_turning_points);
   m_world->visit([&](components::Animation &anim) { anim.update(delta); });
+  m_bullet_system(delta);
 }
 void GameScene::on_event(const sf::Event &e)
 {
@@ -266,6 +270,69 @@ void GameScene::on_event(const sf::Event &e)
   if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::N)
   {
     m_levels->next_level();
+  }
+
+
+  auto mouse_pos = sf::Vector2f{ sf::Mouse::getPosition(*m_win) };
+  if (e.type == sf::Event::KeyPressed)
+  {
+    if (e.key.code == sf::Keyboard::Escape)
+    {
+      m_should_exit = true;
+    } else if (e.key.code == sf::Keyboard::Space)
+    {
+      m_world->visit([&](components::player_tag, components::Animation &anim) {
+        auto bullet_id = m_world->create_entity();
+        components::Projectile projectile;
+        // calculate the direction of the bullet with mouse
+        // position
+        projectile.direction = normalize(mouse_pos - anim.getPosition());
+        projectile.speed = 500;
+        projectile.damage = 20;
+        projectile.setSize({ 10, 10 });
+        // rotate the bullet by a fixed amount
+        projectile.setPosition(anim.getPosition());
+        projectile.setOrigin(sprite_center(projectile));
+        m_world->add_component(bullet_id, projectile);
+      });
+    }
+  } else if (e.type == sf::Event::MouseButtonPressed
+             && e.mouseButton.button == sf::Mouse::Left)
+  {
+    // should be:
+    // if (in world)
+    // if(m_shooters.selected() != none)
+    // m_shooters->spawn(m_shooters.selected())
+    // m_shooters->set_show_available_spawn_points(true)
+    // else
+    // m_shooters->deselect()
+    // m_shooters->set_show_available_spawn_points(false)
+    // else if (in selector)
+    // m_shooter->select(mouse_pos)
+
+    /*
+    auto spawn_info = m_shooters->choose_or_place(mouse_pos);
+    if (spawn_info)
+    {
+      say::info(fmt::format("spawning shooter: {} at {}",
+        to_string(spawn_info->type),
+        to_string(spawn_info->pos)));
+      m_factory->spawn_shooter(
+        *m_world, spawn_info->type, m_shaded_tile.getPosition());
+      m_shooters->deselect();
+    }
+    */
+  } else if (e.type == sf::Event::MouseMoved)
+  {
+    // iterate over all spawn points
+    // and check if mouse is near (20px or less) to any of them
+    // if it is, set the color of the spawn point to red
+    // else set it to green
+    // so selected_spawn_point should be a member of ShooterSelector
+    // for (const auto &point : m_levels->get_current_level().m_spawn_points)
+    // {
+    //   // float distance = get_distance(mouse_pos, point);
+    // }
   }
 }
 void GameScene::on_render()

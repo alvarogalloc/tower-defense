@@ -12,6 +12,10 @@ import json;
 export
 {
   const sf::Vector2u win_size{ 640, 704 };
+  constexpr auto warn = fmt::emphasis::bold | fmt::fg(fmt::color::yellow);
+  constexpr auto error = fmt::emphasis::bold | fmt::fg(fmt::color::red);
+  constexpr auto info = fmt::emphasis::bold | fmt::fg(fmt::color::cyan);
+  constexpr auto success = fmt::emphasis::bold | fmt::fg(fmt::color::green);
 
 
   auto get_resource_path()

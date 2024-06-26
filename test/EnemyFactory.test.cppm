@@ -12,7 +12,8 @@ export void EnemyFactory_test();
 
 
 module :private;
-constexpr static auto enemies_raw_json = R"(
+using namespace nlohmann::literals;
+const auto enemies_json = R"(
     [
     {
       "name": "zombie",
@@ -43,7 +44,7 @@ constexpr static auto enemies_raw_json = R"(
       }   
     }
   ]
-  )";
+  )"_json;
 
 
 void EnemyFactory_test()
@@ -53,7 +54,7 @@ void EnemyFactory_test()
   manager.set_loader<sf::Texture>([](sf::Texture *, std::string_view path) {});
   ginseng::database db;
   "Enemy Factory Test"_test = [&] {
-    EnemyFactory factory{ manager, nlohmann::json::parse(enemies_raw_json) };
+    EnemyFactory factory{ manager, enemies_json };
     expect(1_ul == manager.size<sf::Texture>());
     factory.spawn_enemy(db, components::enemy_type::zombie, { 0, 0 });
     expect(1_ul == db.size());

@@ -1,7 +1,6 @@
 export module ShooterSelector;
 import sfml;
 import stdbridge;
-import say;
 import utils;
 import components;
 

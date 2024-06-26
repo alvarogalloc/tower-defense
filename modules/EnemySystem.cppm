@@ -8,9 +8,10 @@ import sfml;
 
 export
 {
-  std::function<void(float, const std::vector<sf::Vector2f> &)> make_enemy_system(ginseng::database & db)
+  std::function<void(float, const std::vector<sf::Vector2f> &)>
+    make_enemy_system(ginseng::database & db)
   {
-    return [&db](float delta, const std::vector<sf::Vector2f> & directions) {
+    return [&db](float delta, const std::vector<sf::Vector2f> &directions) {
       db.visit([&](ginseng::database::ent_id id,
                  components::Animation &anim,
                  components::EnemyPath &path,
@@ -28,13 +29,13 @@ export
           my_assert(path.current_point < directions.size(),
             "current goal point is out of bounds");
           const auto center = sprite_center(anim);
-          float distance =
-            std::sqrt(std::pow(directions[path.current_point].x - center.x
-                                 - anim.getPosition().x,
-                        2)
-                      + std::pow(directions[path.current_point].y - center.y
-                                   - anim.getPosition().y,
-                        2));
+          float distance = std::hypot(
+            directions[path.current_point].x - center.x - anim.getPosition().x,
+            directions[path.current_point].y - center.y - anim.getPosition().y);
+          // std::sqrt(std::pow(
+          //             2)
+          //           + std::pow(,
+          //             2));
           float min_distance_for_next_point = 3;
           if (distance < min_distance_for_next_point)
           {

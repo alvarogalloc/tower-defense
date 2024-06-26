@@ -34,6 +34,7 @@ export
       std::string m_tilemap_name;
       std::vector<spawn_data> m_waves;
       std::vector<sf::Vector2f> m_enemies_turning_points;
+      std::vector<sf::Vector2f> m_shooters_spawn_points;
       float timer = 0;
       Tilemap m_map;
     };

@@ -1,5 +1,5 @@
 module ShooterSelector;
-import say;
+import fmt;
 
 using namespace components;
 ShooterSelector::shooter_option::shooter_option(sf::Color color,
@@ -50,7 +50,7 @@ void ShooterSelector::add_option(sf::Color color,
 {
   if (ShooterSelector::option_size * m_options.size() > win_size.x)
   {
-    say::warn("the shooter selector is full!");
+    fmt::print("the shooter selector is full!");
     return;
   }
   for (const auto &[_, opt_type, _s] : m_options)
@@ -58,7 +58,7 @@ void ShooterSelector::add_option(sf::Color color,
 
     if (type == opt_type)
     {
-      say::warn("the shooter is already in the selector!");
+       fmt::print("the shooter is already in the selector!");
       return;
     }
   }

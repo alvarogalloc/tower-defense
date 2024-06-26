@@ -5,6 +5,7 @@ import fmt;
 import stdbridge;
 import json;
 import assets;
+import sfml;
 export void LevelManager_test();
 
 module :private;
@@ -77,7 +78,7 @@ const auto levels_json = R"(
     },
     {
       "name": "my second level",
-      "tilemap": "2.tmx",
+      "tilemap": "1.tmx",
       "waves": [
         {
           "type": 1,
@@ -113,11 +114,12 @@ void LevelManager_test()
 {
   using namespace ut;
   my_assets manager{ SRC_DIR "/assets" };
+  manager.set_loader<sf::Texture>(
+    [](sf::Texture *texture, std::string_view path) {
+    });
 
-  "Level Manager Test"_test = [&]() mutable {
-    LevelManager level_manager(levels_json,
-      enemies_json,
-      manager);
+  "Level Manager Test"_test = [&] {
+    LevelManager level_manager(levels_json, enemies_json, manager);
     auto &level = level_manager.get_current_level();
     expect(level.m_name == "my first level"_s);
     level_manager.next_level();

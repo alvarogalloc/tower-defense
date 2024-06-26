@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.28)
 project(magster)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 23)
-find_package(fmt CONFIG REQUIRED)
 find_package(
   SFML
   COMPONENTS system audio window graphics CONFIG
@@ -12,6 +11,17 @@ find_package(tmx CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(ImGui-SFML CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
+
+include(FetchContent)
+# 10.2.1 fmt
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG master)
+
+set(FMT_USE_CMAKE_MODULES ON CACHE BOOL "Use CMake modules for fmt")
+set(FMT_MODULE ON CACHE BOOL "Use fmt as a CMake module")
+FetchContent_MakeAvailable(fmt)
 
 add_compile_definitions(SRC_DIR="${CMAKE_SOURCE_DIR}")
 file(GLOB GAMELIB_MODULE_FILES "modules/*.cppm")

@@ -4,6 +4,7 @@ import LevelManager.test;
 import ut;
 import fmt;
 import stdbridge;
+import utils;
 int main(int argc, char **argv)
 {
   const std::unordered_map<std::string, void (*)()> tests{
@@ -15,7 +16,7 @@ int main(int argc, char **argv)
   {
     for (const auto &[name, test] : tests)
     {
-      fmt::print("\tRunning test: {}\n\n", name);
+      fmt::print(info, "\tRunning test: {}\n", name);
       test();
     }
   } else
@@ -24,12 +25,12 @@ int main(int argc, char **argv)
     {
       if (auto it = tests.find(argv[i]); it != tests.end())
       {
-        fmt::print("\tRunning test: {}\n\n", it->first);
+        fmt::print(info, "\tRunning test: {}\n", it->first);
         it->second();
         break;
       } else
       {
-        fmt::print("Test {} not found\n", argv[i]);
+        fmt::print(info, "Test {} not found", argv[i]);
       }
     }
   }
