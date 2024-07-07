@@ -1,6 +1,7 @@
 import assets.test;
 import EnemyFactory.test;
 import LevelManager.test;
+import shooter_factory.test;
 import ut;
 import fmt;
 import stdbridge;
@@ -10,7 +11,8 @@ int main(int argc, char **argv)
   const std::unordered_map<std::string, void (*)()> tests{
     { "EnemyFactory", EnemyFactory_test },
     { "assets", assets_test },
-    { "LevelManager", LevelManager_test }
+    { "LevelManager", LevelManager_test },
+    { "shooter_factory", shooter_factory_test }
   };
   if (argc == 1)
   {

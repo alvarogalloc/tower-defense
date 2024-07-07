@@ -3,7 +3,6 @@ import stdbridge;
 import sfml;
 import ginseng;
 import assets;
-import imgui;
 import components;
 
 

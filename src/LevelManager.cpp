@@ -1,6 +1,9 @@
 module LevelManager;
 import imgui;
 import fmt;
+import utils;
+import assets;
+import tmx;
 
 // #if 0
 // LevelManager::Level::Level(const nlohmann::json &json)
@@ -118,7 +121,8 @@ LevelManager::Level::Level(const nlohmann::json &levelnode, my_assets &manager)
     data.delay_each = wave.at("delay_each").get<float>();
     m_waves.push_back(data);
   }
-  m_enemies_turning_points = get_points(m_map.get_map()->ly_head, "turningpoints");
+  m_enemies_turning_points =
+    get_points(m_map.get_map()->ly_head, "turningpoints");
 }
 components::enemy_type LevelManager::Level::update(float delta, bool draw_debug)
 {
@@ -198,7 +202,8 @@ void LevelManager::update(ginseng::database &db, float delta)
   if (auto spawn = m_current_level->update(delta, m_draw_debug);
       spawn != components::enemy_type::none)
   {
-    m_enemy_factory->spawn_enemy(db, spawn, m_current_level->m_enemies_turning_points.front());
+    m_enemy_factory->spawn_enemy(
+      db, spawn, m_current_level->m_enemies_turning_points.front());
   }
 }
 

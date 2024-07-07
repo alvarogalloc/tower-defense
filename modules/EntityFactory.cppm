@@ -23,7 +23,9 @@ export
 
     ent_id spawn_demon(ginseng::database &db);
 
-    ent_id spawn_shooter(ginseng::database &db, components::shooter_type type, sf::Vector2f position);
+    ent_id spawn_shooter(ginseng::database &db,
+      components::shooter_type type,
+      sf::Vector2f position);
     ent_id spawn_wizard(ginseng::database &db, sf::Vector2f position);
     ent_id spawn_knight(ginseng::database &db, sf::Vector2f position);
 

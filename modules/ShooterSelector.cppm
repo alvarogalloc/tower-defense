@@ -12,7 +12,9 @@ export
 
     struct shooter_option : public sf::Drawable
     {
-      shooter_option(sf::Color color, components::shooter_type type, sf::Sprite sprite);
+      shooter_option(sf::Color color,
+        components::shooter_type type,
+        sf::Sprite sprite);
       void draw(sf::RenderTarget &target,
         sf::RenderStates states) const override;
       sf::Color m_color;

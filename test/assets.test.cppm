@@ -26,6 +26,6 @@ export void assets_test()
 
     auto texture2 = manager.get<sf::Texture>("characters2.png");
     expect(1_ul == manager.size<sf::Texture>());
-    expect (2_i == load_count);
+    expect(2_i == load_count);
   };
 }

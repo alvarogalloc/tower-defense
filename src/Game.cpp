@@ -30,8 +30,7 @@ Game::Game(GameSpec spec)
   {
     throw std::runtime_error{ "failed to initialize imgui" };
   }
-  constexpr static auto font_path =
-    "/System/Library/Fonts/Menlo.ttc";
+  constexpr static auto font_path = "/System/Library/Fonts/Menlo.ttc";
   auto &io = ImGui::GetIO();
   io.Fonts->AddFontFromFileTTF(font_path, 16.0f);
   io.Fonts->AddFontFromFileTTF(font_path, 32.0f);

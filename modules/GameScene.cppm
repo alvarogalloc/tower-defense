@@ -19,8 +19,8 @@ export class GameScene : public Scene
   constexpr static std::string_view enemies_file = "enemies.json";
   std::function<void(float, const std::vector<sf::Vector2f> &)> m_enemy_system;
   std::function<void(float)> m_bullet_system;
-  // sf::RectangleShape m_shaded_tile;
   // std::vector<sf::Vector2f> m_spawn_points;
+
 
 public:
   virtual void on_start() override;
@@ -29,6 +29,6 @@ public:
   void enemy_system(float delta);
   void bullet_system(float delta);
   virtual void on_render() override;
-  
+
   std::unique_ptr<Scene> on_exit() override;
 };

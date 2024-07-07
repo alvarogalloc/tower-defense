@@ -266,13 +266,10 @@ void GameScene::on_update(float delta)
 }
 void GameScene::on_event(const sf::Event &e)
 {
-  // if n pressed, go to next level
-  if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::N)
+  if (e.type == sf::Event::KeyPressed)
   {
-    m_levels->next_level();
+    if (e.key.code == sf::Keyboard::N) { m_levels->next_level(); }
   }
-
-
   auto mouse_pos = sf::Vector2f{ sf::Mouse::getPosition(*m_win) };
   if (e.type == sf::Event::KeyPressed)
   {
@@ -281,19 +278,10 @@ void GameScene::on_event(const sf::Event &e)
       m_should_exit = true;
     } else if (e.key.code == sf::Keyboard::Space)
     {
-      m_world->visit([&](components::player_tag, components::Animation &anim) {
-        auto bullet_id = m_world->create_entity();
-        components::Projectile projectile;
-        // calculate the direction of the bullet with mouse
-        // position
-        projectile.direction = normalize(mouse_pos - anim.getPosition());
-        projectile.speed = 500;
-        projectile.damage = 20;
-        projectile.setSize({ 10, 10 });
-        // rotate the bullet by a fixed amount
-        projectile.setPosition(anim.getPosition());
-        projectile.setOrigin(sprite_center(projectile));
-        m_world->add_component(bullet_id, projectile);
+      m_world->visit([&](components::player_tag,
+                       components::Animation &anim,
+                       components::ProjectileDefinition def) {
+        spawn_bullet(*m_world, anim.getPosition(), mouse_pos, def);
       });
     }
   } else if (e.type == sf::Event::MouseButtonPressed
@@ -339,7 +327,7 @@ void GameScene::on_render()
 {
   m_win->clear(sf::Color::Red);
   m_win->draw(*m_levels);
-  ImGui::Text("Entities spawned: %zu", m_world->size());
+  ImGui::Text("Number of Entities spawned: %zu", m_world->size());
   m_world->visit([&](components::Animation &anim) { m_win->draw(anim); });
 }
 std::unique_ptr<Scene> GameScene::on_exit() { return nullptr; }

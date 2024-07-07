@@ -115,8 +115,7 @@ void LevelManager_test()
   using namespace ut;
   my_assets manager{ SRC_DIR "/assets" };
   manager.set_loader<sf::Texture>(
-    [](sf::Texture *texture, std::string_view path) {
-    });
+    [](sf::Texture *texture, std::string_view path) {});
 
   "Level Manager Test"_test = [&] {
     LevelManager level_manager(levels_json, enemies_json, manager);

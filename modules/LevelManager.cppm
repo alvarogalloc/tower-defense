@@ -1,18 +1,18 @@
 export module LevelManager;
 import tilemap;
 import json;
-import utils;
 import sfml;
 import components;
 import stdbridge;
 import EnemyFactory;
-import assets;
 import ginseng;
 
+
+class my_assets;
 export
 {
 
-  class LevelManager: public sf::Drawable
+  class LevelManager : public sf::Drawable
   {
     class Level
     {
@@ -48,7 +48,7 @@ export
       my_assets &manager);
     // here should free last tilemap as no next_level will be called
     ~LevelManager();
-     void update(ginseng::database &db, float delta);
+    void update(ginseng::database &db, float delta);
     auto &get_current_level() { return *m_current_level; }
     void next_level();
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

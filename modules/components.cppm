@@ -1,9 +1,8 @@
 export module components;
 import sfml;
 import stdbridge;
-import json;
 import utils;
-export import ginseng;
+import ginseng;
 
 
 export namespace components {
@@ -89,12 +88,18 @@ struct EnemyPath
   std::size_t current_point = 0;
 };
 
+struct ProjectileDefinition
+{
+  float speed;
+  float damage;
+};
 struct Projectile : public sf::RectangleShape
 {
   sf::Vector2f direction;
   float speed;
   float damage;
 };
+
 using player_tag = ginseng::tag<struct player_tag_t>;
 
 enum class enemy_type { none = 0, zombie, demon };

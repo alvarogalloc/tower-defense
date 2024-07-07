@@ -3,12 +3,13 @@ export module EnemyFactory;
 import stdbridge;
 import components;
 import sfml;
-import assets;
+import ginseng;
 import json;
 
 // this class should only hold the info to spawn enemies
 // this is name, type, health, speed and frames
 // it should not be responsible for adding enemies to the scene
+class my_assets;
 export class EnemyFactory
 {
   struct enemy_data

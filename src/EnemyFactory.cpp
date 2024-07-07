@@ -1,5 +1,6 @@
 module EnemyFactory;
 import utils;
+import assets;
 
 EnemyFactory::EnemyFactory(my_assets &manager,
   const nlohmann::json &frames_json)

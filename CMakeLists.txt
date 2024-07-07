@@ -51,6 +51,9 @@ add_executable(magster ${GAME_SOURCE_FILES} ${GAME_RESOURCES})
 target_link_libraries(magster PRIVATE gamelib)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(magster PRIVATE -ftime-trace)
+  endif()
   target_compile_options(magster PRIVATE -fno-omit-frame-pointer
                                          -fsanitize=address,undefined)
   target_link_libraries(magster PRIVATE -fno-omit-frame-pointer
