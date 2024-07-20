@@ -1,6 +1,5 @@
 module GameScene;
 import utils;
-import imgui;
 import sfml;
 import json;
 import EnemySystem;
@@ -199,13 +198,6 @@ void GameScene::on_render()
 {
   m_win->clear(sf::Color::Red);
   if (m_curent_map) m_win->draw(*m_curent_map);
-  // use second font imgui
-
-  auto texture_count = m_manager->size<sf::Texture>();
-  ImGui::Text("%zu Textures loaded", texture_count);
-  auto tilemap_count = m_manager->size<Tilemap>();
-  ImGui::Text("%zu Tilemaps loaded", tilemap_count);
-  ImGui::Text("Entities spawned: %zu", m_world->size());
 
   m_world->visit(
     [&](Animation &anim, ginseng::optional<components::Health> health) {
@@ -327,7 +319,6 @@ void GameScene::on_render()
 {
   m_win->clear(sf::Color::Red);
   m_win->draw(*m_levels);
-  ImGui::Text("Number of Entities spawned: %zu", m_world->size());
   m_world->visit([&](components::Animation &anim) { m_win->draw(anim); });
 }
 std::unique_ptr<Scene> GameScene::on_exit() { return nullptr; }

@@ -8,7 +8,7 @@ export void assets_test()
 {
   using namespace ut;
 
-  assets<sf::Texture> manager{ SRC_DIR "/assets" };
+  my_assets manager{ SRC_DIR "/assets" };
   int load_count = 0;
 
   manager.set_loader<sf::Texture>(

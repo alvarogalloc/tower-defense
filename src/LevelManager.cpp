@@ -1,5 +1,4 @@
 module LevelManager;
-import imgui;
 import fmt;
 import utils;
 import assets;
@@ -126,25 +125,25 @@ LevelManager::Level::Level(const nlohmann::json &levelnode, my_assets &manager)
 }
 components::enemy_type LevelManager::Level::update(float delta, bool draw_debug)
 {
-  auto draw_debug_gui = [&delta](const LevelManager::Level &level) {
-    ImGui::Text("Delta: %f", delta);
-    ImGui::Text("Name: %s", level.m_name.c_str());
-    ImGui::Text("timer: %.2f", level.timer);
-    ImGui::Text("delay: %.2f", level.m_waves.front().delay_each);
-    ImGui::Text("Enemy waves:");
+  // auto draw_debug_gui = [&delta](const LevelManager::Level &level) {
+  //   ImGui::Text("Delta: %f", delta);
+  //   ImGui::Text("Name: %s", level.m_name.c_str());
+  //   ImGui::Text("timer: %.2f", level.timer);
+  //   ImGui::Text("delay: %.2f", level.m_waves.front().delay_each);
+  //   ImGui::Text("Enemy waves:");
+  //
+  //   for (const auto &wave : level.m_waves)
+  //   {
+  //     ImGui::Text("Type: %d, Count: %zu, next wave in: %f, Delay: %f",
+  //       static_cast<int>(wave.type),
+  //       wave.count,
+  //       wave.time_for_next_wave,
+  //       wave.delay_each);
+  //     ImGui::Separator();
+  //   }
+  // };
 
-    for (const auto &wave : level.m_waves)
-    {
-      ImGui::Text("Type: %d, Count: %zu, next wave in: %f, Delay: %f",
-        static_cast<int>(wave.type),
-        wave.count,
-        wave.time_for_next_wave,
-        wave.delay_each);
-      ImGui::Separator();
-    }
-  };
-
-  if (draw_debug) draw_debug_gui(*this);
+  // if (draw_debug) draw_debug_gui(*this);
   timer += delta;
   if (m_waves.empty()) { return components::enemy_type::none; }
 

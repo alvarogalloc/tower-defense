@@ -5,8 +5,6 @@ import stdbridge;
 import tilemap;
 import utils;
 
-export
-{
   template<typename... T> class assets
   {
   public:
@@ -15,6 +13,8 @@ export
       std::unordered_map<std::string_view, std::unique_ptr<Contained>>;
     template<typename Contained>
     using Loader = std::function<void(Contained *, std::string_view)>;
+
+
     constexpr explicit assets(std::string_view path) : m_path(path)
     {
       namespace fs = std::filesystem;
@@ -90,6 +90,8 @@ export
     std::string m_path;
   };
 
+export
+{
   // instantiate the template for sfml types
   class my_assets : public assets<sf::Texture, sf::Font, sf::Music, Tilemap>
   {

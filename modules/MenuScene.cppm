@@ -6,6 +6,9 @@ import stdbridge;
 
 export class MenuScene : public Scene
 {
+  sf::Music* music; 
+  sf::Font* title_font; 
+  sf::Text title_text;
 public:
   virtual void on_start() override;
   virtual void on_event(const sf::Event &) override;

@@ -13,7 +13,7 @@ export
   class shooter_factory
   {
   public:
-    shooter_factory(my_assets &manager, const nlohmann::json& node);
+    shooter_factory(sf::Texture* texture, const nlohmann::json& node);
 
     struct shooter_info
     {
@@ -36,6 +36,7 @@ export
 
   private:
     std::unordered_map<components::shooter_type, shooter_info> m_shooter_data;
+    sf::Texture *m_texture;
   };
 }
 

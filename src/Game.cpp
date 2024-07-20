@@ -1,7 +1,11 @@
+module;
+#include <SFML/OpenGL.hpp>
+#include <imgui.h>
+#include <imgui_impl_opengl2.h>
+
 module Game;
 import fmt;
 import utils;
-import imgui;
 
 void Scene::init(my_assets &manager,
   ginseng::database &world,
@@ -19,22 +23,15 @@ void Game::on_event(const sf::Event &ev)
   m_scene->on_event(ev);
 }
 void Game::on_render() { m_scene->on_render(); }
-void Game::on_exit() { ImGui::SFML::Shutdown(); }
+void Game::on_exit() {}
 
 Game::Game(GameSpec spec)
   : m_manager(spec.asset_path),
-    m_win(sf::VideoMode{ spec.win_size.x, spec.win_size.y }, spec.window_name)
+    m_win(sf::VideoMode{ spec.win_size.x, spec.win_size.y },
+      spec.window_name,
+      sf::Style::Close,
+      sf::ContextSettings(24, 8, 4, 2, 1))
 {
-
-  if (!ImGui::SFML::Init(m_win, false))
-  {
-    throw std::runtime_error{ "failed to initialize imgui" };
-  }
-  constexpr static auto font_path = "/System/Library/Fonts/Menlo.ttc";
-  auto &io = ImGui::GetIO();
-  io.Fonts->AddFontFromFileTTF(font_path, 16.0f);
-  io.Fonts->AddFontFromFileTTF(font_path, 32.0f);
-  my_assert(ImGui::SFML::UpdateFontTexture(), "could not build font atlas");
   m_win.setFramerateLimit(60);
   m_win.setKeyRepeatEnabled(false);
 }
@@ -50,29 +47,64 @@ int Game::run()
 {
   try
   {
+    m_win.setVerticalSyncEnabled(true);
+    m_win.setActive(true);
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.DisplaySize = ImVec2(640, 704);
+    io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableKeyboard;// Enable Keyboard Controls
+    io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableGamepad;// Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplOpenGL2_Init();
+
+
     my_assert(bool(m_scene), "no scene has been set");
     m_clock.restart();
     sf::Event ev;
     while (m_win.isOpen())
     {
-      while (m_win.pollEvent(ev))
-      {
-        ImGui::SFML::ProcessEvent(ev);
-        on_event(ev);
-      }
-      ImGui::SFML::Update(m_win, m_clock.getElapsedTime());
+
+      while (m_win.pollEvent(ev)) { on_event(ev); }
+
       on_update(m_clock.restart().asSeconds());
       if (m_scene->should_exit())
       {
         auto next = m_scene->on_exit();
-        if (next.get() == nullptr) { break; }
+        if (!next)
+        {
+          fmt::println("no scene returned from on_exit, exiting");
+          break;
+        }
         set_scene(std::move(next));
       }
+
+      ImGui_ImplOpenGL2_NewFrame();
+      // ImGui_ImplGlfw_NewFrame();
+      ImGui::NewFrame();
       on_render();
-      ImGui::EndFrame();
-      ImGui::SFML::Render(m_win);
+
+      ImGui::Begin("Hello, world!");
+      ImGui::Button("Look at this pretty button");
+      ImGui::End();
+      ImGui::Render();
+      glViewport(0, 0, m_win.getSize().x, m_win.getSize().y);
+
+      float clear_color[4] = { 0.45f, 0.55f, 0.60f, 1.00f };
+      glClearColor(
+        clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
+      glClear(GL_COLOR_BUFFER_BIT);
+
+      ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
       m_win.display();
     }
+    ImGui_ImplOpenGL2_Shutdown();
+    ImGui::DestroyContext();
     on_exit();
   } catch (const std::exception &e)
   {

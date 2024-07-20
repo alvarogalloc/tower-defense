@@ -1,4 +1,5 @@
 module shooter_factory;
+import components;
 
 
 namespace {
@@ -25,7 +26,9 @@ shooter_factory::shooter_info load_shooter_info(const nlohmann::json &node)
 }
 }// namespace
 
-shooter_factory::shooter_factory(my_assets &manager, const nlohmann::json &json)
+shooter_factory::shooter_factory(sf::Texture *texture,
+  const nlohmann::json &json)
+  : m_texture(texture)
 {
   for (const auto &node : json)
   {
@@ -38,4 +41,14 @@ shooter_factory::shooter_factory(my_assets &manager, const nlohmann::json &json)
 shooter_factory::ent_id shooter_factory::spawn_shooter(ginseng::database &db,
   components::shooter_type type,
   sf::Vector2f position)
-{}
+{
+
+  // should have animation, player_tag and projectile definition
+  auto id = db.create_entity();
+  auto anim =
+    components::Animation(get_shooter_info(type).frames, *m_texture, 0.1f);
+  db.add_component(id, components::player_tag{});
+  db.add_component(id, std::move(anim));
+  db.add_component(id, components::ProjectileDefinition{ 10.f, 10.f });
+  return id;
+}

@@ -9,8 +9,8 @@ import components;
 export
 {
   struct GameSpec;
-  struct Game;
-  struct Scene;
+  class Game;
+  class Scene;
 
   struct GameSpec
   {

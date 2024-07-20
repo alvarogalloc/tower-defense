@@ -47,10 +47,17 @@ void shooter_factory_test()
 {
   using namespace ut;
 
-  my_assets manager{ SRC_DIR "/assets" };
+  ginseng::database db;
+  sf::Image image;
+  image.create(2, 2, sf::Color::White);
+  sf::Texture text;
+  text.loadFromImage(image);
+
   "shooter factory test"_test = [&] mutable {
     using enum components::shooter_type;
-    shooter_factory factory(manager, shooter_json);
+    shooter_factory factory(&text, shooter_json);
+    factory.spawn_shooter(db, wizard, { 0, 0 });
+    expect(1_ul == db.size());
     expect(2_ul == factory.get_shooter_data().size());
 
     expect(20_u8 == factory.get_shooter_info(wizard).damage);
