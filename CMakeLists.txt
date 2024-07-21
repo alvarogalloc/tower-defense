@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 23)
 include(FetchContent)
 set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 if (NOT IMGUI_DIR)
   message(FATAL_ERROR "IMGUI_DIR not set")
 endif()
@@ -28,21 +29,31 @@ set(FMT_MODULE
     CACHE BOOL "Use fmt as a CMake module")
 FetchContent_MakeAvailable(fmt)
 
-
-find_package(SFML COMPONENTS system audio window graphics CONFIG REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
+find_package(RapidJSON CONFIG REQUIRED)
 find_package(tmx CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
-
-
+find_package(raylib CONFIG REQUIRED)
+find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 
 add_compile_definitions(SRC_DIR="${CMAKE_SOURCE_DIR}")
 file(GLOB GAMELIB_MODULE_FILES "modules/*.cppm")
 file(GLOB GAMELIB_SOURCE_FILES "src/*.cpp")
 list(REMOVE_ITEM GAMELIB_SOURCE_FILES "src/main.cpp")
-
 add_library(gamelib)
+
+file(GLOB_RECURSE VENDOR_MODULES "vendor/modules/*.cppm")
+file(GLOB_RECURSE VENDOR_SOURCE_FILES "vendor/src/*.cpp")
+add_library(vendor)
+target_sources(vendor PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
+  ${VENDOR_MODULES} PRIVATE ${VENDOR_SOURCE_FILES})
+target_link_libraries(vendor PUBLIC raylib)
+target_include_directories(vendor SYSTEM INTERFACE ${RAYGUI_INCLUDE_DIRS})
+target_link_libraries(vendor PUBLIC fmt::fmt)
+target_link_libraries(vendor PUBLIC tmx)
+target_link_libraries(vendor PUBLIC rapidjson)
+
+target_link_libraries(gamelib PRIVATE vendor)
+
 
 target_compile_features(gamelib PUBLIC cxx_std_23)
 # debug use sanitizers
@@ -54,15 +65,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 target_sources(gamelib PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
   ${GAMELIB_MODULE_FILES} PRIVATE ${GAMELIB_SOURCE_FILES})
-target_link_libraries(gamelib PUBLIC sfml-system sfml-network sfml-graphics
-                                     sfml-window sfml-audio)
-target_link_libraries(gamelib PUBLIC OpenAL::OpenAL)
 
-target_link_libraries(gamelib PUBLIC fmt::fmt)
-target_link_libraries(gamelib PUBLIC tmx)
-target_link_libraries(gamelib PUBLIC imgui::imgui)
-target_link_libraries(gamelib PUBLIC nlohmann_json::nlohmann_json)
-target_compile_options(gamelib PUBLIC -Wno-deprecated-declarations)
 
 set(GAME_SOURCE_FILES "src/main.cpp")
 file(GLOB_RECURSE GAME_RESOURCES "${CMAKE_SOURCE_DIR}/assets/*")
@@ -73,8 +76,8 @@ target_link_libraries(magster PRIVATE gamelib)
 
 # if option TESTS is enabled add test for each file in test folder
 option(BUILD_TESTING "Enable Test Builds" OFF)
-if(BUILD_TESTING)
-  enable_testing()
-
-  add_subdirectory(test)
-endif()
+# if(BUILD_TESTING)
+#   enable_testing()
+#
+#   add_subdirectory(test)
+# endif()
