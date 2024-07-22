@@ -52,12 +52,23 @@ void tilemap::build_tilemap()
     }
   };
   auto paint_objects = [&](tmx_layer *layer) {
-
+    auto current_object = layer->content.objgr->head;
+    const auto rand_color = Color{ static_cast<unsigned char>(GetRandomValue(0, 255)),
+      static_cast<unsigned char>(GetRandomValue(0, 1)),
+      static_cast<unsigned char>(GetRandomValue(0, 255)),
+      255 };
+    while (current_object)
+    {
+      if (current_object->obj_type == OT_POINT)
+      {
+        DrawCircle(current_object->x, current_object->y, 5, rand_color);
+      }
+      current_object = current_object->next;
+    }
   };
   my_assert(IsRenderTextureReady(m_texture), "RenderTexture not ready");
   BeginTextureMode(m_texture);
   ClearBackground(colors::white);
-  fmt::print(info, "We got here!!\n");
   // go through all the layers
   while (current_layer)
   {
@@ -72,7 +83,7 @@ void tilemap::build_tilemap()
       paint_layer(current_layer);
       break;
     case L_OBJGR:
-      //  paint_objects(current_layer);
+       paint_objects(current_layer);
       break;
     }
     current_layer = current_layer->next;

@@ -25,6 +25,7 @@ export
   using ::LoadFont;
   using ::LoadTexture;
   using ::LoadMusicStream;
+  using ::GetRandomValue;
   using ::UnloadMusicStream;
   using ::UnloadTexture;
   using ::UnloadFont;
