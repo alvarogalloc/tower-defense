@@ -3,8 +3,6 @@ import debug;
 import fmt;
 
 
-
-
 tilemap::tilemap(tmx_map *map) : m_map(map, &tmx_map_free)
 {
   if (!m_map) { throw std::runtime_error("Invalid Map"); }
@@ -12,14 +10,17 @@ tilemap::tilemap(tmx_map *map) : m_map(map, &tmx_map_free)
   build_tilemap();
 }
 
-tilemap::tilemap(std::string_view path)
-  : tilemap(tmx_load(path.data()))
-{
-}
+tilemap::tilemap(std::string_view path) : tilemap(tmx_load(path.data())) {}
 void tilemap::draw()
 {
   // RenderTexture2D target = build_tilemap(*this);
-  DrawTextureRec(m_texture.texture,{0, 0, static_cast<float>(m_texture.texture.width), static_cast<float>(-m_texture.texture.height)}, {0, 0}, colors::white);
+  DrawTextureRec(m_texture.texture,
+    { 0,
+      0,
+      static_cast<float>(m_texture.texture.width),
+      static_cast<float>(-m_texture.texture.height) },
+    { 0, 0 },
+    colors::white);
 }
 
 
@@ -29,25 +30,23 @@ void tilemap::build_tilemap()
     get_map()->height * get_map()->tile_height);
   auto *current_layer = m_map->ly_head;
   auto paint_layer = [&](tmx_layer *layer) {
-    for (int i : std::views::iota(0, int(m_map->width) ))
+    for (int i : std::views::iota(0, int(m_map->width)))
     {
-      for (int j : std::views::iota(0, int(m_map->height) ))
+      for (int j : std::views::iota(0, int(m_map->height)))
       {
 
         const auto gid =
           layer->content.gids[(i * m_map->width) + j] & tmx_flip_bits_removal;
-          if (m_map->tiles[gid] == nullptr) { continue; }
+        if (m_map->tiles[gid] == nullptr) { continue; }
         Rectangle tile_rect(m_map->tiles[gid]->ul_x,
           m_map->tiles[gid]->ul_y,
           m_map->tiles[gid]->tileset->tile_width,
           m_map->tiles[gid]->tileset->tile_height);
-          const auto texture = m_textures.at(m_map->tiles[gid]->tileset->name);
-          fmt::println("texture: {}", m_map->tiles[gid]->tileset->name);
-        Vector2 pos{static_cast<float>(j * m_map->tiles[gid]->tileset->tile_width),
-        static_cast<float>(i * m_map->tiles[gid]->tileset->tile_height)};
+        const auto texture = m_textures.at(m_map->tiles[gid]->tileset->name);
+        Vector2 pos{ static_cast<float>(
+                       j * m_map->tiles[gid]->tileset->tile_width),
+          static_cast<float>(i * m_map->tiles[gid]->tileset->tile_height) };
 
-        fmt::println("pos: {}, {}", pos.x, pos.y);
-        fmt::println("tile_rect: {}, {}, {}, {}", tile_rect.x, tile_rect.y, tile_rect.width, tile_rect.height);
         DrawTextureRec(texture, tile_rect, pos, colors::white);
       }
     }
@@ -81,8 +80,6 @@ void tilemap::build_tilemap()
 
   // it is upside down, so we need to flip it
   EndTextureMode();
-
-
 }
 void tilemap::load_textures()
 {
@@ -96,10 +93,5 @@ void tilemap::load_textures()
     auto texture = LoadTexture(realpath.c_str());
     m_textures.emplace(head->tileset->name, texture);
     head = head->next;
-    fmt::print(info, "Loaded texture: {}\n", realpath);
-  }
-  for (auto &[key, value] : m_textures)
-  {
-    fmt::print(info, "Key: {}, Value: {}\n", key, value.id);
   }
 }
