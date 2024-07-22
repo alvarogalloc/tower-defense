@@ -11,9 +11,6 @@ include(FetchContent)
 set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
-if (NOT IMGUI_DIR)
-  message(FATAL_ERROR "IMGUI_DIR not set")
-endif()
 
 
 # 10.2.1 fmt

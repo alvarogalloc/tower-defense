@@ -29,9 +29,18 @@ export
   using ::UnloadTexture;
   using ::UnloadFont;
   using ::Texture2D;
+  using ::RenderTexture2D;
+using ::LoadRenderTexture;
   using ::Music;
 using ::LoadFontEx;
 using ::DrawTextEx;
+using ::BeginTextureMode;
+using ::EndTextureMode;
+using ::DrawTextureRec;
+using ::IsRenderTextureReady;
+  using ::MeasureText;
+  using ::MeasureTextEx;
+  using ::IsMusicStreamPlaying;
   using ::Font;
   using ::Vector2;
 

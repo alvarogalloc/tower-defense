@@ -1,4 +1,5 @@
 export module assets;
+/*
 import stdbridge;
 import raylib;
 import fmt;
@@ -81,7 +82,11 @@ public:
     auto it = std::get<Map<U>>(m_assets).find(name);
     my_assert(it != std::get<Map<U>>(m_assets).end(),
       fmt::format("Asset '{}' not found", name));
-    if (it != std::get<Map<U>>(m_assets).end())
+    auto should_delete =
+      it != std::get<Map<U>>(m_assets).end();
+      // && std::find(prevent_deletion.begin(), prevent_deletion.end(), name)
+      //      == prevent_deletion.end();
+    if (should_delete)
     {
       std::invoke(std::get<unLoader<U>>(m_unloaders), it->second.get());
       fmt::print(warn, "Erasing '{}'\n", name);
@@ -152,3 +157,4 @@ public:
     set_unloader<Font>([](Font *font) { UnloadFont(*font); });
   }
 };
+*/
