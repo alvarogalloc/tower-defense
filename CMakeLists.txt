@@ -62,7 +62,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 target_sources(gamelib PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
   ${GAMELIB_MODULE_FILES} PRIVATE ${GAMELIB_SOURCE_FILES})
-
+target_compile_options(gamelib PRIVATE
+     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+     -Wall -Wextra -Werror -Wconversion -Wsign-conversion -pedantic-errors>
+     $<$<CXX_COMPILER_ID:MSVC>:
+          /W4>)
 
 set(GAME_SOURCE_FILES "src/main.cpp")
 file(GLOB_RECURSE GAME_RESOURCES "${CMAKE_SOURCE_DIR}/assets/*")
@@ -73,8 +77,8 @@ target_link_libraries(magster PRIVATE gamelib)
 
 # if option TESTS is enabled add test for each file in test folder
 option(BUILD_TESTING "Enable Test Builds" OFF)
-# if(BUILD_TESTING)
-#   enable_testing()
-#
-#   add_subdirectory(test)
-# endif()
+if(BUILD_TESTING)
+  enable_testing()
+
+  add_subdirectory(test)
+endif()

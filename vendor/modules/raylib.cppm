@@ -12,6 +12,7 @@ export
   using ::GetWindowPosition;
   using ::GetScreenWidth;
   using ::GetScreenHeight;
+  using ::DrawTextureEx;
 
   using ::SetTargetFPS;
   using ::WindowShouldClose;

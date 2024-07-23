@@ -14,6 +14,8 @@ export
     // Texture2D m_background;
     Font m_title_font;
     std::unique_ptr<tilemap> m_tilemap;
+    Texture2D m_blue_guy;
+
   public:
     void on_start() override;
     void on_update() override;

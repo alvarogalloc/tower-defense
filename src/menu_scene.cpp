@@ -7,9 +7,9 @@ void menu_scene::on_start()
   m_music = LoadMusicStream(SRC_DIR "/assets/bgmusic.ogg");
   // m_background = LoadTexture(SRC_DIR "/assets/background.png");
   m_title_font = LoadFont(SRC_DIR "/assets/monogram.ttf");
-
   // PlayMusicStream(*m_music);
   GuiSetFont(m_title_font);
+  m_blue_guy = LoadTexture(SRC_DIR "/assets/blueguy.png");
 }
 
 void menu_scene::on_update()
@@ -53,6 +53,13 @@ void menu_scene::on_render()
     120,
     0.2f,
     colors::yellow);
+
+  DrawTextureEx(m_blue_guy,
+    Vector2{ float(GetScreenWidth()) / 2.f - float(m_blue_guy.width) / 2.f,
+      float(GetScreenHeight() - m_blue_guy.height * 3) },
+    0,
+    3,
+    colors::white);
   GuiSetStyle(DEFAULT, TEXT_SIZE, 96);
   if (GuiButton(centerv(centerh({ 10, 40, 240, 80 })), "START"))
   {
