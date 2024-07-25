@@ -15,4 +15,6 @@ using ::GuiLabel;
 using ::GuiLabelButton;
 using ::GuiSetStyle;
 using ::GuiSetFont;
+using ::GuiGroupBox;
+using ::GuiListView;
 }

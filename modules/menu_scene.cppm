@@ -10,10 +10,8 @@ export
 
   class menu_scene : public scene
   {
-    Music m_music;
     // Texture2D m_background;
     Font m_title_font;
-    std::unique_ptr<tilemap> m_tilemap;
     Texture2D m_blue_guy;
 
   public:

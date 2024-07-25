@@ -13,6 +13,8 @@ export
   using ::GetScreenWidth;
   using ::GetScreenHeight;
   using ::DrawTextureEx;
+using ::GetFrameTime;
+using ::GetMousePosition;
 
   using ::SetTargetFPS;
   using ::WindowShouldClose;
@@ -23,6 +25,9 @@ export
   using ::Color;
   using ::CloseWindow;
   using ::Rectangle;
+  using ::DrawRectanglePro;
+  using ::DrawRectangleV;
+using ::DrawTexturePro;
   using ::LoadFont;
   using ::LoadTexture;
   using ::LoadMusicStream;
@@ -45,6 +50,8 @@ using ::IsRenderTextureReady;
   using ::IsMusicStreamPlaying;
   using ::Font;
   using ::Vector2;
+using ::DrawRectangleLinesEx;
+using ::DrawRectangleLines;
 
   using ::UpdateAudioStream;
   using ::UpdateMusicStream;
