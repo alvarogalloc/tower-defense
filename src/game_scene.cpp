@@ -5,12 +5,16 @@ import debug;
 namespace {
 const float frame_size = 32.f;
 
+constexpr float pi = std::numbers::pi_v<float>;
+
+
+constexpr float house_size = 128.f;
 Rectangle house_rect()
 {
   return { static_cast<float>(GetScreenWidth()) / 2 - 64,
     static_cast<float>(GetScreenHeight()) / 2 - 64,
-    128,
-    128 };
+    house_size,
+    house_size };
 }
 constexpr bool doOverlap(const Rectangle &rect1, const Rectangle &rect2)
 {
@@ -30,6 +34,8 @@ template<std::size_t size>
 void respawn_dead(std::array<enemy, size> &enemies, std::size_t count)
 {
   enum class spawn_point { top, left, right, bottom };
+  my_assert(count <= enemies.size(), "count is greater than the size of enemies");
+
   spawn_point current_spawn{ spawn_point::top };
   fmt::print(info, "Respawning dead enemies\n");
   for (auto &enemy : enemies | std::views::filter([](const auto &el) {
@@ -40,10 +46,12 @@ void respawn_dead(std::array<enemy, size> &enemies, std::size_t count)
     enemy.health = 100;
     Vector2 spawn{ 0, 0 };
     auto rand_x = []() { return float(GetRandomValue(0, GetScreenWidth())); };
-    auto rand_y = []() { return float(GetRandomValue(0, GetScreenHeight())); };
+    auto rand_y = []() {
+      return float(GetRandomValue(0, GetScreenHeight() - 64));
+    };
     if (current_spawn == top || current_spawn == bottom)
     {
-      if (current_spawn == bottom) { spawn.y = float(GetScreenHeight()); }
+      if (current_spawn == bottom) { spawn.y = float(GetScreenHeight() - 64); }
       spawn.x = rand_x();
     } else
     {
@@ -78,16 +86,18 @@ void respawn_bullets(std::array<bullet, size> &bullets, std::size_t count)
        }) | std::views::take(count))
   {
     b.hit_count = 0;
+    b.angle = (float(GetRandomValue(0, 360)) * pi) / 180.f;
   }
 }
 
-const float bullet_speed = 300.f;
+const float bullet_speed = 500.f;
 const float bullet_radius = 5.f;
+// 5 rad/sec
+const float bullet_radial_speed = 5;
 }// namespace
 
 void game_scene::on_start()
 {
-
   m_music = LoadMusicStream(SRC_DIR "/assets/title-theme.ogg");
   m_music.looping = true;
   PlayMusicStream(m_music);
@@ -111,7 +121,8 @@ void game_scene::on_start()
     .max_hit_count = 5,
     .damage = 100,
     .position = { house_rect().x, house_rect().y },
-    .direction = { 0, 0 } };
+    .direction = { 0, 0 },
+    .angle = 0.f };
   bullets.fill(proto_bullet);
   for (auto &b : bullets)
   {
@@ -119,6 +130,7 @@ void game_scene::on_start()
                      int(house_rect().x + house_rect().width))),
       static_cast<float>(GetRandomValue(
         int(house_rect().y), int(house_rect().y + house_rect().height))) };
+    respawn_bullets(bullets, bullets.size());
   }
 }
 
@@ -130,7 +142,8 @@ void game_scene::on_update()
     static_cast<float>(GetScreenHeight()) / 2 };
   const float acceleration = 5.0f;
   const float max_speed = 300.0f;
-  for (auto &enemy : enemies)
+  for (auto &enemy :
+    enemies | std::views::filter([](const auto &el) { return el.health != 0; }))
   {
     enemy.speed += acceleration * GetFrameTime();
     if (enemy.speed > max_speed) enemy.speed = max_speed;
@@ -160,7 +173,7 @@ void game_scene::on_update()
         enemies, [](const auto &e) { return e.health != 0; })
       < 5)
   {
-    respawn_dead(enemies, 5);
+    respawn_dead(enemies, 10);
   }
 
   // move bullets
@@ -176,27 +189,23 @@ void game_scene::on_update()
          return el.hit_count != el.max_hit_count;
        }))
   {
-    const auto threshold = 50;
+    const auto threshold = 30;
     const int rand = GetRandomValue(-threshold, threshold);
     const auto dx = mouse.x - b.position.x;
     const auto dy = mouse.y - b.position.y;
     const auto dist = distance(mouse, b.position);
-    if ( dist > float(threshold))
+    if (dist > float(threshold))
     {
       b.direction = normalize({ dx + rand, dy + rand });
       b.position.x += b.direction.x * GetFrameTime() * bullet_speed;
       b.position.y += b.direction.y * GetFrameTime() * bullet_speed;
     } else
     {
-      // idle bullet
-      const float near_speed = 100.f;
-      // also rotate the bullet
-      const auto angle = std::atan2(b.direction.y, b.direction.x);
-      b.direction = normalize(
-        { std::cos(angle + GetFrameTime()), std::sin(angle + GetFrameTime()) });
-
-      b.position.x -= b.direction.x * GetFrameTime() * near_speed;
-      b.position.y -= b.direction.y * GetFrameTime() * near_speed;
+      // make a circle around the mouse
+      b.angle += GetFrameTime() * bullet_radial_speed;
+      if (b.angle > 2.f * pi) b.angle = 0.f;
+      b.position.x = mouse.x + std::cos(b.angle) * (threshold - 5);
+      b.position.y = mouse.y + std::sin(b.angle) * (threshold - 5);
     }
   }
 }
@@ -204,7 +213,6 @@ void game_scene::on_update()
 std::unique_ptr<scene> game_scene::on_exit()
 {
   StopMusicStream(m_music);
-
   UnloadMusicStream(m_music);
   UnloadTexture(m_enemy_frames);
   UnloadTexture(m_grass);
@@ -229,7 +237,7 @@ void game_scene::on_render()
   }
 
   for (auto &enemy :
-    enemies | std::views::filter([](const auto &e) { return e.health == 0; }))
+    enemies | std::views::filter([](const auto &e) { return e.health != 0; }))
   {
     const Rectangle enemy_rect{
       enemy.position.x, enemy.position.y, frame_size, frame_size
@@ -252,30 +260,33 @@ void game_scene::on_render()
 
   static int list_scroll_index = 0;
   static int list_active = -1;
-  std::string list_items = "";
-  for (int i = 0;
-       const auto &bullet : bullets | std::views::filter([](const auto &el) {
+  std::string entities_list = "";
+  auto add_to_list = [&entities_list](std::string_view name, const auto &entity)
+    requires requires {
+      { entity.position } -> std::convertible_to<Vector2>;
+    }
+  {
+    entities_list += fmt::format(
+      "{} (x: {:.2f} y: {:.2f});", name, entity.position.x, entity.position.y);
+  };
+
+  for (const auto &bullet : bullets | std::views::filter([](const auto &el) {
          return el.hit_count != el.max_hit_count;
        }))
   {
-    list_items += fmt::format("Bullet #{} (x: {:.2f} y: {:.2f});",
-      i,
-      bullet.position.x,
-      bullet.position.y);
-    ++i;
+    add_to_list("Bullet", bullet);
     DrawCircle(int(bullet.position.x),
       int(bullet.position.y),
       bullet_radius,
       colors::red);
   }
-  if (list_items.size() > 0)
-  {
-    list_items.pop_back();
-    GuiListView(Rectangle{ 165, 25, 250, 124 },
-      list_items.c_str(),
-      &list_scroll_index,
-      &list_active);
-  }
+  for (const auto &enemy : enemies) { add_to_list("Enemy", enemy); }
 
-  // DrawRectanglePro(house_rect(), { 0, 0 }, 0, colors::red);
+  GuiListView(Rectangle{ 20, 100, 300, 200 },
+    entities_list.c_str(),
+    &list_scroll_index,
+    &list_active);
+
+
+  DrawRectangle(0, 640, 640, 64, colors::gray);
 }

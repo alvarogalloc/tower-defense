@@ -19,6 +19,7 @@ struct bullet {
   int damage;
   Vector2 position;
   Vector2 direction;
+  float angle;
 };
 
 
@@ -28,7 +29,7 @@ private:
   Texture2D m_enemy_frames;
   Texture2D m_grass;
   Music m_music;
-  std::array<enemy, 30> enemies;
+  std::array<enemy, 15> enemies;
   std::array<bullet, 10> bullets;
 
 public:

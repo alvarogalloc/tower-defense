@@ -17,7 +17,6 @@ export
     void load_textures();
 
   public:
-    tilemap() = delete;
     tilemap(tmx_map *);
     tilemap(std::string_view path);
     auto get_map() const -> tmx_map * { return m_map.get(); }

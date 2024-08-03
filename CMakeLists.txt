@@ -28,7 +28,6 @@ FetchContent_MakeAvailable(fmt)
 
 find_package(RapidJSON CONFIG REQUIRED)
 find_package(tmx CONFIG REQUIRED)
-find_package(OpenAL CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 

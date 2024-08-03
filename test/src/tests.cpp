@@ -1,6 +1,8 @@
 module tests;
 import ut;
 import ginseng;
+import tilemap;
+import raylib;
 
 using namespace ut;
 
@@ -10,7 +12,7 @@ struct resources
 {
   ginseng::database db;
 };
-auto& get_shared_resources()
+auto &get_shared_resources()
 {
   static resources res;
   return res;
@@ -18,14 +20,18 @@ auto& get_shared_resources()
 
 void tilemap_test()
 {
-  "tilemap"_test = [] mutable{
-    auto& res  = get_shared_resources();
-    res.db.create_entity();
-    res.db.create_entity();
-    res.db.create_entity();
-    res.db.create_entity();
-    res.db.create_entity();
-    expect(5_ul == res.db.size()); 
+  "tilemap"_test = [] mutable {
+    // needs because of calls to rlLoadTexture
+    // no really need the window
+    // TODO: might be better to put this in runner
+    InitWindow(100, 100, "");
+    tilemap tp{ SRC_DIR "/assets/test_tilemap.tmx" };
+    expect(tp.get_textures().size() == 1_ul);
+    expect(
+      true_b == (tp.get_textures().find("ground") != tp.get_textures().end()));
+    expect(tp.get_target().texture.width
+           == _i(tp.get_map()->width * tp.get_map()->tile_width));
+    CloseWindow();
   };
 }
 }// namespace

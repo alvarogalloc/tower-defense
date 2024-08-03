@@ -1,5 +1,6 @@
 module;
 #include "raylib.h"
+#include <rlgl.h>
 export module raylib;
 
 
@@ -15,6 +16,9 @@ export
   using ::DrawTextureEx;
 using ::GetFrameTime;
 using ::GetMousePosition;
+using ::DrawLine;
+using ::rlglInit;
+using ::rlglClose;
 
   using ::SetTargetFPS;
   using ::WindowShouldClose;
