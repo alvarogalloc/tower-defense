@@ -2,7 +2,6 @@
   "dependencies": [
     "fmt",
     "tmx",
-    "rapidjson",
     "raylib",
     "raygui"
   ],

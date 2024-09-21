@@ -1,15 +1,15 @@
 import raylib;
 import raygui;
 import game;
-import stdbridge;
+import std;
 import menu_scene;
 
 int main()
 {
-  game_spec spec{
+  game_spec spec {
     .window_name = "Hello, World!",
     .asset_path = SRC_DIR "/assets",
-    .win_size = { 640, 704 },
+    .win_size = {640, 704},
     .target_fps = 60,
   };
   game mygame(spec);

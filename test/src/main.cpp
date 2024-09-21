@@ -1,4 +1,4 @@
-import stdbridge;
+import std;
 import debug;
 import fmt;
 import tests;

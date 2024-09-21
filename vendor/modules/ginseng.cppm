@@ -1,5 +1,5 @@
 export module ginseng;
-import stdbridge;
+import std;
 
 export namespace ginseng {
 #pragma clang diagnostic push

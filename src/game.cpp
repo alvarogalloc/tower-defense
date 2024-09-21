@@ -2,12 +2,11 @@ module game;
 import fmt;
 import debug;
 
-
-game::game(const game_spec &spec) : m_spec(spec)
+game::game(const game_spec& spec)
+    : m_spec(spec)
 {
-  InitWindow(static_cast<int>(spec.win_size.x),
-    static_cast<int>(spec.win_size.y),
-    spec.window_name.data());
+  InitWindow(
+    static_cast<int>(spec.win_size.x), static_cast<int>(spec.win_size.y), spec.window_name.data());
   SetTargetFPS(spec.target_fps);
   InitAudioDevice();
 }
@@ -26,16 +25,14 @@ void game::set_scene(std::unique_ptr<scene> scene)
 }
 int game::run()
 {
-  try
-  {
-
+  try {
     my_assert(bool(m_scene), "Scene not set");
-    while (!WindowShouldClose())
-    {
-      if (m_scene->should_exit())
-      {
+    while (!WindowShouldClose()) {
+      if (m_scene->should_exit()) {
         auto new_scene = m_scene->on_exit();
-        if (!new_scene) { break; }
+        if (!new_scene) {
+          break;
+        }
         this->set_scene(std::move(new_scene));
       }
       m_scene->on_update();
@@ -48,12 +45,14 @@ int game::run()
     }
     this->exit();
     return 0;
-  } catch (const std::exception &e)
-  {
+  } catch (const std::exception& e) {
     fmt::print(error, "Error: {}\n", e.what());
     this->exit();
     return 1;
   }
 }
 
-void scene::init(game &game) { m_world = &game.get_world(); }
+void scene::init(game& game)
+{
+  m_world = &game.get_world();
+}

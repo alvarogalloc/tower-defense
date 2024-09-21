@@ -1,6 +1,5 @@
-module;
-#include <iostream>
 export module ut;
+import std;
 #define NTEST
 export namespace ut::inline v2_1_1 {
 namespace type_traits {

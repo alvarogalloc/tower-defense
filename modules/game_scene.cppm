@@ -1,11 +1,9 @@
 export module game_scene;
 import game;
-import stdbridge;
+import std;
 import raylib;
 
-
-struct enemy
-{
+struct enemy {
   Vector2 position;
   int frame;
   int frame_counter;
@@ -18,21 +16,19 @@ struct bullet {
   int max_hit_count;
   int damage;
   Vector2 position;
-  Vector2 direction;
+  Vector2 velocity;
   float angle;
 };
 
-
-export class game_scene : public scene
-{
-private:
+export class game_scene : public scene {
+  private:
   Texture2D m_enemy_frames;
   Texture2D m_grass;
   Music m_music;
   std::array<enemy, 15> enemies;
   std::array<bullet, 10> bullets;
 
-public:
+  public:
   void on_start() override;
   void on_update() override;
 

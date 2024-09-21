@@ -17,4 +17,6 @@ using ::GuiSetStyle;
 using ::GuiSetFont;
 using ::GuiGroupBox;
 using ::GuiListView;
+using ::GuiGetStyle;
+using ::GuiGetState;
 }
