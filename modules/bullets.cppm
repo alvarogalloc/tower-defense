@@ -7,7 +7,6 @@ export
     bool alive = true;
     float acc_time = 0.f;
   };
-
   struct bullet_group_info {
     float damage = 0.f;
     float radius = 0.f;

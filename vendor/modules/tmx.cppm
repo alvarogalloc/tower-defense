@@ -4,7 +4,6 @@ module;
 export module tmx;
 export
 {
-
   extern "C" {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"

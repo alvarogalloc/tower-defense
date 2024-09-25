@@ -2,9 +2,7 @@ cmake_minimum_required(VERSION 3.30 FATAL_ERROR)
 set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "0e5b6991-d74f-4b3d-a41c-cf096e0b2508")
 set(CMAKE_CXX_MODULE_STD ON)
 
-project(magster
-  LANGUAGES CXX
-)
+project(magster LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -13,11 +11,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 # https://gitlab.kitware.com/cmake/cmake/-/issues/25539
 set(CMAKE_CXX_EXTENSIONS ON)
 
-
 include(FetchContent)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
-
 
 # 10.2.1 fmt
 FetchContent_Declare(
@@ -46,32 +42,49 @@ add_library(gamelib)
 file(GLOB_RECURSE VENDOR_MODULES "vendor/modules/*.cppm")
 file(GLOB_RECURSE VENDOR_SOURCE_FILES "vendor/src/*.cpp")
 add_library(vendor)
-target_sources(vendor PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
-  ${VENDOR_MODULES} PRIVATE ${VENDOR_SOURCE_FILES})
+target_sources(
+  vendor
+  PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${VENDOR_MODULES}
+  PRIVATE ${VENDOR_SOURCE_FILES})
 target_link_libraries(vendor PUBLIC raylib)
-target_include_directories(vendor SYSTEM INTERFACE ${RAYGUI_INCLUDE_DIRS})
+target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})
 target_link_libraries(vendor PUBLIC fmt::fmt)
 target_link_libraries(vendor PUBLIC tmx)
 # target_link_libraries(vendor PUBLIC rapidjson)
 
-target_link_libraries(gamelib PRIVATE vendor)
-
+target_link_libraries(gamelib PUBLIC vendor)
 
 target_compile_features(gamelib PUBLIC cxx_std_23)
 # debug use sanitizers
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_options(gamelib PUBLIC -fsanitize=address -fsanitize=leak
-                                         -fsanitize=undefined)
+                                        -fsanitize=undefined)
   target_link_options(gamelib PUBLIC -fsanitize=address -fsanitize=leak
-                                      -fsanitize=undefined)
+                      -fsanitize=undefined)
 endif()
-target_sources(gamelib PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES
-  ${GAMELIB_MODULE_FILES} PRIVATE ${GAMELIB_SOURCE_FILES})
-target_compile_options(gamelib PRIVATE
-     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-     -Wall -Wextra -Werror -Wconversion -Wsign-conversion -pedantic-errors>
-     $<$<CXX_COMPILER_ID:MSVC>:
-          /W4>)
+target_sources(
+  gamelib
+  PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${GAMELIB_MODULE_FILES}
+  PRIVATE ${GAMELIB_SOURCE_FILES})
+
+target_compile_options(
+  gamelib
+  PRIVATE
+    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+    -Wall
+    -Wextra
+    -Werror
+    -Wshadow
+    -Wnon-virtual-dtor
+    -Wold-style-cast
+    -Wcast-align
+    -Wunused
+    -Wpedantic
+    -Wconversion
+    -Wsign-conversion
+    -pedantic-errors>
+    $<$<CXX_COMPILER_ID:MSVC>:
+    /W4>)
 
 set(GAME_SOURCE_FILES "src/main.cpp")
 file(GLOB_RECURSE GAME_RESOURCES "${CMAKE_SOURCE_DIR}/assets/*")

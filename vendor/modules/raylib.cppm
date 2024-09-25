@@ -37,6 +37,10 @@ export
   using ::Font;
   using ::GetColor;
   using ::GetRandomValue;
+  using ::IsMouseButtonDown;
+  using ::IsMouseButtonPressed;
+  using ::IsMouseButtonReleased;
+  using ::IsMouseButtonUp;
   using ::IsMusicStreamPlaying;
   using ::IsRenderTextureReady;
   using ::LoadFont;
@@ -46,13 +50,9 @@ export
   using ::LoadTexture;
   using ::MeasureText;
   using ::MeasureTextEx;
+  using ::MouseButton;
   using ::Music;
   using ::Rectangle;
-  using ::MouseButton;
-  using ::IsMouseButtonPressed;
-  using ::IsMouseButtonDown;
-  using ::IsMouseButtonReleased;
-  using ::IsMouseButtonUp;
   using ::RenderTexture2D;
   using ::SetTargetFPS;
   using ::Texture2D;

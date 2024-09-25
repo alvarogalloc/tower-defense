@@ -5,18 +5,18 @@ module;
 #pragma clang diagnostic pop
 export module raygui;
 
-
-export {
-using ::GuiLoadStyle;
-using ::GuiLoadStyleDefault;
-using ::GuiButton;
-using ::GuiMessageBox;
-using ::GuiLabel;
-using ::GuiLabelButton;
-using ::GuiSetStyle;
-using ::GuiSetFont;
-using ::GuiGroupBox;
-using ::GuiListView;
-using ::GuiGetStyle;
-using ::GuiGetState;
+export
+{
+  using ::GuiButton;
+  using ::GuiGetState;
+  using ::GuiGetStyle;
+  using ::GuiGroupBox;
+  using ::GuiLabel;
+  using ::GuiLabelButton;
+  using ::GuiListView;
+  using ::GuiLoadStyle;
+  using ::GuiLoadStyleDefault;
+  using ::GuiMessageBox;
+  using ::GuiSetFont;
+  using ::GuiSetStyle;
 }

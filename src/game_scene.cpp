@@ -58,7 +58,7 @@ namespace {
       }
       enemy.position = spawn_pos;
       switch (current_spawn) {
-      case spawn::top: current_spawn = spawn::left; break;
+        case spawn::top: current_spawn = spawn::left; break;
         case spawn::left: current_spawn = spawn::right; break;
         case spawn::right: current_spawn = spawn::bottom; break;
         case spawn::bottom: current_spawn = spawn::top; break;
