@@ -10,7 +10,6 @@ game::game(const game_spec& spec)
   SetTargetFPS(spec.target_fps);
   InitAudioDevice();
 }
-
 void game::exit()
 {
   CloseAudioDevice();

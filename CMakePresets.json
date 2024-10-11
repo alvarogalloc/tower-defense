@@ -41,6 +41,5 @@
         "CMAKE_LINKER_TYPE": "LLD"
       }
     }
-
   ]
 }
