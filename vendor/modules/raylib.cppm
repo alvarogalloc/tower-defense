@@ -25,6 +25,8 @@ export
   using ::ClearBackground;
   using ::CloseWindow;
   using ::Color;
+  using ::GetColor;
+  using ::ColorToInt;
   using ::DrawRectangleLines;
   using ::DrawRectangleLinesEx;
   using ::DrawRectanglePro;

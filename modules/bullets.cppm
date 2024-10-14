@@ -14,6 +14,8 @@ export
     Color color = colors::red;
     std::size_t count = 0;
     Vector2 ellipse_radius;
+    // deserialize it from file
+    static bullet_group_info load(std::string_view filename);
   };
   struct detached_bullet {
     bullet_group_info* info = nullptr;
