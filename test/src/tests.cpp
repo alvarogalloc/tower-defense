@@ -45,7 +45,6 @@ namespace {
   {
     "deserialize bullet groups test"_test = [] mutable {
       auto b_info = bullet_group_info::load(SRC_DIR "/assets/test_bullet_group.txt");
-      /*std::println("radius {} ", b_info.radius);*/
       expect((5.0_f == b_info.radius)(0.1f));
       expect((10.0_f == b_info.damage)(0.1f));
       expect((20.0_f == b_info.speed)(0.1f));

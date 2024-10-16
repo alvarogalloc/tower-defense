@@ -2,6 +2,8 @@ module ellipse_scene;
 import menu_scene;
 import fmt;
 import raygui;
+import debug;
+import game_config;
 
 namespace {
   constexpr auto operator+(const Vector2& lhs, const Vector2& rhs)
@@ -38,27 +40,23 @@ namespace {
     return datastr;
   }
 
+  /*inline void poll_collision(bullets& ring, bullet& current_bullet) {}*/
+
 } // namespace
 
 ellipse_scene::ellipse_scene()
 {
-  m_bullet_rings.emplace_back(bullet_group_info {
-    .damage = 10,
-    .radius = 3.f,
-    .speed = 3.f,
-    .color = colors::green,
-    .count = 5,
-    .ellipse_radius = {20, 50}});
-  m_bullet_rings.emplace_back(bullet_group_info {
-    .damage = 1,
-    .radius = 5.f,
-    .speed = 2.f,
-    .color = colors::yellow,
-    .count = 10,
-    .ellipse_radius = {100, 50}});
+  namespace fs = std::filesystem;
+
+  for (const auto rings_path = fs::path {SRC_DIR "/assets/ring_presets"};
+       const auto& current_entry : fs::directory_iterator {rings_path}) {
+    fmt::print(info, "loading ring {}\n", current_entry.path());
+    m_bullet_rings.emplace_back(bullet_group_info::load(current_entry.path().string()));
+  }
 
   m_targets.emplace_back(Vector2 {100, 100}, 10.f, colors::red, 100.f, 100.f);
   m_targets.emplace_back(Vector2 {400, 100}, 20.f, colors::red, 100.f, 100.f);
+  m_current_ring = m_bullet_rings.begin();
 }
 
 void ellipse_scene::on_start() {}
@@ -85,12 +83,20 @@ void ellipse_scene::on_update()
   }
 
   if (IsKeyPressed(KEY_SPACE)) {
+    if (m_current_ring == std::end(m_bullet_rings) || m_current_ring->count_alive() == 0) {
+      m_current_ring = std::ranges::find_if(m_bullet_rings, [](const auto& b_ring) {
+        return b_ring.count_alive() > 0;
+      });
+    }
     // TODO change 'm_bullet_rings.front()' to a selected ring, or maybe all
-    auto m_pos = GetMousePosition();
-    m_detached_bullet = m_bullet_rings.front().detach_bullet(m_pos);
+    if (m_current_ring != std::end(m_bullet_rings)) {
+      auto m_pos = GetMousePosition();
+      auto& new_detached_bullet
+        = m_detached_bullets.emplace_back(m_current_ring->detach_bullet(m_pos));
 
-    // set the target to the closest target
-    m_detached_bullet.target = m_closest_target->pos;
+      // set the target to the closest target
+      new_detached_bullet.target = m_closest_target->pos;
+    }
   }
 
   // spawn target if shift+click
@@ -100,6 +106,9 @@ void ellipse_scene::on_update()
 
   std::ranges::for_each(m_bullet_rings, [frame_time = GetFrameTime()](auto& ring) {
     ring.update(frame_time);
+    /*std::ranges::for_each(m_de)*/
+    /**/
+    /*poll_collision(bullets &ring, bullet &current_bullet)*/
   });
 
   // get the closest distance bullet to the mouse
@@ -110,7 +119,8 @@ void ellipse_scene::on_update()
     });
 
   // if detached bullet has been fired
-  if (m_detached_bullet.valid()) {
+  std::ranges::for_each(m_detached_bullets, [&](auto& current_bullet) {
+    if (!current_bullet.valid()) return;
     // if out of bounds, dont update it again
     // if (
     //   m_detached_bullet.position.x < 0 || m_detached_bullet.position.x > float(GetScreenWidth())
@@ -120,14 +130,11 @@ void ellipse_scene::on_update()
     // }
     // else {
     // point to the closest target
-    auto direction = m_detached_bullet.target - m_detached_bullet.position;
 
-    m_detached_bullet.velocity = m_detached_bullet.velocity + direction * dt;
-    m_detached_bullet.position = m_detached_bullet.position + m_detached_bullet.velocity * dt;
-
-    // check for collision with targets TODO
-    // }
-  }
+    auto direction = current_bullet.target - current_bullet.position;
+    current_bullet.velocity = current_bullet.velocity + direction * dt;
+    current_bullet.position = current_bullet.position + current_bullet.velocity * dt;
+  });
 }
 
 std::unique_ptr<scene> ellipse_scene::on_exit()
@@ -165,19 +172,20 @@ void ellipse_scene::draw_debug_gui() const
 void ellipse_scene::on_render()
 {
   // galaxy blue
-  ClearBackground(Color {0, 0, 128, 255});
+  ClearBackground(get_game_config().bg_color);
   std::ranges::for_each(m_bullet_rings, [mouse_pos = GetMousePosition()](auto& ring) {
     ring.draw(mouse_pos);
   });
 
-  if (m_detached_bullet.valid()) {
-    DrawCircleV(
-      m_detached_bullet.position, m_detached_bullet.info->radius, m_detached_bullet.info->color);
-    // Draw velocity
-    DrawLineV(
-      m_detached_bullet.position, m_detached_bullet.position + m_detached_bullet.velocity,
-      colors::yellow);
-  }
+  auto draw_detached_bullet = [](const detached_bullet& b) {
+    if (b.valid()) {
+      DrawCircleV(b.position, b.info->radius, b.info->color);
+      // Draw velocity
+      DrawLineV(b.position, b.position + b.velocity, colors::yellow);
+    }
+  };
+  std::ranges::for_each(m_detached_bullets, draw_detached_bullet);
+
   constexpr int separation = 20;
   std::ranges::for_each(m_targets, [this](const auto& t) {
     DrawText(

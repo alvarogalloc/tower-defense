@@ -24,7 +24,7 @@ This is a game made to prove myselft in making something from start to finish, d
 - sfml modules will be removed
 - gui should also be a step
 - WIP is asset Manager needed??
-  - Maybe a 'keepalive' flag for passing ownership or a `Res<T>` wrapper 
+- Maybe a 'keepalive' flag for passing ownership or a `Res<T>` wrapper 
 - tmx render, use library or do it myself 
 
 
