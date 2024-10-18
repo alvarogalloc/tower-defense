@@ -24,6 +24,16 @@ jobs:
     steps:
       # caches all the ccache, vcpkg cmake build files for better recompilation times
       - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libxinerama-dev \
+            libxcursor-dev \
+            xorg-dev \
+            libglu1-mesa-dev \
+            pkg-config
+
       - name: Cache
         uses: actions/cache@v3
         with:
