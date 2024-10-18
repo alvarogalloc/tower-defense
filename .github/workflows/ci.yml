@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
     branches:
-      - raylib
+      - main
 
 env:
   VCPKG_ROOT: '~/vcpkg'
