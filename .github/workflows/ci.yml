@@ -5,6 +5,9 @@ on:
     branches:
       - raylib
 
+env:
+  VCPKG_ROOT: '~/vcpkg'
+
 jobs:
   Test:
     runs-on: ${{ matrix.os }}
@@ -15,9 +18,11 @@ jobs:
           - ubuntu-24.04
         compiler:
           - llvm-19
-          - gcc
-          # you can specify the version after `-` like `llvm-18`.
+        buildtype:
+          - dev
+          - rel
     steps:
+      # caches all the ccache, vcpkg cmake build files for better recompilation times
       - uses: actions/checkout@v3
       - name: Cache
         uses: actions/cache@v3
@@ -43,10 +48,18 @@ jobs:
         uses: aminya/setup-cpp@v1
         with:
           compiler: ${{ matrix.compiler }}
-          vcvarsall: ${{ contains(matrix.os, 'windows') }}
           cmake: true
           ninja: true
           vcpkg: true
-          cppcheck: true
-          clang-tidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
+          # cppcheck: true
+          # clang-tidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
           # ...
+      - name: "Configure CMake"
+        run: >
+          cmake -S .
+          --preset ${{ matrix.buildtype }}
+
+      - name: "Build"
+        run: >
+          cmake --build build-${{ matrix.buildtype }}
+
