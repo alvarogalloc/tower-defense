@@ -13,8 +13,8 @@
       "hidden": true,
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache",
-        "imgui_DIR": "$env{HOME}/sdks/imgui/install/lib/cmake/imgui"
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}"
       }
     },
     {
@@ -41,6 +41,5 @@
         "CMAKE_LINKER_TYPE": "LLD"
       }
     }
-
   ]
 }

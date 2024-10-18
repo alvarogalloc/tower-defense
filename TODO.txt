@@ -1,3 +1,6 @@
+THESE ARE QUESTIONS FOR THE COMMON SUPERMEGAJUNIOR GAME DEVELOPER
+
+
 DONE make healthbar for enemies
 fix rotation of player
 autofire
@@ -13,3 +16,8 @@ should i stick to my_assets or better to more flexibility and add compatibility 
 STATE CLEARLY FOR SYSTEMS PURPOSES AND OWNERSHIP OF RESOURCES
 MORE TESTS FOR LEVEL AND LEVEL MANAGER
 SHOULD I USE POLYLINE FOR ENEMY PATH??
+sfml modules will be removed
+gui should also be a step
+WIP is asset Manager needed??
+  - Maybe a 'keepalive' flag for passing ownership or a Res<T> wrapper 
+tmx render, use library or do it myself 

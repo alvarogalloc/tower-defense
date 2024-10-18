@@ -1,17 +1,18 @@
-import Game;
-import MenuScene;
-// // import GameScene;
-// import imgui;
-import sfml;
-import stdbridge;
-
+import raylib;
+import raygui;
+import game;
+import std;
+import menu_scene;
 
 int main()
 {
-  GameSpec spec{ .window_name{ "Magster" },
-    .asset_path{ std::string{ SRC_DIR } + "/assets/" },
-    .win_size{ 640, 704 } };
-  Game game(spec);
-  game.set_scene(std::make_unique<MenuScene>());
-  return game.run();
+  game_spec spec {
+    .window_name = "Hello, World!",
+    .asset_path = SRC_DIR "/assets",
+    .win_size = {640, 704},
+    .target_fps = 60,
+  };
+  game mygame(spec);
+  mygame.set_scene(std::make_unique<menu_scene>());
+  return mygame.run();
 }
