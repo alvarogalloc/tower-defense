@@ -32,7 +32,7 @@ namespace {
   {
     std::string datastr;
     std::size_t i = 0;
-    for (const auto& current : data) {
+    for (auto& current : data) {
       datastr += fmt::format("{}{}: {};", name, i, transformer(current));
       i++;
     }
@@ -157,7 +157,7 @@ void ellipse_scene::draw_debug_gui() const
   GuiListView({100, 200, list_width, 240}, target_positions.c_str(), nullptr, nullptr);
 
   // get all bullet acc_time
-  const auto bullet_positions = list_to_datastr("Ring ", m_bullet_rings, [](const auto& ring) {
+  const auto bullet_positions = list_to_datastr("Ring ", m_bullet_rings, [](auto& ring) {
     std::string acc_times;
     int i = 0;
     for (const auto& b : ring.get()) {

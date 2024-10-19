@@ -122,10 +122,9 @@ void bullets::update(const float delta)
 {
   // only one ellipse now
   for (auto& b : m_bullets) {
+    b.acc_time += delta * m_info.speed;
     if (b.acc_time > 2 * pi) {
       b.acc_time = 0.f;
-    } else {
-      b.acc_time += delta * m_info.speed;
     }
   }
 }

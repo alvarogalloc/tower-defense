@@ -35,15 +35,15 @@ export
 
 public:
     bullets(const bullet_group_info& info);
-    detached_bullet detach_bullet(const Vector2 center);
 
+    detached_bullet detach_bullet(const Vector2 center);
     // position of the player should be provided
     void draw(const Vector2) const;
 
     void respawn_dead();
     void update(const float delta);
 
-    auto get() const&
+    std::vector<bullet>& get()
     {
       return m_bullets;
     }
