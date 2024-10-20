@@ -25,7 +25,7 @@ void game::set_scene(std::unique_ptr<scene> scene)
 int game::run()
 {
   try {
-    my_assert(bool(m_scene), "Scene not set");
+    debug::my_assert(bool(m_scene), "Scene not set");
     while (!WindowShouldClose()) {
       if (m_scene->should_exit()) {
         auto new_scene = m_scene->on_exit();
@@ -45,7 +45,7 @@ int game::run()
     this->exit();
     return 0;
   } catch (const std::exception& e) {
-    fmt::print(error, "Error: {}\n", e.what());
+    fmt::print(debug::error, "Error: {}\n", e.what());
     this->exit();
     return 1;
   }

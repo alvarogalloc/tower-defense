@@ -12,7 +12,7 @@ constexpr static auto pi = std::numbers::pi_v<float>;
 bullet_group_info bullet_group_info::load(std::string_view filename)
 {
   std::ifstream file {filename.data()};
-  my_assert(file.is_open(), "Could not load file");
+  debug::my_assert(file.is_open(), "Could not load file");
   bullet_group_info bullet_info;
 
   std::string line;

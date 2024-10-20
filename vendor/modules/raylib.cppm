@@ -1,5 +1,6 @@
 module;
 #include "raylib.h"
+#include "raymath.h"
 #include <rlgl.h>
 export module raylib;
 
@@ -62,6 +63,7 @@ export
   using ::UnloadMusicStream;
   using ::UnloadTexture;
   using ::Vector2;
+  using ::Vector2Normalize;
   using ::WindowShouldClose;
 
   using ::IsMusicReady;

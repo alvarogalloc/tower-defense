@@ -16,10 +16,10 @@ export game_config get_game_config()
 {
   static game_config gc;
   if (!gc.valid) {
-    fmt::print(info, "loading config file from {}\n", config_file_path);
+    fmt::print(debug::info, "loading config file from {}\n", config_file_path);
     // load only once
     std::ifstream file {config_file_path.data()};
-    my_assert(file.is_open(), "could not open config file");
+    debug::my_assert(file.is_open(), "could not open config file");
     std::string line;
     while (std::getline(file, line)) {
       std::istringstream iss(line);

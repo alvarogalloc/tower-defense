@@ -28,21 +28,13 @@ int main()
     detached_bullet dt_bullet = b_ring.detach_bullet({0, 0});
     expect(b_ring.get().size() - 1 == _ul(b_ring.count_alive()));
     expect(neq(dt_bullet.info, detached_default.info));
-    expect(true_b == (dt_bullet.target == nullptr));
-    target target_dummy{
-          .pos{0,0},
-          .radius = 5.f,
-          .color{colors::white},
-          .health = 10.f,
-          .max_health = 10.f
-    };
-    expect(false_b == dt_bullet.valid());
-    dt_bullet.target = &target_dummy;
-    expect(false_b == (dt_bullet.target == nullptr));
-    expect(true_b == dt_bullet.valid());
-    expect((0._f == dt_bullet.target->pos.x)(0.1));
-    expect((0._f == dt_bullet.target->pos.y)(0.1));
-
+    /*target target_dummy{*/
+    /*      .pos{0,0},*/
+    /*      .radius = 5.f,*/
+    /*      .color{colors::white},*/
+    /*      .health = 10.f,*/
+    /*      .max_health = 10.f*/
+    /*};*/
     // updating a few times, should increase acc_time which moves the bullets
     const auto alive_bullet = std::ranges::find_if(b_ring.get(), [](const auto& el) {
       return el.alive;

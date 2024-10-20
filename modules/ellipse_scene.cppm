@@ -18,6 +18,7 @@ private:
     std::vector<detached_bullet> m_detached_bullets;
 
     bool m_draw_debug_gui = false;
+    std::size_t m_score = 0;
 
 public:
     ellipse_scene();

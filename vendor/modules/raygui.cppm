@@ -8,15 +8,21 @@ export module raygui;
 export
 {
   using ::GuiButton;
+  using ::GuiDropdownBox;
+  using ::GuiDummyRec;
   using ::GuiGetState;
   using ::GuiGetStyle;
   using ::GuiGroupBox;
   using ::GuiLabel;
   using ::GuiLabelButton;
+  using ::GuiLine;
   using ::GuiListView;
+  using ::GuiListViewEx;
   using ::GuiLoadStyle;
   using ::GuiLoadStyleDefault;
   using ::GuiMessageBox;
   using ::GuiSetFont;
   using ::GuiSetStyle;
+  using ::GuiTabBar;
+  using ::GuiWindowBox;
 }

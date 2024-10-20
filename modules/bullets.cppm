@@ -27,12 +27,11 @@ export
   };
   struct detached_bullet {
     bullet_group_info* info {nullptr};
-    target* target {nullptr};
     Vector2 position {0, 0};
     Vector2 velocity {0, 0};
     bool valid() const
     {
-      return info != nullptr && target != nullptr;
+      return info != nullptr;
     }
   };
 
@@ -43,6 +42,11 @@ export
 
 public:
     bullets(const bullet_group_info& info);
+
+    auto get_info() const
+    {
+      return m_info;
+    }
 
     detached_bullet detach_bullet(const Vector2 center);
     // position of the player should be provided
