@@ -4,13 +4,6 @@ import std;
 import raylib;
 import bullets;
 
-struct target {
-  Vector2 pos;
-  float radius;
-  Color color;
-  float health;
-  float max_health;
-};
 
 export
 {

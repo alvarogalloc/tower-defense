@@ -7,6 +7,14 @@ export
     bool alive = true;
     float acc_time = 0.f;
   };
+  struct target {
+    Vector2 pos;
+    float radius;
+    Color color;
+    float health;
+    float max_health;
+  };
+
   struct bullet_group_info {
     float damage = 0.f;
     float radius = 0.f;
@@ -18,13 +26,13 @@ export
     static bullet_group_info load(std::string_view filename);
   };
   struct detached_bullet {
-    bullet_group_info* info = nullptr;
-    Vector2 target {0, 0};
+    bullet_group_info* info {nullptr};
+    target* target {nullptr};
     Vector2 position {0, 0};
     Vector2 velocity {0, 0};
     bool valid() const
     {
-      return info != nullptr;
+      return info != nullptr && target != nullptr;
     }
   };
 

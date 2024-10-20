@@ -2,7 +2,7 @@ export module debug;
 import std;
 import fmt;
 
-export
+export namespace debug
 {
   constexpr auto warn = fmt::emphasis::bold | fmt::fg(fmt::color::yellow);
   constexpr auto error = fmt::emphasis::bold | fmt::fg(fmt::color::red);

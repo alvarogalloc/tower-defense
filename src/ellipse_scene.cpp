@@ -95,7 +95,7 @@ void ellipse_scene::on_update()
         = m_detached_bullets.emplace_back(m_current_ring->detach_bullet(m_pos));
 
       // set the target to the closest target
-      new_detached_bullet.target = m_closest_target->pos;
+      new_detached_bullet.target = &*m_closest_target;
     }
   }
 
@@ -121,17 +121,8 @@ void ellipse_scene::on_update()
   // if detached bullet has been fired
   std::ranges::for_each(m_detached_bullets, [&](auto& current_bullet) {
     if (!current_bullet.valid()) return;
-    // if out of bounds, dont update it again
-    // if (
-    //   m_detached_bullet.position.x < 0 || m_detached_bullet.position.x > float(GetScreenWidth())
-    //   || m_detached_bullet.position.y < 0
-    //   || m_detached_bullet.position.y > float(GetScreenHeight())) {
-    //   m_detached_bullet.info = nullptr;
-    // }
-    // else {
-    // point to the closest target
 
-    auto direction = current_bullet.target - current_bullet.position;
+    auto direction = current_bullet.target->pos - current_bullet.position;
     current_bullet.velocity = current_bullet.velocity + direction * dt;
     current_bullet.position = current_bullet.position + current_bullet.velocity * dt;
   });
@@ -158,15 +149,21 @@ void ellipse_scene::draw_debug_gui() const
 
   // get all bullet acc_time
   const auto bullet_positions = list_to_datastr("Ring ", m_bullet_rings, [](auto& ring) {
-    std::string acc_times;
+    std::string acc_times="\n";
     int i = 0;
-    for (const auto& b : ring.get()) {
+    for (const auto& b : ring.get() | std::views::filter([](const auto& bullet) {
+                           return bullet.alive;
+                         })) {
       acc_times += fmt::format("acc_time {}: {:.2f};", i, b.acc_time);
       i++;
     }
     return acc_times;
   });
-  GuiListView({100 + list_width, 200, list_width, 240}, bullet_positions.c_str(), nullptr, nullptr);
+  static int scroll_index = 0;
+  static int active_index = 0;
+  GuiListView(
+    {100 + list_width, 200, list_width, 240}, bullet_positions.c_str(), &scroll_index,
+    &active_index);
 }
 
 void ellipse_scene::on_render()
