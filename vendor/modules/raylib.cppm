@@ -11,6 +11,7 @@ export
   using ::DrawLine;
   using ::DrawLineV;
   using ::DrawTextureEx;
+  using ::GetFontDefault;
   using ::GetFrameTime;
   using ::GetMousePosition;
   using ::GetScreenHeight;
@@ -26,7 +27,6 @@ export
   using ::ClearBackground;
   using ::CloseWindow;
   using ::Color;
-  using ::GetColor;
   using ::ColorToInt;
   using ::DrawRectangleLines;
   using ::DrawRectangleLinesEx;
@@ -63,7 +63,10 @@ export
   using ::UnloadMusicStream;
   using ::UnloadTexture;
   using ::Vector2;
+  using ::Vector2Length;
   using ::Vector2Normalize;
+  using ::Vector2Subtract;
+  using ::Vector2Zero;
   using ::WindowShouldClose;
 
   using ::IsMusicReady;

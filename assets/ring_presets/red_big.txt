@@ -1,4 +1,4 @@
-damage 10.0
+damage 30.0
 radius 3.0
 speed 3.0
 count 5

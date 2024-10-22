@@ -1,19 +1,15 @@
 export module bullets;
 import std;
 import raylib;
+import fmt;
+import raylib_utils;
 export
 {
   struct bullet {
     bool alive = true;
     float acc_time = 0.f;
   };
-  struct target {
-    Vector2 pos;
-    float radius;
-    Color color;
-    float health;
-    float max_health;
-  };
+
 
   struct bullet_group_info {
     float damage = 0.f;
@@ -27,6 +23,7 @@ export
   };
   struct detached_bullet {
     bullet_group_info* info {nullptr};
+    Vector2 target_position {0, 0};
     Vector2 position {0, 0};
     Vector2 velocity {0, 0};
     bool valid() const
