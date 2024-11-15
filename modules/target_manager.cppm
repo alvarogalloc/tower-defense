@@ -24,7 +24,7 @@ public:
     {
       load_targets_from_file(std::move(file));
     }
-    constexpr target_manager(const std::string contents)
+    constexpr target_manager(const std::string& contents)
     {
       load_from_json(contents);
     }
@@ -52,7 +52,7 @@ public:
       return m_targets;
     }
 
-    constexpr void load_from_json(const std::string contents)
+    constexpr void load_from_json(const std::string& contents)
     {
       rapidjson::Document doc;
       doc.Parse(contents.c_str());

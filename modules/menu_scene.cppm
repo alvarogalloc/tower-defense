@@ -6,7 +6,6 @@ import std;
 export
 {
   class menu_scene : public scene {
-    // Texture2D m_background;
     Font m_title_font;
     Texture2D m_blue_guy;
 

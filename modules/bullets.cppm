@@ -10,7 +10,6 @@ export
     float acc_time = 0.f;
   };
 
-
   struct bullet_group_info {
     float damage = 0.f;
     float radius = 0.f;
@@ -46,8 +45,11 @@ public:
     }
 
     detached_bullet detach_bullet(const Vector2 center);
+    Vector2 get_edge_for(const Vector2 target, const Vector2 center) const;
     // position of the player should be provided
     void draw(const Vector2) const;
+    // overload to draw the ellipse when that ring is selected
+    void draw(const Vector2, bool draw_ellipse) const;
 
     void respawn_dead();
     void update(const float delta);

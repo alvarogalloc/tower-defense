@@ -13,13 +13,29 @@ export
   {
     return Vector2 {lhs.x + rhs.x, lhs.y + rhs.y};
   }
+  constexpr auto operator+(const Vector2& lhs, const float rhs)
+  {
+    return Vector2 {lhs.x + rhs, lhs.y + rhs};
+  }
+
   constexpr auto operator-(const Vector2& lhs, const Vector2& rhs)
   {
     return Vector2 {lhs.x - rhs.x, lhs.y - rhs.y};
   }
+
   constexpr auto operator*(const Vector2& lhs, float rhs)
   {
     return Vector2 {lhs.x * rhs, lhs.y * rhs};
+  }
+
+  constexpr auto operator*(float lhs, const Vector2& rhs)
+  {
+    return Vector2 {lhs * rhs.x, lhs * rhs.y};
+  }
+
+  constexpr auto operator*(const Vector2& lhs, const Vector2& rhs)
+  {
+    return Vector2 {lhs.x * rhs.x, lhs.y * rhs.y};
   }
 
   constexpr auto list_to_datastr(std::string name, std::ranges::range auto data, auto transformer)

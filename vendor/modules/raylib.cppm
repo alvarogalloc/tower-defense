@@ -10,6 +10,8 @@ export
   using ::CloseWindow;
   using ::DrawLine;
   using ::DrawLineV;
+  using ::DrawEllipse;
+  using ::DrawEllipseLines;
   using ::DrawTextureEx;
   using ::GetFontDefault;
   using ::GetFrameTime;
@@ -63,10 +65,14 @@ export
   using ::UnloadMusicStream;
   using ::UnloadTexture;
   using ::Vector2;
+  using ::Vector2Add;
+  using ::Vector2Scale;
   using ::Vector2Length;
   using ::Vector2Normalize;
   using ::Vector2Subtract;
   using ::Vector2Zero;
+  using ::Vector2Distance;
+  using ::Vector2Equals;
   using ::WindowShouldClose;
 
   using ::IsMusicReady;

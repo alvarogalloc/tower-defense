@@ -25,6 +25,7 @@ public:
 private:
     constexpr void move_detached_bullets(float dt)
     {
+      float rand_factor = float(GetRandomValue(-1, 1));
       for (auto& current_bullet : m_detached_bullets) {
         if (!current_bullet.valid()) continue; // Skip invalid bullets
 
@@ -52,8 +53,11 @@ private:
         constexpr static float acceleration = 400.f; // Adjust acceleration value as needed
 
         // Calculate new velocity with acceleration, but limit acceleration when close to target
-        float acceleration_factor = std::min(1.0f, distance_to_target / max_speed);
-        current_bullet.velocity = current_bullet.velocity
+        constexpr static float min_acceleration_factor = 0.5f;
+        const float acceleration_factor
+          = std::clamp(distance_to_target / (max_speed / 2), min_acceleration_factor, 1.0f);
+
+        current_bullet.velocity = current_bullet.velocity+ Vector2{rand_factor, rand_factor}
           + direction_normalized * acceleration * acceleration_factor * dt;
 
         // Limit velocity to max speed

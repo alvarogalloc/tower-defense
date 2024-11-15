@@ -5,11 +5,13 @@ import raygui;
 import debug;
 import game_config;
 import raylib_utils;
+import debug_gui_system;
 
 ellipse_scene::ellipse_scene()
     : m_target_manager(std::ifstream {SRC_DIR "/assets/targets.json"})
     , m_draw_system(m_target_manager, m_detached_bullets)
     , m_physics_system(m_target_manager, m_detached_bullets)
+    , m_debug_gui_system(debug_gui_system(m_bullet_rings, m_target_manager))
 {
   namespace fs = std::filesystem;
 
@@ -18,8 +20,7 @@ ellipse_scene::ellipse_scene()
     fmt::print(debug::info, "loading ring {}\n", current_entry.path());
     m_bullet_rings.emplace_back(bullet_group_info::load(current_entry.path().string()));
   }
-
-  m_current_ring = m_bullet_rings.begin();
+  debug::my_assert(!m_bullet_rings.empty(), "No bullet rings loaded");
 }
 
 void ellipse_scene::on_start() {}
@@ -39,23 +40,40 @@ void ellipse_scene::on_update()
     std::ranges::for_each(m_bullet_rings, &bullets::respawn_dead);
   }
 
-  // get the closest distance bullet to the mouse
+  // shoot
   if (IsKeyPressed(KEY_SPACE)) {
-    if (m_current_ring == std::end(m_bullet_rings) || m_current_ring->count_alive() == 0) {
-      m_current_ring = std::ranges::find_if(m_bullet_rings, [](const auto& b_ring) {
-        return b_ring.count_alive() > 0;
-      });
-    }
-    // TODO change 'm_bullet_rings.front()' to a selected ring, or maybe all
-    if (m_current_ring != std::end(m_bullet_rings)) {
-      auto m_pos = GetMousePosition();
-      auto& new_bullet = m_detached_bullets.emplace_back(m_current_ring->detach_bullet(m_pos));
-      new_bullet.target_position = m_target_manager.closest_to(m_pos).pos;
+    debug::my_assert(m_selected_ring_index < m_bullet_rings.size(), "Invalid ring index");
+    if (m_bullet_rings.at(m_selected_ring_index).count_alive() > 0) {
+      m_detached_bullets.push_back([this] {
+        const auto mouse_pos = GetMousePosition();
+        auto new_bullet = m_bullet_rings.at(m_selected_ring_index).detach_bullet(mouse_pos);
+        // now we get the edge of the ellipse for the target
+        Vector2 target_pos = {9999,9999};
+        for (auto& target : m_target_manager.get_targets()) {
+          Vector2 edge = m_bullet_rings.at(m_selected_ring_index).get_edge_for(target.pos, mouse_pos);
+          // check if the edge is closer to the target than the current target_pos
+          if (Vector2Distance(edge, target.pos) < Vector2Distance(target_pos, target.pos)) {
+            target_pos = target.pos;
+          }
+        }
+        new_bullet.target_position = target_pos;
+        return new_bullet;
+      }());
     }
   }
+  if (IsKeyPressed(KEY_LEFT)) {
+    m_selected_ring_index
+      = (m_selected_ring_index + m_bullet_rings.size() - 1) % m_bullet_rings.size();
+  }
+  if (IsKeyPressed(KEY_RIGHT)) {
+    m_selected_ring_index = (m_selected_ring_index + 1) % m_bullet_rings.size();
+  }
+
+  /*
+  */
   // spawn target if shift+click
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && IsKeyDown(KEY_LEFT_SHIFT)) {
-    const target new_target{
+    const target new_target {
       .pos = GetMousePosition(),
       .radius = 10.f,
       .color = colors::red,
@@ -69,13 +87,13 @@ void ellipse_scene::on_update()
     ring.update(dt);
   }
 
-
   // if detached bullet has been fired
   // remove dead targets, but update score
   auto remove_dead_targets = [&] {
-    auto removed_targets = std::ranges::remove_if(m_target_manager.get_targets(), [](const auto& target) {
-      return target.health <= 0;
-    });
+    auto removed_targets
+      = std::ranges::remove_if(m_target_manager.get_targets(), [](const auto& target) {
+          return target.health <= 0;
+        });
 
     for (const auto& target : removed_targets) {
       m_score += static_cast<std::size_t>(target.max_health);
@@ -90,94 +108,22 @@ std::unique_ptr<scene> ellipse_scene::on_exit()
   return std::make_unique<ellipse_scene>();
 }
 
-void ellipse_scene::draw_debug_gui() const
-{
-  auto list = "Bullet Rings;Current Ring;Targets;Closest Target;Detached Bullets";
-
-  static int scrollIndex = 0;
-  static int active = 0;
-  GuiListView({0, 0, 200, 200}, list, &scrollIndex, &active);
-  // print the selected tab
-  auto draw_ring_info = [](const auto& ring) {
-    auto [damage, radius, speed, color, count, ellipse_radius] = ring.get_info();
-    // Separator
-    // make what i made but in a string separated by '\n'
-    std::string info = fmt::format(
-      "Damage: {}\nRadius: {}\nSpeed: {}\nColor: {:x}\nCount: {}\nRadius: {}", damage, radius,
-      speed, static_cast<std::uint32_t>(ColorToInt(color)), count, to_string(ellipse_radius));
-    // draw rectangle with color
-    DrawRectangle(
-      400, 0, 200, 200,
-      GetColor(static_cast<std::uint32_t>(GuiGetStyle(DEFAULT, BACKGROUND_COLOR))));
-    GuiLabel({410, 0, 190, 200}, info.c_str());
-  };
-  auto draw_target_info = [](const auto& target) {
-    auto [pos, radius, color, health, max_health] = target;
-    std::string info = fmt::format(
-      "Position: {}\nRadius: {}\nColor: {:x}\nHealth: {}\nMax Health: {}", to_string(pos), radius,
-      static_cast<std::uint32_t>(ColorToInt(color)), health, max_health);
-    DrawRectangle(
-      400, 0, 200, 200,
-      GetColor(static_cast<std::uint32_t>(GuiGetStyle(DEFAULT, BACKGROUND_COLOR))));
-    GuiLabel({410, 0, 190, 200}, info.c_str());
-  };
-  switch (active) {
-    case 0: {
-      if (m_bullet_rings.empty()) {
-        break;
-      }
-      static int ring_scroll = 0;
-      static int ring_active = 0;
-      auto list_str = list_to_datastr("", m_bullet_rings, [&](const auto& ring) {
-        return fmt::format(
-          "Ring {:x}", static_cast<std::uint32_t>(ColorToInt(ring.get_info().color)));
-      });
-      GuiListView({200, 0, 200, 200}, list_str.c_str(), &ring_scroll, &ring_active);
-      draw_ring_info(m_bullet_rings.at(std::size_t(ring_active)));
-      break;
-    }
-    case 1: {
-      if (m_current_ring == m_bullet_rings.end()) {
-        break;
-      }
-      draw_ring_info(*m_current_ring);
-      break;
-    }
-    case 2: {
-      if (m_target_manager.get_targets().empty()) {
-        break;
-      }
-      static int target_scroll = 0;
-      static int target_active = 0;
-      auto list_str = list_to_datastr("", m_target_manager.get_targets(), [&](const auto& target) {
-        return fmt::format("Target {:x}", static_cast<std::uint32_t>(ColorToInt(target.color)));
-      });
-      GuiListView({200, 0, 200, 200}, list_str.c_str(), &target_scroll, &target_active);
-      draw_target_info(m_target_manager.get_targets().at(std::size_t(target_active)));
-      break;
-    }
-    case 3: {
-      if(m_target_manager.get_targets().empty()) {
-        break;
-      }
-      draw_target_info(m_target_manager.closest_to(GetMousePosition()));
-      break;
-    }
-    default: break;
-  }
-}
-
 void ellipse_scene::on_render()
 {
   // galaxy blue
   ClearBackground(get_game_config().bg_color);
-  std::ranges::for_each(m_bullet_rings, [mouse_pos = GetMousePosition()](auto& ring) {
-    ring.draw(mouse_pos);
-  });
 
-
-  if (m_draw_debug_gui) {
-    draw_debug_gui();
+  const auto mouse_pos = GetMousePosition();
+  for (auto ring_index : std::views::iota(0uz, m_bullet_rings.size())) {
+    m_bullet_rings.at(ring_index).draw(mouse_pos, m_selected_ring_index == ring_index);
   }
+
   m_draw_system.draw();
+
+  const auto score_str = fmt::format("Score: {}", m_score);
+  constexpr static Vector2 score_pos = {10.f, 10.f};
+  DrawText(score_str.c_str(), int(score_pos.x), int(score_pos.y), 20, colors::white);
+  if (m_draw_debug_gui) {
+    m_debug_gui_system.draw(m_selected_ring_index);
+  }
 }

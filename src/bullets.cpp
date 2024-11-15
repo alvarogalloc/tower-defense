@@ -81,6 +81,14 @@ void bullets::draw(const Vector2 center) const
     DrawCircleV(pos, m_info.radius, m_info.color);
   }
 }
+void bullets::draw(const Vector2 center, bool draw_ellipse) const
+{
+  draw(center);
+  if (draw_ellipse) {
+    DrawEllipseLines(
+      int(center.x), int(center.y), m_info.ellipse_radius.x, m_info.ellipse_radius.y, m_info.color);
+  }
+}
 
 void bullets::respawn_dead()
 {
@@ -117,12 +125,20 @@ detached_bullet bullets::detach_bullet(const Vector2 center)
   }
   return detached;
 }
+Vector2 bullets::get_edge_for(const Vector2 target, const Vector2 center) const {
+  Vector2 direction = Vector2Subtract(target, center);
+  float angle = std::atan2(direction.y, direction.x);
+  return Vector2 {
+    std::cos(angle) * m_info.ellipse_radius.x + center.x,
+    std::sin(angle) * m_info.ellipse_radius.y + center.y,
+  };
+}
 
 void bullets::update(const float delta)
 {
   // only one ellipse now
   for (auto& b : m_bullets) {
-    b.acc_time += delta * m_info.speed;
+    b.acc_time += delta;
     if (b.acc_time > 2 * pi) {
       b.acc_time = 0.f;
     }

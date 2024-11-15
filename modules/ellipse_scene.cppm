@@ -6,15 +6,14 @@ import bullets;
 import draw_system;
 import physics_system;
 import target_manager;
+import debug_gui_system;
 
 export
 {
   class ellipse_scene : public scene {
 private:
     std::vector<bullets> m_bullet_rings;
-    std::vector<bullets>::iterator m_current_ring;
-
-    /*std::vector<target> m_targets;*/
+    std::size_t m_selected_ring_index = 0;
 
     std::vector<detached_bullet> m_detached_bullets;
 
@@ -24,13 +23,13 @@ private:
     target_manager m_target_manager;
     draw_system m_draw_system;
     physics_system m_physics_system;
+    debug_gui_system m_debug_gui_system;
 
 public:
     ellipse_scene();
 
     void on_start() override;
     void on_update() override;
-    void draw_debug_gui() const;
 
     std::unique_ptr<scene> on_exit() override;
     void on_render() override;

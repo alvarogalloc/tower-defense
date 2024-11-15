@@ -15,11 +15,24 @@ include(FetchContent)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 
+
+# use clang tidy
+# find_program(CLANG_TIDY_EXE NAMES "clang-tidy" QUIET)
+#
+# if(CLANG_TIDY_EXE)
+#   set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}")
+#   macro(use_clang_tidy TARGET)
+#     set_target_properties(${TARGET} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+#   endmacro()
+# else()
+#   message(WARNING "clang-tidy not found. Code analysis will be skipped.")
+# endif()
+
 # 10.2.1 fmt
 FetchContent_Declare(
   fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG master)
+  GIT_TAG 11.0.2)
 set(FMT_USE_CMAKE_MODULES
     ON
     CACHE BOOL "Use CMake modules for fmt")
@@ -38,6 +51,7 @@ file(GLOB GAMELIB_MODULE_FILES "modules/*.cppm")
 file(GLOB GAMELIB_SOURCE_FILES "src/*.cpp")
 list(REMOVE_ITEM GAMELIB_SOURCE_FILES "src/main.cpp")
 add_library(gamelib)
+# use_clang_tidy(gamelib)
 
 file(GLOB_RECURSE VENDOR_MODULES "vendor/modules/*.cppm")
 file(GLOB_RECURSE VENDOR_SOURCE_FILES "vendor/src/*.cpp")
@@ -90,6 +104,7 @@ set(GAME_SOURCE_FILES "src/main.cpp")
 file(GLOB_RECURSE GAME_RESOURCES "${CMAKE_SOURCE_DIR}/assets/*")
 
 add_executable(magster ${GAME_SOURCE_FILES} ${GAME_RESOURCES})
+# use_clang_tidy(gamelib)
 # add a macro with the current path
 target_link_libraries(magster PRIVATE gamelib)
 
@@ -99,4 +114,10 @@ if(BUILD_TESTING)
   enable_testing()
 
   add_subdirectory(test)
+endif()
+
+# if option EXAMPLES is enabled add example for each file in examples folder
+option(BUILD_EXAMPLES "Enable Example Builds" OFF)
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples)
 endif()

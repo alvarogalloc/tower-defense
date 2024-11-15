@@ -1,0 +1,6 @@
+damage 30.0
+radius 1.0
+speed 100.0
+count 30
+color 0x00aaffff
+ellipse_radius 200.0 80.0

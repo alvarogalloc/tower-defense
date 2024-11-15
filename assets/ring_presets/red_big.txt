@@ -1,6 +1,6 @@
 damage 30.0
 radius 3.0
-speed 3.0
+speed 100.0
 count 5
 color 0x00ff00ff
 ellipse_radius 20.0 50.0
