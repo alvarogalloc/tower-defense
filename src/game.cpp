@@ -27,6 +27,9 @@ int game::run()
   try {
     debug::my_assert(bool(m_scene), "Scene not set");
     while (!WindowShouldClose()) {
+      if (m_scene->should_exit_game()) {
+        break;
+      }
       if (m_scene->should_exit()) {
         auto new_scene = m_scene->on_exit();
         if (!new_scene) {

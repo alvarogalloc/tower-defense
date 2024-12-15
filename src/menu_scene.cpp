@@ -13,9 +13,6 @@ void menu_scene::on_start()
 
 void menu_scene::on_update()
 {
-  if (IsKeyPressed(KEY_ENTER)) {
-    m_should_exit = true;
-  }
 }
 
 std::unique_ptr<scene> menu_scene::on_exit()
@@ -27,35 +24,35 @@ std::unique_ptr<scene> menu_scene::on_exit()
 
 void menu_scene::on_render()
 {
-  auto centerh = [](const Rectangle& rect) {
-    auto width = GetScreenWidth();
-    return Rectangle {float(width) / 2 - rect.width / 2, rect.y, rect.width, rect.height};
-  };
-  auto centerv = [](const Rectangle& rect) {
-    auto height = GetScreenHeight();
-    return Rectangle {rect.x, float(height) / 2 - rect.height / 2, rect.width, rect.height};
-  };
   // DrawTexture(*m_background, 0, 0, colors::white);
   ClearBackground(colors::darkgreen);
   // calculate the width of the text
-  const auto text_width = MeasureTextEx(m_title_font, "Magster", 120, 0.2f).x;
-  const auto text_pos = Vector2 {.x = float(GetScreenWidth()) / 2 - text_width / 2, .y = 100};
+  constexpr static std::string_view title = "Rooster\nSpace";
+  const auto text_size = MeasureTextEx(m_title_font, title.data(), 120, 0.2f);
+  const auto text_pos = Vector2 {.x = float(GetScreenWidth()) / 2 - text_size.x / 2, .y = 100};
+  const int font_size = 96;
   // draw a brown rectangle behind the text
-  DrawRectangleRec(Rectangle {text_pos.x - 10, text_pos.y, text_width + 10, 120}, colors::brown);
-  DrawTextEx(m_title_font, "Magster", text_pos, 120, 0.2f, colors::yellow);
+  auto title_rect = Rectangle {text_pos.x - 10, text_pos.y, text_size.x + 10, text_size.y + 10};
+  DrawRectangleRec(title_rect, colors::brown);
+  DrawTextEx(m_title_font, title.data(), text_pos, font_size, 0.2f, colors::yellow);
 
-  // DrawTextureEx(m_blue_guy,
-  //   Vector2{ float(GetScreenWidth()) / 2.f - float(m_blue_guy.width) / 2.f,
-  //     float(GetScreenHeight() - m_blue_guy.height * 3) },
-  //   0,
-  //   3,
-  //   colors::white);
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 96);
-  if (GuiButton(centerv(centerh({10, 40, 240, 80})), "START")) {
+  DrawTextureEx(
+    m_blue_guy,
+    Vector2 {
+      float(GetScreenWidth()) / 2.f - float(m_blue_guy.width) / 2.f,
+      float(GetScreenHeight() - m_blue_guy.height * 3)},
+    0, 3, colors::white);
+  GuiSetStyle(DEFAULT, TEXT_SIZE, font_size);
+  Rectangle start_rect = title_rect;
+  start_rect.y += title_rect.height + 10;
+  start_rect.x = float(GetScreenWidth()) / 2 - 125;
+  start_rect.width = 250;
+  start_rect.height = 80;
+  if (GuiButton(start_rect, "START")) {
     m_should_exit = true;
   }
-  GuiSetStyle(DEFAULT, TEXT_SIZE, 16);
-  if (GuiButton(centerh({10, 400, 80, 40}), "EXIT")) {
-    CloseWindow();
+  start_rect.y += start_rect.height + 10;
+  if (GuiButton(start_rect, "EXIT")) {
+    m_should_exit_game = true;
   }
 }

@@ -25,6 +25,11 @@ public:
     {
       return m_should_exit;
     }
+    virtual bool should_exit_game() const
+    {
+      return false;
+    }
+
     void init(game& game);
     virtual void on_start() = 0;
     virtual void on_update() = 0;

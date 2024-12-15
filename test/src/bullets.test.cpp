@@ -6,16 +6,6 @@ import raylib_utils;
 
 using namespace ut;
 
-auto should_throw(auto fn)
-{
-  try {
-    fn();
-    std::print("should throw but didn't\n");
-    expect(false == true_b);
-  } catch (const std::exception& e) {
-    expect(true == true_b);
-  }
-};
 // clang-format off
 constexpr bullets::info b_ring_info_valid {
   .damage = 10.0f,

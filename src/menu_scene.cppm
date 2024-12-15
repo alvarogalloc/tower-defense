@@ -8,8 +8,13 @@ export
   class menu_scene : public scene {
     Font m_title_font;
     Texture2D m_blue_guy;
+    bool m_should_exit_game = false;
 
 public:
+    bool should_exit_game() const override
+    {
+      return m_should_exit_game;
+    }
     void on_start() override;
     void on_update() override;
 

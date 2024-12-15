@@ -48,7 +48,7 @@ find_package(glfw3 CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 
 add_compile_definitions(SRC_DIR="${CMAKE_SOURCE_DIR}")
-file(GLOB GAMELIB_MODULE_FILES "modules/*.cppm")
+file(GLOB GAMELIB_MODULE_FILES "src/*.cppm")
 file(GLOB GAMELIB_SOURCE_FILES "src/*.cpp")
 list(REMOVE_ITEM GAMELIB_SOURCE_FILES "src/main.cpp")
 add_library(gamelib)
