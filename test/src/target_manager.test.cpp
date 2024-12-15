@@ -4,19 +4,29 @@ import target_manager;
 import std;
 
 using namespace ut;
+
+auto expect_throw = [](auto&& f) {
+  try {
+    /*f();*/
+    expect(false_b == true) << "Expected a exception here exception";
+  } catch (...) {
+    expect(true_b == true);
+  }
+};
+
 int main()
 {
-  "default constructor"_test = [] mutable {
+  "default constructor"_test = [] {
     target_manager manager;
     expect(true_b == manager.get_targets().empty());
   };
 
-  "constructor with empty json array"_test = [] mutable {
+  "constructor with empty json array"_test = [] {
     target_manager manager("[]");
     expect(true_b == manager.get_targets().empty());
   };
 
-  "constructor with valid JSON"_test = [] mutable {
+  "constructor with valid JSON"_test = [] {
     std::string json = R"(
             [
                 {"pos": [0.0,  20.5], "radius": 10.0, "color": [220, 10, 20, 55], "health": 100.0, "max_health": 100.0},
@@ -27,7 +37,7 @@ int main()
     expect(2_ul == manager.get_targets().size());
   };
 
-  "load_targets_from_file"_test = [] mutable {
+  "load_targets_from_file"_test = [] {
     std::string filename = "targets.json";
     std::ofstream file(filename);
     file << R"(
@@ -43,8 +53,44 @@ int main()
 
     std::filesystem::remove(filename);
   };
+  "closest to position"_test = [] {
+    target_manager manager;
+    target t1({10.f, 10.f}, 10.0f, {255, 0, 0, 255}, 100.0f, 100.0f);
+    target t2({10.f, 10.f}, 10.0f, {255, 0, 10, 255}, 100.0f, 100.0f);
+    target t3({30.f, 30.f}, 10.0f, {255, 10, 0, 255}, 100.0f, 100.0f);
+    manager.spawn(t1);
+    manager.spawn(t2);
+    manager.spawn(t3);
+    // make an assertion like this but separate for each condition
+    /*
+       pos.x == rhs.pos.x && pos.y == rhs.pos.y && radius == rhs.radius
+        && color.r == rhs.color.r && color.g == rhs.color.g && color.b == rhs.color.b
+        && health == rhs.health && max_health == rhs.max_health
+      */
+    auto cmp_target = [](target l, target r) {
+      // all the left hand side values are equal to the right hand side values
+      // but the left floats, should be constructed as _f(value)
 
-  "spawn"_test = [] mutable {
+      expect((_f(r.pos.x) == l.pos.x)(0.01));
+      expect((_f(r.pos.y) == l.pos.y)(0.01));
+      expect((_f(r.radius) == l.radius)(0.01));
+      expect(_uc(r.color.r) == l.color.r);
+      expect(_uc(r.color.g) == l.color.g);
+      expect(_uc(r.color.b) == l.color.b);
+      expect((_f(r.health) == l.health)(0.01));
+      expect((_f(r.max_health) == l.max_health)(0.01));
+    };
+    auto closest = manager.closest_to({0.f, 0.f});
+    cmp_target(t1, closest);
+    closest = manager.closest_to({20.f, 20.f});
+    // all three are at the same distance, so the first one should be returned
+    cmp_target(t1, closest);
+    manager.get_targets().at(1).pos = t2.pos = {20.f, 20.f};
+    closest = manager.closest_to({20.f, 20.f});
+    cmp_target(t2, closest);
+  };
+
+  "spawn"_test = [] {
     target_manager manager;
     target t({100.f, 10.f}, 10.0f, {255, 0, 0, 255}, 100.0f, 100.0f);
     manager.spawn(t);

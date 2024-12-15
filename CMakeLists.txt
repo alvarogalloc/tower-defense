@@ -44,6 +44,7 @@ FetchContent_MakeAvailable(fmt)
 # find_package(RapidJSON CONFIG REQUIRED)
 find_package(tmx CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 
 add_compile_definitions(SRC_DIR="${CMAKE_SOURCE_DIR}")
@@ -61,9 +62,10 @@ target_sources(
   PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${VENDOR_MODULES}
   PRIVATE ${VENDOR_SOURCE_FILES})
 target_link_libraries(vendor PUBLIC raylib)
-target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})
+target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS}) # suprress header warnings
 target_link_libraries(vendor PUBLIC fmt::fmt)
 target_link_libraries(vendor PUBLIC tmx)
+target_link_libraries(vendor PUBLIC glfw)
 # target_link_libraries(vendor PUBLIC rapidjson)
 
 target_link_libraries(gamelib PUBLIC vendor)

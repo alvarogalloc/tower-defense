@@ -1,6 +1,7 @@
 export module ut;
 import std;
 #define NTEST
+#define UT_RUN_TIME_ONLY
 export namespace ut::inline v2_1_1 {
   namespace type_traits {
     template <class, class>

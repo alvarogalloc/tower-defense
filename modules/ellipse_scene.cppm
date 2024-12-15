@@ -18,6 +18,7 @@ private:
     std::vector<detached_bullet> m_detached_bullets;
 
     bool m_draw_debug_gui = false;
+    bool m_draw_debug_gui_detached_bullets = false;
     std::size_t m_score = 0;
 
     target_manager m_target_manager;

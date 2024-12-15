@@ -2,13 +2,35 @@ import ut;
 import raylib;
 import bullets;
 import std;
+import raylib_utils;
 
 using namespace ut;
+
+auto should_throw(auto fn)
+{
+  try {
+    fn();
+    std::print("should throw but didn't\n");
+    expect(false == true_b);
+  } catch (const std::exception& e) {
+    expect(true == true_b);
+  }
+};
+// clang-format off
+constexpr bullets::info b_ring_info_valid {
+  .damage = 10.0f,
+  .radius = 5.0f,
+  .speed = 20.0f,
+  .color ={},
+  .count = 5,
+  .ellipse_radius {3.0f, 4.0f},
+};
+// clang-format on
+
 int main()
 {
-  bullet_group_info b_info {};
-  "deserialize bullet groups test"_test = [&] mutable {
-    b_info = bullet_group_info::load(SRC_DIR "/assets/test_bullet_group.txt");
+  "deserialize bullet groups test"_test = [] {
+    auto b_info = bullets::info::load(SRC_DIR "/assets/test_bullet_group.txt");
     expect((5.0_f == b_info.radius)(0.1f));
     expect((10.0_f == b_info.damage)(0.1f));
     expect((20.0_f == b_info.speed)(0.1f));
@@ -19,8 +41,8 @@ int main()
     expect((4._f == b_info.ellipse_radius.y)(0.1f));
   };
   // i can be sure that from here b_info is valid
-  "common bullet operations"_test = [&] mutable {
-    bullets b_ring {b_info};
+  "common bullet operations"_test = [&] {
+    bullets b_ring {b_ring_info_valid};
     detached_bullet detached_default {};
     expect(true_b != detached_default.valid());
     expect(b_ring.get().size() == _ul(b_ring.count_alive()));
@@ -48,5 +70,32 @@ int main()
 
     b_ring.respawn_dead();
     expect(b_ring.get().size() == _ul(b_ring.count_alive()));
+  };
+
+  "chase construction means is always valid"_test = [] {
+    bullet_chase chase {{}, 0.f};
+    expect(chase.get_points().size() == 0_ul);
+    chase.add_point({0, 0});
+    expect(chase.get_points().size() == 1_ul);
+    chase.add_point({1, 1});
+    expect(chase.get_points().size() == 2_ul);
+    chase.reset();
+    expect(chase.get_points().size() == 0_ul);
+    expect(Vector2Equals({0, 0}, chase.get_current_position()));
+  };
+
+  "chase update actually gets to target"_test = [] {
+    bullet_chase chase {{}, 250.f};
+    expect(Vector2Equals({0, 0}, chase.get_current_position()));
+    chase.add_point({1, 1});
+    expect(Vector2Equals({1, 1}, chase.get_current_position()));
+    chase.add_point({100, 1});
+    expect(Vector2Equals({1, 1}, chase.get_current_position()));
+    while (!Vector2Equals({100, 1}, chase.get_current_position())) {
+      chase.update(0.1f);
+    }
+    expect(Vector2Equals({100, 1}, chase.get_current_position()));
+    chase.update(100.f);
+    expect(Vector2Equals({100, 1}, chase.get_current_position()));
   };
 }

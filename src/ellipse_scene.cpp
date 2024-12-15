@@ -11,14 +11,14 @@ ellipse_scene::ellipse_scene()
     : m_target_manager(std::ifstream {SRC_DIR "/assets/targets.json"})
     , m_draw_system(m_target_manager, m_detached_bullets)
     , m_physics_system(m_target_manager, m_detached_bullets)
-    , m_debug_gui_system(debug_gui_system(m_bullet_rings, m_target_manager))
+    , m_debug_gui_system(m_bullet_rings, m_target_manager, m_detached_bullets)
 {
   namespace fs = std::filesystem;
 
   for (const auto rings_path = fs::path {SRC_DIR "/assets/ring_presets"};
        const auto& current_entry : fs::directory_iterator {rings_path}) {
     fmt::print(debug::info, "loading ring {}\n", current_entry.path());
-    m_bullet_rings.emplace_back(bullet_group_info::load(current_entry.path().string()));
+    m_bullet_rings.emplace_back(bullets::info::load(current_entry.path().string()));
   }
   debug::my_assert(!m_bullet_rings.empty(), "No bullet rings loaded");
 }
@@ -36,6 +36,9 @@ void ellipse_scene::on_update()
   if (IsKeyPressed(KEY_TAB)) {
     m_draw_debug_gui = !m_draw_debug_gui;
   }
+  if (IsKeyPressed(KEY_D)) {
+    m_draw_debug_gui_detached_bullets = !m_draw_debug_gui_detached_bullets;
+  }
   if (IsKeyPressed(KEY_R)) {
     std::ranges::for_each(m_bullet_rings, &bullets::respawn_dead);
   }
@@ -48,9 +51,10 @@ void ellipse_scene::on_update()
         const auto mouse_pos = GetMousePosition();
         auto new_bullet = m_bullet_rings.at(m_selected_ring_index).detach_bullet(mouse_pos);
         // now we get the edge of the ellipse for the target
-        Vector2 target_pos = {9999,9999};
+        Vector2 target_pos {9999, 9999}; // initial should be something far away
         for (auto& target : m_target_manager.get_targets()) {
-          Vector2 edge = m_bullet_rings.at(m_selected_ring_index).get_edge_for(target.pos, mouse_pos);
+          Vector2 edge
+            = m_bullet_rings.at(m_selected_ring_index).get_edge_for(target.pos, mouse_pos);
           // check if the edge is closer to the target than the current target_pos
           if (Vector2Distance(edge, target.pos) < Vector2Distance(target_pos, target.pos)) {
             target_pos = target.pos;
@@ -105,7 +109,7 @@ void ellipse_scene::on_update()
 
 std::unique_ptr<scene> ellipse_scene::on_exit()
 {
-  return std::make_unique<ellipse_scene>();
+  return std::make_unique<menu_scene>();
 }
 
 void ellipse_scene::on_render()
@@ -125,5 +129,9 @@ void ellipse_scene::on_render()
   DrawText(score_str.c_str(), int(score_pos.x), int(score_pos.y), 20, colors::white);
   if (m_draw_debug_gui) {
     m_debug_gui_system.draw(m_selected_ring_index);
+  }
+
+  if (m_draw_debug_gui_detached_bullets) {
+    m_debug_gui_system.draw_list_detached_bullets();
   }
 }

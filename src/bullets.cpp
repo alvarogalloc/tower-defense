@@ -3,17 +3,61 @@ import std;
 import debug;
 import fmt;
 import raygui;
-//
+
+// implement constructor, add_point, reset and update
+bullet_chase::bullet_chase(const std::vector<Vector2>& points, float speed)
+    : m_points(points)
+    , m_speed(speed)
+{
+  if (m_points.size() > 0) {
+    current_position = m_points.front();
+  }
+}
+
+void bullet_chase::add_point(const Vector2& point)
+{
+  m_points.push_back(point);
+  if (m_points.size() == 1) {
+    current_position = m_points.front();
+  }
+}
+
+void bullet_chase::reset()
+{
+  m_points.clear();
+  current_position = {0, 0};
+}
+
+void bullet_chase::update(float delta)
+{
+  if (m_points.size() < 2) {
+    return;
+  }
+  constexpr static float tolerance = 3.f;
+  if (Vector2Distance(current_position, m_points.at(1)) < tolerance) {
+    m_points.erase(m_points.begin());
+    current_position = m_points.front();
+  }
+  // right now we'll just move the current_position towards next point
+  // we'll implement the bezier curve later
+  if (m_points.size() < 2) {
+    return;
+  }
+  const auto next_position = m_points.at(1);
+  const auto direction = Vector2Normalize(Vector2Subtract(next_position, current_position));
+  current_position = Vector2Add(current_position, Vector2Scale(direction, m_speed * delta));
+}
+
 // the bullets will be circling in three ellipses around the player
 // in angles 0, 120, 240 (in radians: 0, 2pi/3, 4pi/3)
 
 constexpr static auto pi = std::numbers::pi_v<float>;
 
-bullet_group_info bullet_group_info::load(std::string_view filename)
+bullets::info bullets::info::load(std::string_view filename)
 {
   std::ifstream file {filename.data()};
   debug::my_assert(file.is_open(), "Could not load file");
-  bullet_group_info bullet_info;
+  bullets::info bullet_info;
 
   std::string line;
   while (std::getline(file, line)) {
@@ -52,7 +96,7 @@ bullet_group_info bullet_group_info::load(std::string_view filename)
   return bullet_info;
 }
 
-bullets::bullets(const bullet_group_info& bullets_info)
+bullets::bullets(const bullets::info& bullets_info)
     : m_info {bullets_info}
 {
   m_bullets.resize(m_info.count);
@@ -123,9 +167,17 @@ detached_bullet bullets::detach_bullet(const Vector2 center)
     detached.info = &m_info;
     res->alive = false;
   }
+
+  detached.chase.reset();
+  detached.chase.add_point(detached.position);
+  // calculate a second point that is bulletsx and targety
+  detached.chase.add_point(Vector2 {detached.position.x, detached.target_position.y});
+  detached.chase.add_point(detached.target_position);
+
   return detached;
 }
-Vector2 bullets::get_edge_for(const Vector2 target, const Vector2 center) const {
+Vector2 bullets::get_edge_for(const Vector2 target, const Vector2 center) const
+{
   Vector2 direction = Vector2Subtract(target, center);
   float angle = std::atan2(direction.y, direction.x);
   return Vector2 {

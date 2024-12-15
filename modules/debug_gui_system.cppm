@@ -14,14 +14,33 @@ export
 private:
     const std::vector<bullets>& m_bullet_rings;
     const target_manager& m_t_manager;
+    const std::vector<detached_bullet>& m_detached_bullets;
 
     int scrollIndex = 0, active = 0, ring_list_scroll = 0, ring_list_active = 0,
-        target_list_scroll = 0, target_list_active = 0;
+        target_list_scroll = 0, target_list_active = 0, detached_bullet_scroll = 0,
+        detached_bullet_active = 0;
 
 public:
-    debug_gui_system(const std::vector<bullets>& bullet_rings, const target_manager& t_manager):
-      m_bullet_rings(bullet_rings), m_t_manager(t_manager)
+    debug_gui_system(
+      const std::vector<bullets>& bullet_rings, const target_manager& t_manager,
+      const std::vector<detached_bullet>& detached_bullets)
+        : m_bullet_rings(bullet_rings)
+        , m_t_manager(t_manager)
+        , m_detached_bullets(detached_bullets)
     {}
+    void draw_list_detached_bullets()
+    {
+      if (m_detached_bullets.empty()) {
+        return;
+      }
+      auto list_str = list_to_datastr("", m_detached_bullets, [&](const auto& bullet) {
+        return fmt::format(
+          "Bullet pos: {}, chase.pos ", to_string(bullet.position), to_string(bullet.chase.get_current_position()));
+      });
+      GuiListView(
+        Rectangle {200, 0, 200, 200}, list_str.c_str(), &detached_bullet_scroll,
+        &detached_bullet_active);
+    }
     void draw(const std::size_t current_ring)
     {
       constexpr static auto list = "Bullet Rings;Current Ring;Targets;Closest Target";

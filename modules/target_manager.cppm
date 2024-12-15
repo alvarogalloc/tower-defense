@@ -8,6 +8,12 @@ import rapidjson;
 export
 {
   struct target {
+    bool operator==(const target& rhs) const
+    {
+      return pos.x == rhs.pos.x && pos.y == rhs.pos.y && radius == rhs.radius
+        && color.r == rhs.color.r && color.g == rhs.color.g && color.b == rhs.color.b
+        && health == rhs.health && max_health == rhs.max_health;
+    }
     Vector2 pos;
     float radius;
     Color color;
@@ -35,7 +41,8 @@ public:
         = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
       load_from_json(contents);
     }
-    constexpr auto& closest_to(const Vector2 pos) const {
+    constexpr auto& closest_to(const Vector2 pos) const
+    {
       return *std::min_element(
         m_targets.begin(), m_targets.end(), [&](const auto& lhs, const auto& rhs) {
           return std::hypot(lhs.pos.x - pos.x, lhs.pos.y - pos.y)

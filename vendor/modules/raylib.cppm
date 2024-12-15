@@ -47,7 +47,7 @@ export
   using ::IsMouseButtonReleased;
   using ::IsMouseButtonUp;
   using ::IsMusicStreamPlaying;
-  using ::IsRenderTextureReady;
+  using ::IsRenderTextureValid;
   using ::LoadFont;
   using ::LoadFontEx;
   using ::LoadMusicStream;
@@ -75,7 +75,7 @@ export
   using ::Vector2Equals;
   using ::WindowShouldClose;
 
-  using ::IsMusicReady;
+  using ::IsMusicValid;
   using ::PlayMusicStream;
   using ::SetMasterVolume;
   using ::SetMusicPitch;
