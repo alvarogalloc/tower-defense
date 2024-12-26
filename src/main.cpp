@@ -9,7 +9,7 @@ int main()
   game_spec spec {
     .window_name = "Hello, World!",
     .asset_path = SRC_DIR "/assets",
-    .win_size = {640, 704},
+    .win_size = {1280, 720},
     .target_fps = 60,
   };
   game mygame(spec);

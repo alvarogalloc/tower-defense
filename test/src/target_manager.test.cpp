@@ -55,9 +55,9 @@ int main()
   };
   "closest to position"_test = [] {
     target_manager manager;
-    target t1({10.f, 10.f}, 10.0f, {255, 0, 0, 255}, 100.0f, 100.0f);
-    target t2({10.f, 10.f}, 10.0f, {255, 0, 10, 255}, 100.0f, 100.0f);
-    target t3({30.f, 30.f}, 10.0f, {255, 10, 0, 255}, 100.0f, 100.0f);
+    target t1(10.0f, 100.0f, 100.0f, {10.f, 10.f}, {255, 0, 0, 255});
+    target t2(10.0f, 100.0f, 100.0f, {10.f, 10.f}, {255, 0, 10, 255});
+    target t3(10.0f, 100.0f, 100.0f, {30.f, 30.f}, {255, 10, 0, 255});
     manager.spawn(t1);
     manager.spawn(t2);
     manager.spawn(t3);
@@ -92,7 +92,7 @@ int main()
 
   "spawn"_test = [] {
     target_manager manager;
-    target t({100.f, 10.f}, 10.0f, {255, 0, 0, 255}, 100.0f, 100.0f);
+    target t(10.0f, 100.0f, 100.0f, {30.f, 30.f}, {255, 10, 0, 255});
     manager.spawn(t);
     expect(1_ul == manager.get_targets().size());
     int n_calls = 2300;

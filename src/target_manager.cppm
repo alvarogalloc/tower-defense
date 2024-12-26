@@ -3,22 +3,23 @@ import raylib;
 import std;
 import debug;
 import fmt;
-import rapidjson;
+import json;
 
 export
 {
   struct target {
+    float radius;
+    float health;
+    float max_health;
+
+    Vector2 pos;
+    Color color;
     bool operator==(const target& rhs) const
     {
       return pos.x == rhs.pos.x && pos.y == rhs.pos.y && radius == rhs.radius
         && color.r == rhs.color.r && color.g == rhs.color.g && color.b == rhs.color.b
         && health == rhs.health && max_health == rhs.max_health;
     }
-    Vector2 pos;
-    float radius;
-    Color color;
-    float health;
-    float max_health;
   };
 
   class target_manager {
@@ -61,40 +62,15 @@ public:
 
     constexpr void load_from_json(const std::string& contents)
     {
-      rapidjson::Document doc;
-      doc.Parse(contents.c_str());
-      // shold be an array of objects
-      debug::my_assert(doc.IsArray(), "The json should contain an array of objects");
-
-      for (const auto& target : doc.GetArray()) {
-        debug::my_assert(target.IsObject(), "Each element of the array should be an object");
-
-        debug::my_assert(target.HasMember("pos"), "Each target should have a pos");
-        debug::my_assert(target["pos"].IsArray(), "Each target should have a pos as an array");
-        debug::my_assert(
-          target["pos"].Size() == 2, "Each target should have a pos with 2 elements (x, y)");
-
-        debug::my_assert(target.HasMember("radius"), "Each target should have a radius");
-
-        debug::my_assert(target.HasMember("color"), "Each target should have a color");
-        debug::my_assert(target["color"].IsArray(), "Each target should have a color as an array");
-        debug::my_assert(
-          target["color"].Size() == 4,
-          "Each target should have a color with 4 elements (r, g, b, a)");
-
-        debug::my_assert(target.HasMember("health"), "Each target should have a health");
-
-        debug::my_assert(target.HasMember("max_health"), "Each target should have a max_health");
-
+      using json = nlohmann::json;
+      auto targets = json::parse(contents);
+      for (const auto& target : targets) {
         m_targets.emplace_back(
-          Vector2 {target["pos"][0].GetFloat(), target["pos"][1].GetFloat()},
-          target["radius"].GetFloat(),
-          Color {
-            static_cast<unsigned char>(target["color"][0].GetInt()),
-            static_cast<unsigned char>(target["color"][1].GetInt()),
-            static_cast<unsigned char>(target["color"][2].GetInt()),
-            static_cast<unsigned char>(target["color"][3].GetInt())},
-          target["health"].GetFloat(), target["max_health"].GetFloat());
+          target["radius"].get<float>(), target["health"].get<float>(),
+          target["max_health"].get<float>(),
+          Vector2{target["pos"]["x"].get<float>(), target["pos"]["y"].get<float>()},
+          Color{target["color"]["r"].get<std::uint8_t>(), target["color"]["g"].get<std::uint8_t>(),
+           target["color"]["b"].get<std::uint8_t>(), target["color"]["a"].get<std::uint8_t>()});
       }
     }
 

@@ -8,10 +8,10 @@ export
 {
   using ::CloseAudioDevice;
   using ::CloseWindow;
-  using ::DrawLine;
-  using ::DrawLineV;
   using ::DrawEllipse;
   using ::DrawEllipseLines;
+  using ::DrawLine;
+  using ::DrawLineV;
   using ::DrawTextureEx;
   using ::GetFontDefault;
   using ::GetFrameTime;
@@ -66,13 +66,14 @@ export
   using ::UnloadTexture;
   using ::Vector2;
   using ::Vector2Add;
-  using ::Vector2Scale;
-  using ::Vector2Length;
-  using ::Vector2Normalize;
-  using ::Vector2Subtract;
-  using ::Vector2Zero;
   using ::Vector2Distance;
   using ::Vector2Equals;
+  using ::Vector2Length;
+  using ::Vector2Normalize;
+  using ::Vector2Rotate;
+  using ::Vector2Scale;
+  using ::Vector2Subtract;
+  using ::Vector2Zero;
   using ::WindowShouldClose;
 
   using ::IsMusicValid;
@@ -85,6 +86,8 @@ export
   using ::UpdateMusicStream;
 
   using ::DrawCircle;
+  using ::DrawTexture;
+  using ::DrawTextureV;
   using ::DrawCircleGradient;
   using ::DrawCircleLines;
   using ::DrawCircleSector;

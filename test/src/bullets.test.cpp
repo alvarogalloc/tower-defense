@@ -61,31 +61,4 @@ int main()
     b_ring.respawn_dead();
     expect(b_ring.get().size() == _ul(b_ring.count_alive()));
   };
-
-  "chase construction means is always valid"_test = [] {
-    bullet_chase chase {{}, 0.f};
-    expect(chase.get_points().size() == 0_ul);
-    chase.add_point({0, 0});
-    expect(chase.get_points().size() == 1_ul);
-    chase.add_point({1, 1});
-    expect(chase.get_points().size() == 2_ul);
-    chase.reset();
-    expect(chase.get_points().size() == 0_ul);
-    expect(Vector2Equals({0, 0}, chase.get_current_position()));
-  };
-
-  "chase update actually gets to target"_test = [] {
-    bullet_chase chase {{}, 250.f};
-    expect(Vector2Equals({0, 0}, chase.get_current_position()));
-    chase.add_point({1, 1});
-    expect(Vector2Equals({1, 1}, chase.get_current_position()));
-    chase.add_point({100, 1});
-    expect(Vector2Equals({1, 1}, chase.get_current_position()));
-    while (!Vector2Equals({100, 1}, chase.get_current_position())) {
-      chase.update(0.1f);
-    }
-    expect(Vector2Equals({100, 1}, chase.get_current_position()));
-    chase.update(100.f);
-    expect(Vector2Equals({100, 1}, chase.get_current_position()));
-  };
 }

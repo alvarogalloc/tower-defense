@@ -15,18 +15,12 @@ include(FetchContent)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 
-
-# use clang tidy
-# find_program(CLANG_TIDY_EXE NAMES "clang-tidy" QUIET)
+# use clang tidy find_program(CLANG_TIDY_EXE NAMES "clang-tidy" QUIET)
 #
-# if(CLANG_TIDY_EXE)
-#   set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}")
-#   macro(use_clang_tidy TARGET)
-#     set_target_properties(${TARGET} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
-#   endmacro()
-# else()
-#   message(WARNING "clang-tidy not found. Code analysis will be skipped.")
-# endif()
+# if(CLANG_TIDY_EXE) set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}")
+# macro(use_clang_tidy TARGET) set_target_properties(${TARGET} PROPERTIES
+# CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}") endmacro() else() message(WARNING
+# "clang-tidy not found. Code analysis will be skipped.") endif()
 
 # 10.2.1 fmt
 FetchContent_Declare(
@@ -41,11 +35,10 @@ set(FMT_MODULE
     CACHE BOOL "Use fmt as a CMake module")
 FetchContent_MakeAvailable(fmt)
 
-# find_package(RapidJSON CONFIG REQUIRED)
-find_package(tmx CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
+find_package(nlohmann_json CONFIG REQUIRED)
 
 add_compile_definitions(SRC_DIR="${CMAKE_SOURCE_DIR}")
 file(GLOB GAMELIB_MODULE_FILES "src/*.cppm")
@@ -62,12 +55,11 @@ target_sources(
   PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${VENDOR_MODULES}
   PRIVATE ${VENDOR_SOURCE_FILES})
 target_link_libraries(vendor PUBLIC raylib)
-target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS}) # suprress header warnings
+target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS}
+)# suprress header warnings
 target_link_libraries(vendor PUBLIC fmt::fmt)
-target_link_libraries(vendor PUBLIC tmx)
 target_link_libraries(vendor PUBLIC glfw)
-# target_link_libraries(vendor PUBLIC rapidjson)
-
+target_link_libraries(vendor PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(gamelib PUBLIC vendor)
 
 target_compile_features(gamelib PUBLIC cxx_std_23)
@@ -106,8 +98,7 @@ set(GAME_SOURCE_FILES "src/main.cpp")
 file(GLOB_RECURSE GAME_RESOURCES "${CMAKE_SOURCE_DIR}/assets/*")
 
 add_executable(magster ${GAME_SOURCE_FILES} ${GAME_RESOURCES})
-# use_clang_tidy(gamelib)
-# add a macro with the current path
+# use_clang_tidy(gamelib) add a macro with the current path
 target_link_libraries(magster PRIVATE gamelib)
 
 # if option TESTS is enabled add test for each file in test folder
