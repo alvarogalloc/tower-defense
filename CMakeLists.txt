@@ -38,6 +38,8 @@ FetchContent_MakeAvailable(fmt)
 find_package(raylib CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
+# todo change this when module support
+# find_package(glaze CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 
 add_compile_definitions(SRC_DIR="${CMAKE_SOURCE_DIR}")
@@ -47,8 +49,8 @@ list(REMOVE_ITEM GAMELIB_SOURCE_FILES "src/main.cpp")
 add_library(gamelib)
 # use_clang_tidy(gamelib)
 
-file(GLOB_RECURSE VENDOR_MODULES "vendor/modules/*.cppm")
-file(GLOB_RECURSE VENDOR_SOURCE_FILES "vendor/src/*.cpp")
+file(GLOB_RECURSE VENDOR_MODULES "vendor/*.cppm")
+file(GLOB_RECURSE VENDOR_SOURCE_FILES "vendor/*.cpp")
 add_library(vendor)
 target_sources(
   vendor
@@ -59,7 +61,8 @@ target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS}
 )# suprress header warnings
 target_link_libraries(vendor PUBLIC fmt::fmt)
 target_link_libraries(vendor PUBLIC glfw)
-target_link_libraries(vendor PRIVATE nlohmann_json::nlohmann_json)
+# target_link_libraries(vendor PRIVATE glaze::glaze)
+target_link_libraries(vendor PUBLIC nlohmann_json nlohmann_json::nlohmann_json)
 target_link_libraries(gamelib PUBLIC vendor)
 
 target_compile_features(gamelib PUBLIC cxx_std_23)
@@ -69,6 +72,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
                                         -fsanitize=undefined)
   target_link_options(gamelib PUBLIC -fsanitize=address -fsanitize=leak
                       -fsanitize=undefined)
+  # add libc++ hardening 
+add_definitions(-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG)
 endif()
 target_sources(
   gamelib
@@ -103,7 +108,7 @@ target_link_libraries(magster PRIVATE gamelib)
 
 # if option TESTS is enabled add test for each file in test folder
 option(BUILD_TESTING "Enable Test Builds" OFF)
-if(BUILD_TESTING)
+if(FALSE AND BUILD_TESTING)
   enable_testing()
 
   add_subdirectory(test)

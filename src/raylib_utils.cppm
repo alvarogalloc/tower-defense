@@ -1,13 +1,12 @@
 export module raylib_utils;
 import raylib;
-import fmt;
 import std;
 
 export
 {
   constexpr auto to_string(const Vector2& v)
   {
-    return fmt::format("({:.2f},{:.2f})", v.x, v.y);
+    return std::format("({:.2f},{:.2f})", v.x, v.y);
   }
   constexpr auto operator+(const Vector2& lhs, const Vector2& rhs)
   {
@@ -43,7 +42,7 @@ export
     std::string datastr;
     std::size_t i = 0;
     for (auto& current : data) {
-      datastr += fmt::format("{}{}: {};", name, i, transformer(current));
+      datastr += std::format("{}{}: {};", name, i, transformer(current));
       i++;
     }
     datastr.pop_back(); // remove last ';'

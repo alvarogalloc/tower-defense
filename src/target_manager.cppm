@@ -62,6 +62,8 @@ public:
 
     constexpr void load_from_json(const std::string& contents)
     {
+#if 1
+// with nlohmann
       using json = nlohmann::json;
       auto targets = json::parse(contents);
       for (const auto& target : targets) {
@@ -72,6 +74,14 @@ public:
           Color{target["color"]["r"].get<std::uint8_t>(), target["color"]["g"].get<std::uint8_t>(),
            target["color"]["b"].get<std::uint8_t>(), target["color"]["a"].get<std::uint8_t>()});
       }
+#else
+      // with glaze json
+
+      using glz::read_json;
+      auto ec = read_json(m_targets, contents);
+      debug::my_assert(!ec, "error reading json: {}", ec.custom_error_message);
+
+#endif
     }
 
     constexpr target& spawn(target t)

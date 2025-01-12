@@ -30,10 +30,12 @@ export
   using ::CloseWindow;
   using ::Color;
   using ::ColorToInt;
+  using ::DrawLineEx;
   using ::DrawRectangleLines;
   using ::DrawRectangleLinesEx;
   using ::DrawRectanglePro;
   using ::DrawRectangleV;
+  using ::DrawText;
   using ::DrawTextEx;
   using ::DrawTexturePro;
   using ::DrawTextureRec;
@@ -86,8 +88,6 @@ export
   using ::UpdateMusicStream;
 
   using ::DrawCircle;
-  using ::DrawTexture;
-  using ::DrawTextureV;
   using ::DrawCircleGradient;
   using ::DrawCircleLines;
   using ::DrawCircleSector;
@@ -105,6 +105,7 @@ export
   using ::DrawRing;
   using ::DrawText;
   using ::DrawTexture;
+  using ::DrawTextureV;
   using ::DrawTriangle;
   using ::DrawTriangleFan;
   using ::DrawTriangleLines;

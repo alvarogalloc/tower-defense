@@ -2,7 +2,8 @@ import raylib;
 import raygui;
 import game;
 import std;
-import menu_scene;
+//import menu_scene;
+import ellipse_scene;
 
 int main()
 {
@@ -13,6 +14,6 @@ int main()
     .target_fps = 60,
   };
   game mygame(spec);
-  mygame.set_scene(std::make_unique<menu_scene>());
+  mygame.set_scene(std::make_unique<ellipse_scene>());
   return mygame.run();
 }

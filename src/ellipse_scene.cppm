@@ -12,11 +12,10 @@ export
 private:
     std::size_t m_score = 0;
     target_manager m_target_manager;
-    player_movement m_player_movement;
+    player_movement m_spaceship_movement;
     std::function<void(float)> m_update_player;
 
     Texture2D m_spaceship;
-
 
 public:
     ellipse_scene();

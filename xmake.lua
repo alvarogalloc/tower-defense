@@ -1,24 +1,26 @@
 ---@diagnostic disable: undefined-global, undefined-field
 set_project("magster")
 
--- Set C++ standard
-set_languages("cxx23")
-
--- Add project modes
 add_rules("mode.debug", "mode.release")
+set_defaultmode("debug")
 
-add_requires("raylib", "raygui", "rapidjson")
+set_languages("c++23")
+add_requires("raylib", "raygui", "nlohmann_json")
 
--- Set debug flags
-if is_mode("debug") then
-	add_cxflags("-fno-omit-frame-pointer", "-fsanitize=address,undefined")
-	add_ldflags("-fno-omit-frame-pointer", "-fsanitize=address,undefined")
-end
-
-add_cxflags("-Wno-deprecated-declarations")
+target("vendor")
+  set_kind("static")
+  set_policy("build.c++.modules", true)
+  add_packages("raylib", "raygui", "nlohmann_json", { public = true })
+  add_files("vendor/*.cpp")
+  add_files("vendor/*.cppm", { public = true })
+  add_files("fmt/src/fmt.cc", { public = true })
+  add_includedirs("fmt/include", "fmt/src", { public = true })
 
 target("magster")
+  set_kind("binary")
+  set_policy("build.c++.modules.std", true)
+  set_policy("build.c++.modules", true)
   add_files("src/*.cpp")
   add_files("src/*.cppm")
-  set_kind("binary")
-  add_deps("raylib", "raygui", "rapidjson")
+  add_defines(string.format('SRC_DIR="%s"', os.scriptdir()))
+  add_deps("vendor")

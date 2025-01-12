@@ -1,7 +1,8 @@
 {
   "dependencies": [
-    "raylib",
+    "nlohmann-json",
     "raygui",
-    "nlohmann-json"
-  ]
+    "raylib"
+  ],
+  "builtin-baseline": "a3a2cda955a08aff87c2d9f6b72fb955ecfabd49"
 }
