@@ -14,6 +14,7 @@ private:
     target_manager m_target_manager;
     player_movement m_spaceship_movement;
     std::function<void(float)> m_update_player;
+    std::function<void()> m_draw_player;
 
     Texture2D m_spaceship;
 
