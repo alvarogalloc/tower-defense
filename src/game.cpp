@@ -1,13 +1,12 @@
 module game;
-import fmt;
 import debug;
 
-game::game(const game_spec& spec)
-    : m_spec(spec)
+game::game(config::app_info spec)
+    : m_spec(std::move(spec))
 {
   InitWindow(
-    static_cast<int>(spec.win_size.x), static_cast<int>(spec.win_size.y), spec.window_name.data());
-  SetTargetFPS(spec.target_fps);
+    static_cast<int>(spec.size.x), static_cast<int>(spec.size.y), spec.window_name.data());
+  SetTargetFPS(spec.fps);
   InitAudioDevice();
 }
 void game::exit()
@@ -25,6 +24,7 @@ void game::set_scene(std::unique_ptr<scene> scene)
 int game::run()
 {
   try {
+    bool debug_mode = false;
     debug::my_assert(bool(m_scene), "Scene not set");
     while (!WindowShouldClose()) {
       if (m_scene->should_exit_game()) {
@@ -38,6 +38,12 @@ int game::run()
         this->set_scene(std::move(new_scene));
       }
       m_scene->on_update();
+      // f1 to toggle debug
+      debug_mode = IsKeyPressed(KEY_F1) ? !debug_mode : debug_mode;
+
+      if (debug_mode) {
+        debug::draw_debug(m_world);
+      }
       BeginDrawing();
       {
         m_scene->on_render();
@@ -48,7 +54,7 @@ int game::run()
     this->exit();
     return 0;
   } catch (const std::exception& e) {
-    fmt::print(debug::error, "Error: {}\n", e.what());
+    std::print("{}Error: {}\n{}", debug::error, e.what(), debug::reset);
     this->exit();
     return 1;
   }

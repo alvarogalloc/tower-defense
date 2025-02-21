@@ -1,11 +1,11 @@
-export module menu_scene;
+export module scenes.menu;
 import game;
 import raylib;
 import std;
 
-export
+export namespace scenes
 {
-  class menu_scene : public scene {
+  class menu : public scene {
     Font m_title_font;
     Texture2D m_blue_guy;
     bool m_should_exit_game = false;

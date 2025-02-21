@@ -2,18 +2,13 @@ import raylib;
 import raygui;
 import game;
 import std;
-//import menu_scene;
-import ellipse_scene;
+import scenes.menu;
+import scenes.shooting;
+import config;
 
 int main()
 {
-  game_spec spec {
-    .window_name = "Hello, World!",
-    .asset_path = SRC_DIR "/assets",
-    .win_size = {1280, 720},
-    .target_fps = 60,
-  };
-  game mygame(spec);
-  mygame.set_scene(std::make_unique<ellipse_scene>());
+  game mygame{config::game_info};
+  mygame.set_scene(std::make_unique<scenes::menu>());
   return mygame.run();
 }

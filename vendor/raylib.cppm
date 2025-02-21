@@ -55,6 +55,7 @@ export
   using ::LoadMusicStream;
   using ::LoadRenderTexture;
   using ::LoadTexture;
+using ::GetTime;
   using ::MeasureText;
   using ::MeasureTextEx;
   using ::MouseButton;

@@ -2,18 +2,12 @@ export module game;
 import ginseng;
 import raylib;
 import std;
+import config;
 
 export
 {
   class game;
   class scene;
-
-  struct game_spec {
-    std::string_view window_name;
-    std::string_view asset_path;
-    Vector2 win_size;
-    int target_fps;
-  };
 
   class scene {
 protected:
@@ -40,12 +34,8 @@ public:
 
   class game {
 public:
-    game(const game_spec& spec);
+    game(config::app_info spec);
     void exit();
-    auto get_spec() const -> const game_spec&
-    {
-      return m_spec;
-    }
     auto get_world() -> ginseng::database&
     {
       return m_world;
@@ -54,7 +44,7 @@ public:
     [[nodiscard]] int run();
 
 private:
-    game_spec m_spec;
+    config::app_info m_spec;
     std::unique_ptr<scene> m_scene;
     ginseng::database m_world;
   };

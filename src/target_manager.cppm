@@ -2,7 +2,6 @@ export module target_manager;
 import raylib;
 import std;
 import debug;
-import fmt;
 import json;
 
 export

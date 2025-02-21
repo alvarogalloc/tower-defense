@@ -22,18 +22,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 # CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}") endmacro() else() message(WARNING
 # "clang-tidy not found. Code analysis will be skipped.") endif()
 
-# 10.2.1 fmt
-FetchContent_Declare(
-  fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 11.0.2)
-set(FMT_USE_CMAKE_MODULES
-    ON
-    CACHE BOOL "Use CMake modules for fmt")
-set(FMT_MODULE
-    ON
-    CACHE BOOL "Use fmt as a CMake module")
-FetchContent_MakeAvailable(fmt)
 
 find_package(raylib CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
@@ -43,8 +31,8 @@ find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 find_package(nlohmann_json CONFIG REQUIRED)
 
 add_compile_definitions(SRC_DIR="${CMAKE_SOURCE_DIR}")
-file(GLOB GAMELIB_MODULE_FILES "src/*.cppm")
-file(GLOB GAMELIB_SOURCE_FILES "src/*.cpp")
+file(GLOB_RECURSE GAMELIB_MODULE_FILES "src/*.cppm")
+file(GLOB_RECURSE GAMELIB_SOURCE_FILES "src/*.cpp")
 list(REMOVE_ITEM GAMELIB_SOURCE_FILES "src/main.cpp")
 add_library(gamelib)
 # use_clang_tidy(gamelib)
@@ -59,7 +47,6 @@ target_sources(
 target_link_libraries(vendor PUBLIC raylib)
 target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS}
 )# suprress header warnings
-target_link_libraries(vendor PUBLIC fmt::fmt)
 target_link_libraries(vendor PUBLIC glfw)
 # target_link_libraries(vendor PRIVATE glaze::glaze)
 target_link_libraries(vendor PUBLIC nlohmann_json nlohmann_json::nlohmann_json)
