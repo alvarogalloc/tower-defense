@@ -12,4 +12,6 @@ export namespace components {
     float rotation;
   };
 
-}
+  struct bounding_box : Rectangle {};
+
+} // namespace components

@@ -6,6 +6,17 @@ export module raylib;
 
 export
 {
+  using ::CheckCollisionCircleLine;
+  using ::CheckCollisionCircleRec;
+  using ::CheckCollisionCircles;
+  using ::CheckCollisionLines;
+  using ::CheckCollisionPointCircle;
+  using ::CheckCollisionPointLine;
+  using ::CheckCollisionPointPoly;
+  using ::CheckCollisionPointRec;
+  using ::CheckCollisionPointTriangle;
+  using ::CheckCollisionRecs;
+
   using ::CloseAudioDevice;
   using ::CloseWindow;
   using ::DrawEllipse;
@@ -44,6 +55,7 @@ export
   using ::Font;
   using ::GetColor;
   using ::GetRandomValue;
+  using ::GetTime;
   using ::IsMouseButtonDown;
   using ::IsMouseButtonPressed;
   using ::IsMouseButtonReleased;
@@ -55,7 +67,6 @@ export
   using ::LoadMusicStream;
   using ::LoadRenderTexture;
   using ::LoadTexture;
-using ::GetTime;
   using ::MeasureText;
   using ::MeasureTextEx;
   using ::MouseButton;

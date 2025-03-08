@@ -2,7 +2,7 @@ module systems.bullet;
 import config;
 
 namespace systems::bullet {
-  void shoot_bullet(ginseng::database& db, info info)
+  void shoot_bullet(ginseng::database& db, components::bullet info)
   {
     auto new_bullet = db.create_entity();
     db.add_component(new_bullet, std::move(info));
@@ -10,11 +10,11 @@ namespace systems::bullet {
 
   void update(ginseng::database& db, float dt)
   {
-    const auto is_out_of_bounds = [&](const info& bullet) {
+    const auto is_out_of_bounds = [&](const components::bullet& bullet) {
       return bullet.position.x < 0 || bullet.position.x > config::game_info.size.x || bullet.position.y < 0
         || bullet.position.y > config::game_info.size.y;
     };
-    db.visit([&](ginseng::database::ent_id id, info& bullet) {
+    db.visit([&](ginseng::database::ent_id id, components::bullet& bullet) {
       const auto sin_value = std::sin(bullet.rotation - 3.14f / 2.f);
       const auto cos_value = std::cos(bullet.rotation - 3.14f / 2.f);
       const float bullet_speed = 850.0f;
@@ -28,8 +28,8 @@ namespace systems::bullet {
 
   void draw(ginseng::database& db)
   {
-    db.visit([&](const info& bullet) {
-      DrawCircleV(bullet.position, 5.f, colors::white);
+    db.visit([&](const components::bullet& bullet) {
+      DrawCircleV(bullet.position, bullet.radius, colors::white);
     });
   }
 

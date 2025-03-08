@@ -2,6 +2,7 @@ module scenes.shooting;
 import raylib;
 import systems.player;
 import systems.bullet;
+import systems.enemy;
 import components.movement;
 
 namespace scenes {
@@ -11,6 +12,7 @@ namespace scenes {
   {
     m_systems.push_back(systems::player::update);
     m_systems.push_back(systems::bullet::update);
+    m_systems.push_back(systems::enemy::update);
 
     auto new_player = m_world->create_entity();
 

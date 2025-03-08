@@ -1,5 +1,6 @@
 module systems.player;
 import systems.bullet;
+import components.bullet;
 
 namespace {
   using namespace systems::player;
@@ -77,7 +78,7 @@ namespace systems::player {
           const auto& player = db.get_component<movement>(entity);
           systems::bullet::shoot_bullet(
             db,
-            systems::bullet::info {
+            components::bullet {
               player.position,
               Vector2Scale(Vector2Normalize(player.velocity), 100.f),
               player.rotation,
