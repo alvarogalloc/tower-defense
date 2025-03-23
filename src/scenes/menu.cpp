@@ -12,7 +12,10 @@ namespace scenes {
     m_blue_guy = LoadTexture(routes::BLUE_GUY_TEXTURE);
   }
 
-  void menu::on_update() {}
+  void menu::on_update()
+  {
+    m_space_background.update(GetFrameTime());
+  }
 
   std::unique_ptr<scene> menu::on_exit()
   {
@@ -23,8 +26,8 @@ namespace scenes {
 
   void menu::on_render()
   {
-    // DrawTexture(*m_background, 0, 0, colors::white);
-    ClearBackground(colors::darkgreen);
+    m_space_background.draw();
+
     // calculate the width of the text
     constexpr static std::string_view title = "Rooster\nSpace";
     const auto text_size = MeasureTextEx(m_title_font, title.data(), 120, 0.2f);

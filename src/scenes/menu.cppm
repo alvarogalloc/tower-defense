@@ -2,6 +2,7 @@ export module scenes.menu;
 import game;
 import raylib;
 import std;
+import prefabs.space_background;
 
 export namespace scenes
 {
@@ -9,6 +10,7 @@ export namespace scenes
     Font m_title_font;
     Texture2D m_blue_guy;
     bool m_should_exit_game = false;
+    prefabs::space_background m_space_background;
 
 public:
     bool should_exit_game() const override

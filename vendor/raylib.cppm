@@ -16,6 +16,13 @@ export
   using ::CheckCollisionPointRec;
   using ::CheckCollisionPointTriangle;
   using ::CheckCollisionRecs;
+  using ::GetShaderLocation;
+  using ::LoadShader;
+  using ::SetShaderValue;
+  using ::Shader;
+  using ::UnloadShader;
+  using ::BeginShaderMode;
+  using ::EndShaderMode;
 
   using ::CloseAudioDevice;
   using ::CloseWindow;

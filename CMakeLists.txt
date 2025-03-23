@@ -69,7 +69,7 @@ target_sources(
 
 target_compile_options(
   gamelib
-  PRIVATE
+  PUBLIC
     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
     -Wall
     -Wextra
