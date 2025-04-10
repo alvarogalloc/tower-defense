@@ -15,5 +15,6 @@ private:
     int m_time_loc {};
     int m_res_loc {};
     float m_time = 0.0f;
+    Vector2 m_resolution {};
   };
 } // namespace

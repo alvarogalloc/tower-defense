@@ -4,15 +4,17 @@ import systems.player;
 import systems.bullet;
 import systems.enemy;
 import components.movement;
+import components.enemy;
+import components.tags;
 
 namespace scenes {
-  shooting::shooting() {}
+  using namespace systems;
 
   void shooting::on_start()
   {
-    m_systems.push_back(systems::player::update);
-    m_systems.push_back(systems::bullet::update);
-    m_systems.push_back(systems::enemy::update);
+    m_systems.emplace_back(player::update);
+    m_systems.emplace_back(bullet::update);
+    m_systems.emplace_back(enemy::update);
 
     auto new_player = m_world->create_entity();
 
@@ -23,7 +25,7 @@ namespace scenes {
         .velocity = {0.f, 0.f},
         .acceleration_rate = 100.f,
         .deceleration_rate = 10.f,
-        .max_speed = 200.f,
+        .max_speed = 500.f,
         .rotation = 0.f,
       });
     m_world->add_component(
@@ -35,9 +37,23 @@ namespace scenes {
         .max_ammo = 10,
       });
     m_world->add_component(new_player, systems::player::action::none);
+    m_world->add_component(new_player, components::tags::player {});
     auto spaceship = LoadTexture(SRC_DIR "/assets/spaceship.png");
     m_to_clean.push_back(spaceship);
     m_world->add_component(new_player, spaceship);
+
+    // enemy type 1
+    m_enemy_spawner = systems::enemy::make_spawner(
+      components::bounding_box {0, 0, 50, 50},
+      components::enemy {
+        .enemy_type = components::enemy::type::basic,
+        .health = 100,
+        .damage = 10,
+        .texture = LoadTexture(SRC_DIR "/assets/enemy.png"),
+        .speed = 100.f,
+      });
+    m_enemy_spawner(*m_world, 0.f, 0.f);
+    m_enemy_spawner(*m_world, 150.f, 0.f);
   }
   void shooting::on_update()
   {
@@ -59,5 +75,6 @@ namespace scenes {
     ClearBackground(colors::darkblue);
     systems::player::draw(*m_world);
     systems::bullet::draw(*m_world);
+    systems::enemy::draw(*m_world);
   }
 } // namespace scenes

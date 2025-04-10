@@ -26,7 +26,7 @@ namespace systems::player {
       const auto starting_pos = player.position;
       Vector2 thrust = {0.0f, 0.0f};
       constexpr static float rotation_factor = 3.14f / 100.f;
-      constexpr static float acceleration_factor = 1.0f;
+      constexpr static float acceleration_factor = 1.6f;
       const auto sin_value = std::sin(player.rotation - 3.14f / 2.f);
       const auto cos_value = std::cos(player.rotation - 3.14f / 2.f);
       if (IsKeyDown(KEY_W)) {
@@ -46,7 +46,7 @@ namespace systems::player {
       }
       if (thrust.x != 0.0f || thrust.y != 0.0f) {
         thrust = Vector2Scale(
-          Vector2Normalize(thrust), player.acceleration_rate * dt); // Apply acceleration
+          Vector2Normalize(thrust), player.acceleration_rate); // Apply acceleration
         player.velocity = Vector2Add(player.velocity, thrust);
         if (Vector2Length(player.velocity) > player.max_speed) {
           player.velocity
@@ -55,7 +55,7 @@ namespace systems::player {
       } else {
         // Decelerate when no thrust is applied
         Vector2 deceleration
-          = Vector2Scale(Vector2Normalize(player.velocity), -player.deceleration_rate * dt);
+          = Vector2Scale(Vector2Normalize(player.velocity), -player.deceleration_rate);
         player.velocity = Vector2Add(player.velocity, deceleration);
         // Stop if velocity is very low
         if (Vector2Length(player.velocity) < 10.0f) {
@@ -83,6 +83,7 @@ namespace systems::player {
               Vector2Scale(Vector2Normalize(player.velocity), 100.f),
               player.rotation,
               10,
+              4.5
             });
 
           break;

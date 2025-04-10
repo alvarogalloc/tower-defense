@@ -42,7 +42,7 @@ int game::run()
       debug_mode = IsKeyPressed(KEY_F1) ? !debug_mode : debug_mode;
 
       if (debug_mode) {
-        debug::draw_debug(m_world);
+        debug::draw_debug(m_debug_messages);
       }
       BeginDrawing();
       {
@@ -63,4 +63,5 @@ int game::run()
 void scene::init(game& game)
 {
   m_world = &game.get_world();
+  m_debug_messages = game.get_debug_messages();
 }

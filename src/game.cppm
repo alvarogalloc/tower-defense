@@ -3,6 +3,7 @@ import ginseng;
 import raylib;
 import std;
 import config;
+import debug;
 
 export
 {
@@ -10,16 +11,17 @@ export
   class scene;
 
   class scene {
-protected:
+public:
+    scene() = default;
     ginseng::database* m_world;
+    std::span<debug::message> m_debug_messages;
     bool m_should_exit = false;
 
-public:
-    bool should_exit() const
+    [[nodiscard]] bool should_exit() const
     {
       return m_should_exit;
     }
-    virtual bool should_exit_game() const
+    [[nodiscard]] virtual bool should_exit_game() const
     {
       return false;
     }
@@ -42,10 +44,18 @@ public:
     }
     void set_scene(std::unique_ptr<scene> scene);
     [[nodiscard]] int run();
-
+    auto get_debug_messages() -> std::vector<debug::message>&
+    {
+      return m_debug_messages;
+    }
+    [[nodiscard]] auto get_spec() const -> const config::app_info
+    {
+      return m_spec;
+    }
 private:
     config::app_info m_spec;
     std::unique_ptr<scene> m_scene;
     ginseng::database m_world;
+    std::vector<debug::message> m_debug_messages;
   };
 }

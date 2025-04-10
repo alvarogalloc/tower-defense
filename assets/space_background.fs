@@ -6,6 +6,6 @@ uniform float time;
 
 void main() {
   // black to white and back
-  float col =(sin(time)/100)+0.1;
+  float col =(sin(time)/10)+0.1;
   FragColor = vec4(col, col, col, 1.0);
 }

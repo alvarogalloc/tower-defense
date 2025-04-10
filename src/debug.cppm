@@ -10,7 +10,12 @@ constexpr static std::string_view cyan = "\033[36m";
 constexpr static std::string_view green = "\033[32m";
 
 export namespace debug {
-
+  struct message {
+    float lifetime_seconds;
+    std::string text;
+    Color color;
+  };
+  
   constexpr std::string_view reset = "\033[0m";
   const std::string warn = std::format("{}{}{}", bold, yellow, "{}");
   const std::string error = std::format("{}{}{}", bold, red, "{}");
@@ -29,10 +34,19 @@ export namespace debug {
     }
   }
 
-  void draw_debug(ginseng::database& db)
+  void draw_debug( std::vector<message>& messages)
   {
-    DrawText("Debug mode", 10, 10, 20, colors::yellow);
-    const std::string text = std::format("Entities: {}", db.size());
-    DrawText(text.c_str(), 10, 30, 20, colors::yellow);
+    int start_y {10};
+    int line_height {20};
+    for (int i  = 0;auto& message : messages) {
+      if (message.lifetime_seconds > 0.f) {
+        message.lifetime_seconds -= GetFrameTime();
+        DrawText(
+          message.text.c_str(), 10, start_y + line_height * i, 20, message.color);
+      }
+      ++i;
+    }
+    auto removed = std::ranges::remove_if (messages,[](const auto& msg) { return msg.lifetime_seconds <= 0.f; });
+    messages.erase(removed.begin(), messages.end());
   }
 } // namespace debug

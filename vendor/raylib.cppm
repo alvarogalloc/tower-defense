@@ -6,6 +6,12 @@ export module raylib;
 
 export
 {
+  // 
+  using ::Music;
+  using ::LoadMusicStream;
+  using ::PlayMusicStream;
+  using ::UpdateMusicStream;
+  using ::StopMusicStream;
   using ::CheckCollisionCircleLine;
   using ::CheckCollisionCircleRec;
   using ::CheckCollisionCircles;
