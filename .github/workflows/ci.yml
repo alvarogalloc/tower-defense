@@ -69,7 +69,13 @@ jobs:
           cmake -S .
           --preset ${{ matrix.buildtype }}
 
-      - name: "Build"
+      - name: "Build with cmake"
         run: >
           cmake --build build-${{ matrix.buildtype }}
+      - name: "Upload executable"
+        uses: actions/upload-artifact@v3
+        with:
+          name: magster-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.buildtype }}
+          path: build-${{ matrix.buildtype }}/magster
+
 
