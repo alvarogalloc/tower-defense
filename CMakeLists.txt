@@ -45,8 +45,9 @@ target_sources(
   PUBLIC FILE_SET cxx_modules TYPE CXX_MODULES FILES ${VENDOR_MODULES}
   PRIVATE ${VENDOR_SOURCE_FILES})
 target_link_libraries(vendor PUBLIC raylib)
-target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS}
-)# suprress header warnings
+# make these use c++23 
+target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})# suprress header warnings
+
 target_link_libraries(vendor PUBLIC glfw)
 # target_link_libraries(vendor PRIVATE glaze::glaze)
 target_link_libraries(vendor PUBLIC nlohmann_json nlohmann_json::nlohmann_json)

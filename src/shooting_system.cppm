@@ -1,7 +1,8 @@
 export module shooting_system;
 import std;
 import raylib;
-struct bullet {
+struct bullet
+{
     Vector2 position;
     Vector2 velocity;
     float deceleration_rate;
@@ -11,7 +12,8 @@ struct bullet {
 /*export std::function<std::optional<detached_bullet>()>*/
 /*make_shooting_system(std::vector<bullets>& bullet_rings)*/
 /*{*/
-/*  return [&, selected_ring = 0uz, aim_vector = Vector2 {1.f, 0.f}]() mutable {*/
+/*  return [&, selected_ring = 0uz, aim_vector = Vector2 {1.f, 0.f}]() mutable
+ * {*/
 /*    if (IsKeyPressed(KEY_TAB)) {*/
 /*      selected_ring = (selected_ring + 1) % bullet_rings.size();*/
 /*    }*/
@@ -26,13 +28,15 @@ struct bullet {
 /*  };*/
 /*}*/
 /**/
-/*export std::function<void(float)> make_update_bullets(std::vector<detached_bullet>& detached)*/
+/*export std::function<void(float)>
+ * make_update_bullets(std::vector<detached_bullet>& detached)*/
 /*{*/
 /*  return [&](float dt) {*/
 /*    for (auto& b : detached) {*/
 /*      if (b.valid()) {*/
 /*        Vector2 deceleration*/
-/*          = Vector2Scale(Vector2Normalize(b.velocity), -b.deceleration_rate * dt);*/
+/*          = Vector2Scale(Vector2Normalize(b.velocity), -b.deceleration_rate *
+ * dt);*/
 /*        b.velocity = Vector2Add(b.velocity, deceleration);*/
 /**/
 /*        // Stop if velocity is very low*/

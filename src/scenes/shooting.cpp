@@ -48,8 +48,9 @@ namespace scenes {
       components::enemy {
         .enemy_type = components::enemy::type::basic,
         .health = 100,
+        .max_health = 100,
         .damage = 10,
-        .texture = LoadTexture(SRC_DIR "/assets/enemy.png"),
+        .texture = LoadTexture(SRC_DIR "/assets/blueguy.png"),
         .speed = 100.f,
       });
     m_enemy_spawner(*m_world, 0.f, 0.f);

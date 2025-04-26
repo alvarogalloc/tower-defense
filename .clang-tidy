@@ -1,5 +1,5 @@
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,-modernize-use-trailing-return-type,-misc-unused-using-decls'
+Checks:          'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,-modernize-use-trailing-return-type,-misc-unused-using-decls,-cppcoreguidelines-special-member-functions'
 WarningsAsErrors: true
 HeaderFilterRegex: ''
 CheckOptions:

@@ -14,11 +14,32 @@ target("vendor")
   add_files("vendor/*.cpp")
   add_files("vendor/*.cppm", { public = true })
 
+
+target("magsterlib")
+  set_kind("static")
+  set_policy("build.c++.modules.std", true)
+  set_policy("build.c++.modules", true)
+  add_files("src/**.cpp")
+  remove_files("src/main.cpp")
+  add_files("src/**.cppm", { public = true })
+  add_defines(string.format('SRC_DIR="%s"', os.scriptdir()))
+  add_deps("vendor")
+
 target("magster")
   set_kind("binary")
   set_policy("build.c++.modules.std", true)
   set_policy("build.c++.modules", true)
-  add_files("src/**.cpp")
-  add_files("src/**.cppm", { public = true })
+  add_files("src/main.cpp")
   add_defines(string.format('SRC_DIR="%s"', os.scriptdir()))
-  add_deps("vendor")
+  add_deps("vendor", "magsterlib")
+
+
+target("example-gui")
+  set_kind("binary")
+  set_policy("build.c++.modules.std", true)
+  set_policy("build.c++.modules", true)
+  add_files("examples/gui.cpp")
+  add_defines(string.format('SRC_DIR="%s"', os.scriptdir()))
+  add_deps("magsterlib", "vendor")
+
+

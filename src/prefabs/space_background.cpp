@@ -8,9 +8,12 @@ namespace prefabs {
       : m_resolution(config::game_info.size)
   {
     using namespace std::string_literals;
-    const auto fragment_shader_path = config::game_info.asset_path + "/space_background.fs"s;
+    const auto fragment_shader_path
+      = config::game_info.asset_path + "/space_background.fs"s;
     using namespace std::filesystem;
-    debug::my_assert(exists(fragment_shader_path), "File does not exist: "s + fragment_shader_path);
+    debug::my_assert(
+      exists(fragment_shader_path),
+      "File does not exist: "s + fragment_shader_path);
     m_shader = LoadShader(nullptr, fragment_shader_path.c_str());
     m_time_loc = GetShaderLocation(m_shader, "time");
     m_res_loc = GetShaderLocation(m_shader, "resolution");

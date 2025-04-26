@@ -21,6 +21,7 @@ export namespace components {
         ("enemy_type: {}, health: {}, damage: {}, speed: {}", enemy_type_str, health, damage, speed);
     }
     std::uint8_t health;
+    std::uint8_t max_health;
     std::uint8_t damage;
     Texture2D texture;
     float speed;

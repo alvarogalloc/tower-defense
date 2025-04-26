@@ -8,13 +8,14 @@
     {
       "name": "default",
       "description": "Default preset",
-      "generator": "Ninja",
+      "generator": "Ninja Multi-Config",
       "binaryDir": "${sourceDir}/build",
       "hidden": true,
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}"
+        "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
+        "CMAKE_LINKER_TYPE": "LLD"
       }
     },
     {
