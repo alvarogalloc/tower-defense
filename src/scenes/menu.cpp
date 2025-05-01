@@ -2,6 +2,14 @@ module scenes.menu;
 import raygui;
 import scenes.shooting;
 import asset_routes;
+inline constexpr int font_size = 96;
+inline constexpr Color base_color {
+  .r = colors::darkpurple.r,
+  .g = colors::darkpurple.g,
+  .b = colors::darkpurple.b,
+  .a = 100
+};
+
 
 namespace scenes {
 
@@ -12,11 +20,19 @@ namespace scenes {
     m_blue_guy = LoadTexture(routes::BLUE_GUY_TEXTURE);
     m_music = LoadMusicStream(routes::MENU_MUSIC);
     PlayMusicStream(m_music);
+
+    auto base_color = colors::darkpurple;
+        GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, ColorToInt(base_color));
+
+      GuiSetStyle(BUTTON, TEXT_COLOR_PRESSED, ColorToInt(colors::white));
+      GuiSetStyle(0, TEXT_SIZE, font_size);
+
   }
 
   void menu::on_update()
   {
-    m_space_background.update(GetFrameTime());
+
+    m_space_background.update();
     UpdateMusicStream(m_music);
   }
 
@@ -24,22 +40,24 @@ namespace scenes {
   {
     UnloadTexture(m_blue_guy);
     // UnloadFont(m_title_font); font is shared with raygui so we don't unload it
-    return std::make_unique<scenes::shooting>();
+    return std::make_unique<scenes::shooting>(*m_game);
   }
 
   void menu::on_render()
   {
+    ClearBackground(colors::darkblue);
     m_space_background.draw();
 
     float next_element_y = 0;
-    const int font_size = 96;
+
+
     [&]() {
       constexpr static std::string_view title = "Rooster\nSpace";
       const auto text_size = MeasureTextEx(m_title_font, title.data(), 120, 0.2f);
       const auto text_pos = Vector2 {.x = float(GetScreenWidth()) / 2 - text_size.x / 2, .y = 100};
       // draw a brown rectangle behind the text
       auto title_rect = Rectangle {text_pos.x - 10, text_pos.y, text_size.x + 10, text_size.y + 10};
-      DrawRectangleRec(title_rect, colors::brown);
+      DrawRectangleRec(title_rect, base_color);
       DrawTextEx(m_title_font, title.data(), text_pos, font_size, 0.2f, colors::yellow);
       next_element_y = title_rect.y + title_rect.height + 10;
     }();
@@ -55,7 +73,7 @@ namespace scenes {
 
     enum class action { start, exit, none };
     auto current_action = [&]() {
-      GuiSetStyle(DEFAULT, TEXT_SIZE, font_size);
+
       Rectangle start_rect;
       start_rect.y += next_element_y + 10;
       start_rect.x = float(GetScreenWidth()) / 2 - 125;

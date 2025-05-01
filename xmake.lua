@@ -5,12 +5,14 @@ add_rules("mode.debug", "mode.release")
 set_defaultmode("debug")
 
 set_languages("c++23")
-add_requires("raylib", "raygui", "nlohmann_json")
+add_requires("raylib", "raygui", "rapidjson", "fmt")
+
+
 
 target("vendor")
   set_kind("static")
   set_policy("build.c++.modules", true)
-  add_packages("raylib", "raygui", "nlohmann_json", { public = true })
+  add_packages("raylib", "raygui", "rapidjson","fmt", { public = true })
   add_files("vendor/*.cpp")
   add_files("vendor/*.cppm", { public = true })
 

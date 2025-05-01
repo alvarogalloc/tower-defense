@@ -24,7 +24,7 @@ namespace scenes {
         .position = {400.f, 300.f},
         .velocity = {0.f, 0.f},
         .acceleration_rate = 100.f,
-        .deceleration_rate = 10.f,
+        .deceleration_rate = 15.f,
         .max_speed = 500.f,
         .rotation = 0.f,
       });
@@ -33,8 +33,8 @@ namespace scenes {
       systems::player::gun {
         .reload_time = 0.5f,
         .last_shot = 0.f,
-        .ammo = 10,
-        .max_ammo = 10,
+        .ammo = 50,
+        .max_ammo = 50,
       });
     m_world->add_component(new_player, systems::player::action::none);
     m_world->add_component(new_player, components::tags::player {});

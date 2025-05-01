@@ -1,8 +1,9 @@
 module;
-#include <nlohmann/json.hpp>
+#include <rapidjson/document.h>
 export module json;
 
-export namespace nlohmann
-{
-using nlohmann::json;
+
+export namespace rapidjson {
+  using rapidjson::Document;
+  using rapidjson::Value;
 }

@@ -10,10 +10,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 # https://gitlab.kitware.com/cmake/cmake/-/issues/25916
 # https://gitlab.kitware.com/cmake/cmake/-/issues/25539
 set(CMAKE_CXX_EXTENSIONS ON)
+# set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations -std=gnu++23")
 
 # use clang tidy find_program(CLANG_TIDY_EXE NAMES "clang-tidy" QUIET)
 #
@@ -23,12 +24,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 # "clang-tidy not found. Code analysis will be skipped.") endif()
 
 
+
 find_package(raylib CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(RapidJSON CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 # todo change this when module support
 # find_package(glaze CONFIG REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
+# find_package(nlohmann_json CONFIG REQUIRED)
 
 add_compile_definitions(SRC_DIR="${CMAKE_SOURCE_DIR}")
 file(GLOB_RECURSE GAMELIB_MODULE_FILES "src/*.cppm")
@@ -36,7 +40,6 @@ file(GLOB_RECURSE GAMELIB_SOURCE_FILES "src/*.cpp")
 list(REMOVE_ITEM GAMELIB_SOURCE_FILES "src/main.cpp")
 add_library(gamelib)
 # use_clang_tidy(gamelib)
-
 file(GLOB_RECURSE VENDOR_MODULES "vendor/*.cppm")
 file(GLOB_RECURSE VENDOR_SOURCE_FILES "vendor/*.cpp")
 add_library(vendor)
@@ -49,8 +52,10 @@ target_link_libraries(vendor PUBLIC raylib)
 target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})# suprress header warnings
 
 target_link_libraries(vendor PUBLIC glfw)
-# target_link_libraries(vendor PRIVATE glaze::glaze)
-target_link_libraries(vendor PUBLIC nlohmann_json nlohmann_json::nlohmann_json)
+target_compile_features(vendor PRIVATE cxx_std_23)
+# target_link_libraries(vendor PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(vendor PRIVATE RapidJSON rapidjson)
+target_link_libraries(vendor PUBLIC fmt::fmt)
 target_link_libraries(gamelib PUBLIC vendor)
 
 target_compile_features(gamelib PUBLIC cxx_std_23)

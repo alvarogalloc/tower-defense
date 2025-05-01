@@ -12,8 +12,9 @@ export {
     class scene
     {
       public:
-        scene() = default;
+        scene(game& game);
         ginseng::database *m_world{nullptr};
+        game *m_game{nullptr};
         std::span<debug::message> m_debug_messages;
         bool m_should_exit = false;
 
@@ -26,7 +27,6 @@ export {
             return false;
         }
 
-        void init(game &game);
         virtual void on_start() = 0;
         virtual void on_update() = 0;
         virtual void on_render() = 0;

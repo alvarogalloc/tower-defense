@@ -27,12 +27,12 @@ export {
         std::vector<target> m_targets;
 
       public:
-        constexpr target_manager() = default;
+         target_manager() = default;
         target_manager(std::ifstream &&file)
         {
             load_targets_from_file(std::move(file));
         }
-        constexpr target_manager(const std::string &contents)
+         target_manager(const std::string &contents)
         {
             load_from_json(contents);
         }
@@ -44,7 +44,7 @@ export {
                             std::istreambuf_iterator<char>());
             load_from_json(contents);
         }
-        constexpr auto &closest_to(const Vector2 pos) const
+         auto &closest_to(const Vector2 pos) const
         {
             return *std::min_element(
                 m_targets.begin(), m_targets.end(),
@@ -54,18 +54,18 @@ export {
                 });
         }
 
-        constexpr auto &get_targets()
+         auto &get_targets()
         {
             return m_targets;
         }
-        constexpr auto &get_targets() const
+        auto &get_targets() const
         {
             return m_targets;
         }
 
-        constexpr void load_from_json(const std::string &contents)
+         void load_from_json(const std::string &contents)
         {
-#if 1
+#if 0
             // with nlohmann
             using json = nlohmann::json;
             auto targets = json::parse(contents);
@@ -82,7 +82,8 @@ export {
                           target["color"]["b"].get<std::uint8_t>(),
                           target["color"]["a"].get<std::uint8_t>()});
             }
-#else
+#endif
+#if 0
             // with glaze json
 
             using glz::read_json;
@@ -91,9 +92,29 @@ export {
                              ec.custom_error_message);
 
 #endif
+#if 1
+            using namespace rapidjson;
+            static Document doc;
+            doc.Parse(contents.c_str());
+            debug::my_assert(!doc.HasParseError(), "error parsing json");
+            for (const auto &target : doc.GetArray())
+            {
+                using u8 = std::uint8_t;
+                m_targets.emplace_back(
+                    target["radius"].GetFloat(), target["health"].GetFloat(),
+                    target["max_health"].GetFloat(),
+                    Vector2{target["pos"]["x"].GetFloat(),
+                            target["pos"]["y"].GetFloat()},
+                    Color{u8(target["color"]["r"].GetUint()),
+                          u8(target["color"]["g"].GetUint()),
+                          u8(target["color"]["b"].GetUint()),
+                          u8(target["color"]["a"].GetUint())});
+            }
+
+#endif
         }
 
-        constexpr target &spawn(target t)
+         target &spawn(target t)
         {
             return m_targets.emplace_back(t);
         }

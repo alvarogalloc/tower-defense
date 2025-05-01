@@ -2,6 +2,7 @@ module;
 #include <cstdio>
 module game;
 import debug;
+import fmt;
 namespace
 {
 
@@ -53,7 +54,6 @@ void game::set_scene(std::unique_ptr<scene> scene)
 {
     this->m_scene.reset();
     this->m_scene = std::move(scene);
-    this->m_scene->init(*this);
     this->m_scene->on_start();
 }
 int game::run()
@@ -97,20 +97,19 @@ int game::run()
     }
     catch (const std::exception &e)
     {
-        std::print("{}Error: {}\n{}", debug::error, e.what(), debug::reset);
+        fmt::print("{}Error: {}\n{}", debug::error, e.what(), debug::reset);
         this->exit();
         return -1;
     }
     catch (...)
     {
-        std::print("{}Error: Unknown error\n{}", debug::error, debug::reset);
+        fmt::print("{}Error: Unknown error\n{}", debug::error, debug::reset);
         this->exit();
         return -1;
     }
 }
 
-void scene::init(game &game)
+
+scene::scene(game &game) :m_world(&game.get_world()), m_game(&game), m_debug_messages( game.get_debug_messages())
 {
-    m_world = &game.get_world();
-    m_debug_messages = game.get_debug_messages();
 }

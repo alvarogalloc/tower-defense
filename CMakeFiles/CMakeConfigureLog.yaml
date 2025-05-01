@@ -1,0 +1,162 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/local/share/cmake-3.31/Modules/CMakeDetermineSystem.cmake:205 (message)"
+      - "CMakeLists.txt:5 (project)"
+    message: |
+      The system is: Darwin - 20.6.0 - x86_64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/local/share/cmake-3.31/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/local/share/cmake-3.31/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/local/share/cmake-3.31/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:5 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /opt/local/libexec/llvm-20/bin/clang++ 
+      Build flags: -isystem;/opt/local/libexec/llvm-20/include;-fcolor-diagnostics
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+      
+      The CXX compiler identification is Clang, found in:
+        /Users/macuser/code/tower-defense/CMakeFiles/3.31.3/CompilerIdCXX/a.out
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/local/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:74 (try_compile)"
+      - "/opt/local/share/cmake-3.31/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:5 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "/Users/macuser/code/tower-defense/CMakeFiles/CMakeScratch/TryCompile-LdAyid"
+      binary: "/Users/macuser/code/tower-defense/CMakeFiles/CMakeScratch/TryCompile-LdAyid"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/opt/local/libexec/llvm-20/bin/clang-scan-deps"
+      CMAKE_CXX_FLAGS: "-isystem /opt/local/libexec/llvm-20/include -fcolor-diagnostics"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_EXE_LINKER_FLAGS: "-fuse-ld=lld -rpath /opt/local/libexec/llvm-20/lib/libc++ -rpath /opt/local/libexec/llvm-20/lib/libunwind -L /opt/local/libexec/llvm-20/lib/libc++ -L /opt/local/libexec/llvm-20/lib/libunwind/ -l unwind"
+      CMAKE_EXPERIMENTAL_CXX_IMPORT_STD: "0e5b6991-d74f-4b3d-a41c-cf096e0b2508"
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: "11.7"
+      CMAKE_OSX_SYSROOT: "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/macuser/code/tower-defense/CMakeFiles/CMakeScratch/TryCompile-LdAyid'
+        
+        Run Build Command(s): /opt/local/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_1d5b5/fast
+        /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_1d5b5.dir/build.make CMakeFiles/cmTC_1d5b5.dir/build
+        Building CXX object CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o
+        ccache /opt/local/libexec/llvm-20/bin/clang++   -isystem /opt/local/libexec/llvm-20/include -fcolor-diagnostics  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=11.7 -fcolor-diagnostics   -v -Wl,-v -MD -MT CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp
+        clang version 20.1.2
+        Target: x86_64-apple-darwin20.6.0
+        Thread model: posix
+        InstalledDir: /opt/local/libexec/llvm-20/bin
+        Configuration file: /opt/local/libexec/llvm-20/bin/x86_64-apple-darwin20.6.0-clang++.cfg
+        clang++: \x1b[0;1;35mwarning: \x1b[0m\x1b[1m-Wl,-v: 'linker' input unused [-Wunused-command-line-argument]\x1b[0m
+         (in-process)
+         "/opt/local/libexec/llvm-20/bin/clang" -cc1 -triple x86_64-apple-macosx11.7.0 -Wundef-prefix=TARGET_OS_ -Werror=undef-prefix -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mframe-pointer=all -ffp-contract=on -fno-rounding-math -funwind-tables=2 -target-sdk-version=12.1 -fcompatibility-qualified-id-block-type-checking -fvisibility-inlines-hidden-static-local-var -fbuiltin-headers-in-system-modules -fdefine-target-os-macros -target-cpu penryn -tune-cpu generic -debugger-tuning=lldb -fdebug-compilation-dir=/Users/macuser/code/procedural_image/build-dev/CMakeFiles/CMakeScratch/TryCompile-8iUN01 -target-linker-version 711 -v -fcoverage-compilation-dir=/Users/macuser/code/procedural_image/build-dev/CMakeFiles/CMakeScratch/TryCompile-8iUN01 -resource-dir /opt/local/libexec/llvm-20/lib/clang/20 -dependency-file CMakeFiles/cmTC_b24b2.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_b24b2.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -isystem /opt/local/libexec/llvm-20/bin/../include/c++ -isystem /opt/local/libexec/llvm-20/include -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -internal-isystem /opt/local/libexec/llvm-20/bin/../include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /opt/local/libexec/llvm-20/lib/clang/20/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -fdeprecated-macro -ferror-limit 19 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -fmax-type-align=16 -fcolor-diagnostics -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_b24b2.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/local/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp
+        clang -cc1 version 20.1.2 based upon LLVM 20.1.2 default target x86_64-apple-darwin20.6.0
+        ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include"
+        ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/SubFrameworks"
+        ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /opt/local/libexec/llvm-20/bin/../include/c++
+         /opt/local/libexec/llvm-20/include
+         /opt/local/libexec/llvm-20/bin/../include/c++/v1
+         /opt/local/libexec/llvm-20/lib/clang/20/include
+         /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
+         /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks (framework directory)
+        End of search list.
+        Linking CXX executable cmTC_1d5b5
+        /opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1d5b5.dir/link.txt --verbose=1
+        clang version 20.1.2
+        Target: x86_64-apple-darwin20.6.0
+        Thread model: posix
+        InstalledDir: /opt/local/libexec/llvm-20/bin
+        Configuration file: /opt/local/libexec/llvm-20/bin/x86_64-apple-darwin20.6.0-clang++.cfg
+         "/opt/local/libexec/llvm-20/bin/ld64.lld" -demangle -dynamic -arch x86_64 -platform_version macos 11.7.0 12.1 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mllvm -enable-linkonceodr-outlining -o cmTC_1d5b5 -L/opt/local/libexec/llvm-20/bin/../lib/libc++/ -L/opt/local/libexec/llvm-20/bin/../lib/libunwind/ -L/opt/local/libexec/llvm-20/lib/libc++ -L/opt/local/libexec/llvm-20/lib/libunwind/ -lc++ -lc++abi -lunwind -rpath /opt/local/libexec/llvm-20/bin/../lib/libc++/ -rpath /opt/local/libexec/llvm-20/bin/../lib/libunwind/ -search_paths_first -headerpad_max_install_names -rpath /opt/local/libexec/llvm-20/lib/libc++ -rpath /opt/local/libexec/llvm-20/lib/libunwind -lunwind -v CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /opt/local/libexec/llvm-20/lib/clang/20/lib/darwin/libclang_rt.osx.a
+        LLD 20.1.2
+        Library search paths:
+        	/opt/local/libexec/llvm-20/bin/../lib/libc++/
+        	/opt/local/libexec/llvm-20/bin/../lib/libunwind/
+        	/opt/local/libexec/llvm-20/lib/libc++
+        	/opt/local/libexec/llvm-20/lib/libunwind/
+        	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib
+        Framework search paths:
+        	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks
+        /opt/local/libexec/llvm-20/bin/clang++ -isystem /opt/local/libexec/llvm-20/include -fcolor-diagnostics  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=11.7 -Wl,-search_paths_first -Wl,-headerpad_max_install_names -fuse-ld=lld -rpath /opt/local/libexec/llvm-20/lib/libc++ -rpath /opt/local/libexec/llvm-20/lib/libunwind -L /opt/local/libexec/llvm-20/lib/libc++ -L /opt/local/libexec/llvm-20/lib/libunwind/ -l unwind -v -Wl,-v CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_1d5b5
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/local/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:113 (message)"
+      - "/opt/local/share/cmake-3.31/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:5 (project)"
+    message: |
+      Effective list of requested architectures (possibly empty)  : ""
+      Effective list of architectures found in the ABI info binary: "x86_64"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/local/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:182 (message)"
+      - "/opt/local/share/cmake-3.31/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:5 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=loading
+        found start of include info
+        warn: unable to parse implicit include dirs!
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/local/share/cmake-3.31/Modules/CMakeDetermineCompilerABI.cmake:218 (message)"
+      - "/opt/local/share/cmake-3.31/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:5 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?))("|,| |$)]
+        ignore line: [Change Dir: '/Users/macuser/code/tower-defense/CMakeFiles/CMakeScratch/TryCompile-LdAyid']
+        ignore line: []
+        ignore line: [Run Build Command(s): /opt/local/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_1d5b5/fast]
+        ignore line: [/Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_1d5b5.dir/build.make CMakeFiles/cmTC_1d5b5.dir/build]
+        ignore line: [Building CXX object CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [ccache /opt/local/libexec/llvm-20/bin/clang++   -isystem /opt/local/libexec/llvm-20/include -fcolor-diagnostics  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=11.7 -fcolor-diagnostics   -v -Wl -v -MD -MT CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [clang version 20.1.2]
+        ignore line: [Target: x86_64-apple-darwin20.6.0]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: /opt/local/libexec/llvm-20/bin]
+        ignore line: [Configuration file: /opt/local/libexec/llvm-20/bin/x86_64-apple-darwin20.6.0-clang++.cfg]
+        ignore line: [clang++: \x1b[0;1;35mwarning: \x1b[0m\x1b[1m-Wl,-v: 'linker' input unused [-Wunused-command-line-argument]\x1b[0m; (in-process); "/opt/local/libexec/llvm-20/bin/clang" -cc1 -triple x86_64-apple-macosx11.7.0 -Wundef-prefix=TARGET_OS_ -Werror=undef-prefix -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mframe-pointer=all -ffp-contract=on -fno-rounding-math -funwind-tables=2 -target-sdk-version=12.1 -fcompatibility-qualified-id-block-type-checking -fvisibility-inlines-hidden-static-local-var -fbuiltin-headers-in-system-modules -fdefine-target-os-macros -target-cpu penryn -tune-cpu generic -debugger-tuning=lldb -fdebug-compilation-dir=/Users/macuser/code/procedural_image/build-dev/CMakeFiles/CMakeScratch/TryCompile-8iUN01 -target-linker-version 711 -v -fcoverage-compilation-dir=/Users/macuser/code/procedural_image/build-dev/CMakeFiles/CMakeScratch/TryCompile-8iUN01 -resource-dir /opt/local/libexec/llvm-20/lib/clang/20 -dependency-file CMakeFiles/cmTC_b24b2.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_b24b2.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -isystem /opt/local/libexec/llvm-20/bin/../include/c++ -isystem /opt/local/libexec/llvm-20/include -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -internal-isystem /opt/local/libexec/llvm-20/bin/../include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /opt/local/libexec/llvm-20/lib/clang/20/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -fdeprecated-macro -ferror-limit 19 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -fmax-type-align=16 -fcolor-diagnostics -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_b24b2.dir/CMakeCXXCompilerABI.cpp.o -x c++ /opt/local/share/cmake-3.31/Modules/CMakeCXXCompilerABI.cpp;clang -cc1 version 20.1.2 based upon LLVM 20.1.2 default target x86_64-apple-darwin20.6.0;ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include";ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/SubFrameworks";ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks";#include "..." search starts here:;#include <...> search starts here:; /opt/local/libexec/llvm-20/bin/../include/c++; /opt/local/libexec/llvm-20/include; /opt/local/libexec/llvm-20/bin/../include/c++/v1; /opt/local/libexec/llvm-20/lib/clang/20/include; /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include; /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks (framework directory);End of search list.;Linking CXX executable cmTC_1d5b5;/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1d5b5.dir/link.txt --verbose=1;clang version 20.1.2;Target: x86_64-apple-darwin20.6.0;Thread model: posix;InstalledDir: /opt/local/libexec/llvm-20/bin;Configuration file: /opt/local/libexec/llvm-20/bin/x86_64-apple-darwin20.6.0-clang++.cfg; "/opt/local/libexec/llvm-20/bin/ld64.lld" -demangle -dynamic -arch x86_64 -platform_version macos 11.7.0 12.1 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mllvm -enable-linkonceodr-outlining -o cmTC_1d5b5 -L/opt/local/libexec/llvm-20/bin/../lib/libc++/ -L/opt/local/libexec/llvm-20/bin/../lib/libunwind/ -L/opt/local/libexec/llvm-20/lib/libc++ -L/opt/local/libexec/llvm-20/lib/libunwind/ -lc++ -lc++abi -lunwind -rpath /opt/local/libexec/llvm-20/bin/../lib/libc++/ -rpath /opt/local/libexec/llvm-20/bin/../lib/libunwind/ -search_paths_first -headerpad_max_install_names -rpath /opt/local/libexec/llvm-20/lib/libc++ -rpath /opt/local/libexec/llvm-20/lib/libunwind -lunwind -v CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /opt/local/libexec/llvm-20/lib/clang/20/lib/darwin/libclang_rt.osx.a;LLD 20.1.2;Library search paths:;	/opt/local/libexec/llvm-20/bin/../lib/libc++/;	/opt/local/libexec/llvm-20/bin/../lib/libunwind/;	/opt/local/libexec/llvm-20/lib/libc++;	/opt/local/libexec/llvm-20/lib/libunwind/;	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib;Framework search paths:;	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks;/opt/local/libexec/llvm-20/bin/clang++ -isystem /opt/local/libexec/llvm-20/include -fcolor-diagnostics  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=11.7 -Wl,-search_paths_first -Wl,-headerpad_max_install_names -fuse-ld=lld -rpath /opt/local/libexec/llvm-20/lib/libc++ -rpath /opt/local/libexec/llvm-20/lib/libunwind -L /opt/local/libexec/llvm-20/lib/libc++ -L /opt/local/libexec/llvm-20/lib/libunwind/ -l unwind -v -Wl,-v CMakeFiles/cmTC_1d5b5.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_1d5b5;;]
+        Library search paths: [;/opt/local/libexec/llvm-20/bin/../lib/libc++/;/opt/local/libexec/llvm-20/bin/../lib/libunwind/;/opt/local/libexec/llvm-20/lib/libc++;/opt/local/libexec/llvm-20/lib/libunwind/;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+        Framework search paths: [;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks]
+        collapse library dir [/opt/local/libexec/llvm-20/bin/../lib/libc++/] ==> [/opt/local/libexec/llvm-20/lib/libc++]
+        collapse library dir [/opt/local/libexec/llvm-20/bin/../lib/libunwind/] ==> [/opt/local/libexec/llvm-20/lib/libunwind]
+        collapse library dir [/opt/local/libexec/llvm-20/lib/libc++] ==> [/opt/local/libexec/llvm-20/lib/libc++]
+        collapse library dir [/opt/local/libexec/llvm-20/lib/libunwind/] ==> [/opt/local/libexec/llvm-20/lib/libunwind]
+        collapse library dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+        collapse framework dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks]
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: [/opt/local/libexec/llvm-20/lib/libc++;/opt/local/libexec/llvm-20/lib/libunwind;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+        implicit fwks: [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks]
+      
+      
+...

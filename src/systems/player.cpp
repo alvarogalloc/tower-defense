@@ -7,7 +7,13 @@ namespace {
   auto get_player_action() -> action
   {
     // can hold for continuous action
-    if (IsKeyPressed(KEY_SPACE)) {
+    using t_clock = std::chrono::steady_clock;
+    static auto last_shot_time = t_clock::now();
+    constexpr static auto ms_needed_to_autoshoot = 120;
+    if (IsKeyDown(KEY_SPACE) && 
+std::chrono::duration_cast<std::chrono::milliseconds>(t_clock::now() - last_shot_time).count() > ms_needed_to_autoshoot
+        ) {
+      last_shot_time = t_clock::now();
       return action::shoot;
     }
     if (IsKeyPressed(KEY_R)) {
@@ -25,8 +31,8 @@ namespace systems::player {
     db.visit([&](movement& player) {
       const auto starting_pos = player.position;
       Vector2 thrust = {0.0f, 0.0f};
-      constexpr static float rotation_factor = 3.14f / 100.f;
-      constexpr static float acceleration_factor = 1.6f;
+      constexpr static float rotation_factor = 3.14f / 50.f;
+      constexpr static float acceleration_factor = 1.5f;
       const auto sin_value = std::sin(player.rotation - 3.14f / 2.f);
       const auto cos_value = std::cos(player.rotation - 3.14f / 2.f);
       if (IsKeyDown(KEY_W)) {

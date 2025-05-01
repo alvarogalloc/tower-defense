@@ -14,7 +14,7 @@ export namespace scenes {
     systems::enemy::spawner m_enemy_spawner;
     
 public:
-    shooting() {}
+    shooting(game& game): scene(game) {}
 
     void on_start() override;
     void on_update() override;

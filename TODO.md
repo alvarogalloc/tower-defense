@@ -27,3 +27,4 @@
     3. add it to detached_bullets owned by physics system
     4. should have a chase component that has a start, midpoint and target (this changes)
         - target pos changes every frame and should be known by the physics system
+- auto target enemies

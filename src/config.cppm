@@ -1,23 +1,35 @@
 export module config;
 import json;
 import std;
+import fmt;
 import raylib;
 
 export namespace config
 {
-auto get_game_config()
+rapidjson::Document& get_game_config()
 {
     constexpr static std::string_view config_file_path =
         SRC_DIR "/assets/game_config.json";
+#if 0
     using nlohmann::json;
     static std::optional<json> data;
     if (!data.has_value())
     {
-        std::println("Loading game config from {}", config_file_path);
+        fmt::println("Loading game config from {}", config_file_path);
         std::ifstream f(config_file_path.data());
         data = json::parse(f);
     }
-    return data.value();
+#else
+    using namespace rapidjson;
+    static Document data;
+    fmt::println("Loading game config from {}", config_file_path);
+    std::ifstream f(config_file_path.data());
+    std::string contents((std::istreambuf_iterator<char>(f)),
+                         (std::istreambuf_iterator<char>()));
+    data = Document();
+    data.Parse(contents.c_str());
+#endif
+    return data;
 }
 
 struct app_info

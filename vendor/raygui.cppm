@@ -1,9 +1,10 @@
 module;
-#include "raylib.h"
+#include <raylib.h>
 export module raygui;
 
-// #define RAYGUIAPI export
-
 export {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-enum-compare-conditional"
 #include "raygui.h"
+#pragma clang diagnostic pop
 }
