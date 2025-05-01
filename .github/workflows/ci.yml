@@ -71,11 +71,11 @@ jobs:
 
       - name: "Build with cmake"
         run: >
-          cmake --build build --config ${{ matrix.buildtype }}
+          cmake --build build-cmake --config ${{ matrix.buildtype }}
       - name: "Upload executable"
         uses: actions/upload-artifact@v4
         with:
           name: magster-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.buildtype }}
-          path: build/${{ matrix.buildtype }}/magster
+          path: build-cmake/${{ matrix.buildtype }}/magster
 
 
