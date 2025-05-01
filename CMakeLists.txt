@@ -54,7 +54,7 @@ target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})# suprres
 target_link_libraries(vendor PUBLIC glfw)
 target_compile_features(vendor PRIVATE cxx_std_23)
 # target_link_libraries(vendor PUBLIC nlohmann_json::nlohmann_json)
-target_link_libraries(vendor PRIVATE RapidJSON rapidjson)
+target_link_libraries(vendor PUBLIC RapidJSON rapidjson)
 target_link_libraries(vendor PUBLIC fmt::fmt)
 target_link_libraries(gamelib PUBLIC vendor)
 

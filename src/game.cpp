@@ -97,13 +97,13 @@ int game::run()
     }
     catch (const std::exception &e)
     {
-        fmt::print("{}Error: {}\n{}", debug::error, e.what(), debug::reset);
+        std::print("{}Error: {}\n{}", debug::error, e.what(), debug::reset);
         this->exit();
         return -1;
     }
     catch (...)
     {
-        fmt::print("{}Error: Unknown error\n{}", debug::error, debug::reset);
+        std::print("{}Error: Unknown error\n{}", debug::error, debug::reset);
         this->exit();
         return -1;
     }

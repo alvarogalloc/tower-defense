@@ -15,14 +15,14 @@ rapidjson::Document& get_game_config()
     static std::optional<json> data;
     if (!data.has_value())
     {
-        fmt::println("Loading game config from {}", config_file_path);
+        std::println("Loading game config from {}", config_file_path);
         std::ifstream f(config_file_path.data());
         data = json::parse(f);
     }
 #else
     using namespace rapidjson;
     static Document data;
-    fmt::println("Loading game config from {}", config_file_path);
+    std::println("Loading game config from {}", config_file_path);
     std::ifstream f(config_file_path.data());
     std::string contents((std::istreambuf_iterator<char>(f)),
                          (std::istreambuf_iterator<char>()));
