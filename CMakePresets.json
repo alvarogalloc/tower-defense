@@ -15,8 +15,28 @@
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
         "CMAKE_LINKER_TYPE": "LLD",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_EXAMPLES": "ON",
+        "BUILD_TESTING": "ON"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "description": "",
+      "displayName": "",
+      "configurePreset": "default"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "maintest",
+      "description": "",
+      "displayName": "",
+      "configurePreset": "default",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
     }
   ]
 }

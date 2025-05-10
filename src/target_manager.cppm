@@ -27,12 +27,12 @@ export {
         std::vector<target> m_targets;
 
       public:
-         target_manager() = default;
+        target_manager() = default;
         target_manager(std::ifstream &&file)
         {
             load_targets_from_file(std::move(file));
         }
-         target_manager(const std::string &contents)
+        target_manager(const std::string &contents)
         {
             load_from_json(contents);
         }
@@ -44,7 +44,7 @@ export {
                             std::istreambuf_iterator<char>());
             load_from_json(contents);
         }
-         auto &closest_to(const Vector2 pos) const
+        auto &closest_to(const Vector2 pos) const
         {
             return *std::min_element(
                 m_targets.begin(), m_targets.end(),
@@ -54,7 +54,7 @@ export {
                 });
         }
 
-         auto &get_targets()
+        auto &get_targets()
         {
             return m_targets;
         }
@@ -63,7 +63,7 @@ export {
             return m_targets;
         }
 
-         void load_from_json(const std::string &contents)
+        void load_from_json(const std::string &contents)
         {
 #if 0
             // with nlohmann
@@ -114,7 +114,7 @@ export {
 #endif
         }
 
-         target &spawn(target t)
+        target &spawn(target t)
         {
             return m_targets.emplace_back(t);
         }

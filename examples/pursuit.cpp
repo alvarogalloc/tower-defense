@@ -25,7 +25,7 @@ action handle_input()
 class Pursuit
 {
     std::deque<Vector2> m_points;
-    Vector2 current_position;
+    Vector2 current_position{};
     // when the simulation starts, we'll have to calculate the bezier curve
     // current_position will be the first point in the curve and
     // when it reaches m_points.back()+1, we pop the back and set
@@ -86,7 +86,8 @@ class Pursuit
             DrawLineV(m_points.at(i), m_points.at(i + 1), colors::black);
         }
 
-        DrawCircleV(current_position, 5.f, colors::red);
+        float point_radius=5.f;
+        DrawCircleV(current_position,point_radius , colors::red);
     }
 };
 

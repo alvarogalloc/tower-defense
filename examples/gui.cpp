@@ -1,55 +1,54 @@
-import gui.widgets;
 import std;
 import raylib;
 import raygui;
+import gui;
+using namespace gui::v2;
 
-int main()
+container make_bottom_bar()
 {
-    InitWindow(400, 400, "howdy");
-    SetTargetFPS(30);
-
-    using namespace gui::v2;
-
-    // container c1{
-    //     .dir = container::direction::vertical,
-    //     .children = {},
-    //     .position = {0, 0},
-    //     .size = {400, 400},
-    // };
 
     container bottom_menu{
         .dir = container::direction::horizontal,
         .children = {},
-        .position = {0, 400 - 50},
-        .size = {400, 50},
+        .position = {0, 200},
+        .size = {200, 50},
+        .lyflags = layout_flags::no_space,
+        .alflags = align_flags::start,
+
     };
-    bottom_menu.add_child(
-        button{GuiIconText(ICON_WINDOW, ""), colors::green, 20.f, Vector2{0, 8},
-               [](auto &btn) { std::cout << "Hello, World!" << std::endl; }});
+    // maybe a pipe to fit_to(xyvec) that recomputes the fontsize and padding to
+    // fit gui btn = btn{...} | fit_to (box_size) | align_to(left(container))
+    auto btn = bottom_menu.add_child<button>(
+        "First", colors::green, Vector2{50, 50},
+        [](auto &) { std::cout << "Hello, World!" << std::endl; });
 
-        bottom_menu.add_child(
-        button{GuiIconText(ICON_CROSS, ""), colors::red, 20.f, Vector2{0, 8},
-               [](auto &btn) { std::cout << "Hello, World!" << std::endl; }});
+    auto btn2 = bottom_menu.add_child<button>(
+        "second", colors::green, Vector2{50, 50},
+        [](auto &) { std::cout << "Hello, World!" << std::endl; });
+    auto btn3 = bottom_menu.add_child<button>(
+        "third", colors::green, Vector2{50, 50},
+        [](auto &) { std::cout << "Hello, World!" << std::endl; });
 
+    auto btn4 = bottom_menu.add_child<button>(
+        "hola", colors::green, Vector2{50, 50},
+        [](auto &) { std::cout << "Hello, World!" << std::endl; });
 
-    // c1.add_children(
-    //     button{"Hello, World!", colors::red, 29.f, Vector2{20.f, 20.f},
-    //            [](auto &btn) {
+    // bottom_menu.add_child(
     //
-    //            }},
-    //     button{"Hello, World2!", colors::red, 29.f, Vector2{100.f, 10.f},
-    //            [](auto &btn) {
-    //
-    //            }},
-    //     button{"Hello, World2!", colors::red, 29.f, Vector2{100.f, 10.f},
-    //            [](auto &btn) {
-    //
-    //            }
-    //
-    //     }
-    //
-    // );
+    //     button{"Second", colors::red, 20.f, Vector2{0, 8},
+    //            [](auto &) { std::cout << "Hello, World!" << std::endl; }});
+    // bottom_menu.position.y -= btn->get_size().y;
+    return bottom_menu;
+}
 
+int main()
+{
+    SetConfigFlags(FLAG_WINDOW_UNDECORATED);
+    InitWindow(400, 600, "howdy");
+    SetTargetFPS(30);
+
+    using gui_t = std::pair<std::string_view, container>;
+    gui_t bottom_bar{"bottom_bar", make_bottom_bar()};
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -61,7 +60,8 @@ int main()
         // Create a text widget
         // c1.draw();
         // c1.draw_box_model();
-        bottom_menu.draw();
+        bottom_bar.second.draw();
+        bottom_bar.second.draw_box_model();
         EndDrawing();
     }
     CloseWindow();

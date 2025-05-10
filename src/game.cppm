@@ -12,7 +12,7 @@ export {
     class scene
     {
       public:
-        scene(game& game);
+        scene(game &game);
         ginseng::database *m_world{nullptr};
         game *m_game{nullptr};
         std::span<debug::message> m_debug_messages;

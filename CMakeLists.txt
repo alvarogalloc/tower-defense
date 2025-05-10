@@ -100,15 +100,15 @@ add_executable(magster ${GAME_SOURCE_FILES} ${GAME_RESOURCES})
 target_link_libraries(magster PRIVATE gamelib)
 
 # if option TESTS is enabled add test for each file in test folder
-option(BUILD_TESTING "Enable Test Builds" OFF)
-if(FALSE AND BUILD_TESTING)
+option(BUILD_TESTING "Enable building tests" OFF)
+if(BUILD_TESTING)
   enable_testing()
 
   add_subdirectory(test)
 endif()
 
 # if option EXAMPLES is enabled add example for each file in examples folder
-option(BUILD_EXAMPLES "Enable Example Builds" OFF)
+option(BUILD_EXAMPLES "Enable building example usage programs" OFF)
 if(BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()

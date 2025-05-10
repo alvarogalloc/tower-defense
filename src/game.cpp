@@ -109,7 +109,8 @@ int game::run()
     }
 }
 
-
-scene::scene(game &game) :m_world(&game.get_world()), m_game(&game), m_debug_messages( game.get_debug_messages())
+scene::scene(game &game)
+    : m_world(&game.get_world()), m_game(&game),
+      m_debug_messages(game.get_debug_messages())
 {
 }

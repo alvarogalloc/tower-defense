@@ -6,7 +6,7 @@ import raylib;
 
 export namespace config
 {
-rapidjson::Document& get_game_config()
+rapidjson::Document &get_game_config()
 {
     constexpr static std::string_view config_file_path =
         SRC_DIR "/assets/game_config.json";
