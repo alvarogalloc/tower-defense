@@ -1,0 +1,4 @@
+-I /Users/macuser/vcpkg/installed/x64-osx/include/
+-std=c++23
+-Wall
+-Werror

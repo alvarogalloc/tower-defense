@@ -6,13 +6,13 @@ export namespace utils {
 
   auto should_throw(auto fn)
   {
-    using namespace ut;
+    using namespace boost::ut;
     try {
       fn();
       std::print("should throw but didn't\n");
-      expect(false == true_b);
+      expect(false == not "true"_b);
     } catch (const std::exception& e) {
-      expect(true == true_b);
+      expect(true == "true"_b);
     }
   };
 

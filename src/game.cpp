@@ -8,12 +8,6 @@ namespace
 
 void custom_raylib_log(int msgType, const char *text, va_list args)
 {
-    /*      bold =
-  yellow
-  red =
-  cyan =
-  green
-  */
     std::cout << debug::colors::bold;
     switch (msgType)
     {
@@ -35,6 +29,8 @@ void custom_raylib_log(int msgType, const char *text, va_list args)
     std::vprintf(text, args);
     std::cout << debug::reset << '\n';
 }
+// NOLINTNEXTLINE
+game *g_instance = nullptr;
 } // namespace
 
 game::game(config::app_info spec) : m_spec(std::move(spec))
@@ -44,9 +40,19 @@ game::game(config::app_info spec) : m_spec(std::move(spec))
                spec.window_name.data());
     SetTargetFPS(spec.fps);
     InitAudioDevice();
+    g_instance = this;
+}
+game &game::get()
+{
+    return *g_instance;
 }
 void game::exit()
 {
+    auto _ = m_scene->on_exit();
+    if (m_scene)
+    {
+        this->m_scene.reset();
+    }
     CloseAudioDevice();
     CloseWindow();
 }
@@ -107,10 +113,4 @@ int game::run()
         this->exit();
         return -1;
     }
-}
-
-scene::scene(game &game)
-    : m_world(&game.get_world()), m_game(&game),
-      m_debug_messages(game.get_debug_messages())
-{
 }

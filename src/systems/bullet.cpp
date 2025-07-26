@@ -2,6 +2,7 @@ module systems.bullet;
 import config;
 import components.enemy;
 import components.movement;
+using namespace rooster;
 
 namespace systems::bullet
 {

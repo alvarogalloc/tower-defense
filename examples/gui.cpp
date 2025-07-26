@@ -1,23 +1,20 @@
 import std;
-import raylib;
 import raygui;
+import raylib;
 import gui;
+
 using namespace gui::v2;
+using namespace rooster;
 
 container make_bottom_bar()
 {
-
-    container bottom_menu{
-        .dir = container::direction::horizontal,
-        .children = {},
-        .position = {0, 200},
-        .size = {200, 50},
-        .lyflags = layout_flags::no_space,
-        .alflags = align_flags::start,
-
-    };
-    // maybe a pipe to fit_to(xyvec) that recomputes the fontsize and padding to
-    // fit gui btn = btn{...} | fit_to (box_size) | align_to(left(container))
+    container bottom_menu{.size = {300, 100},
+                          .position = {50, 200},
+                          .gap = 1.f,
+                          .dir = container::direction::vertical,
+                          .children = {},
+                          .lyflags = layout_flags::no_space,
+                          .alflags = h_alignment::center};
     auto btn = bottom_menu.add_child<button>(
         "First", colors::green, Vector2{50, 50},
         [](auto &) { std::cout << "Hello, World!" << std::endl; });
@@ -30,37 +27,88 @@ container make_bottom_bar()
         [](auto &) { std::cout << "Hello, World!" << std::endl; });
 
     auto btn4 = bottom_menu.add_child<button>(
-        "hola", colors::green, Vector2{50, 50},
+        "fourth", colors::green, Vector2{100, 50},
         [](auto &) { std::cout << "Hello, World!" << std::endl; });
-
-    // bottom_menu.add_child(
-    //
-    //     button{"Second", colors::red, 20.f, Vector2{0, 8},
-    //            [](auto &) { std::cout << "Hello, World!" << std::endl; }});
-    // bottom_menu.position.y -= btn->get_size().y;
+    auto btn5 = bottom_menu.add_child<button>(
+        "fifth", colors::green, Vector2{30, 50},
+        [](auto &) { std::cout << "Hello, World!" << std::endl; });
+    auto subcont =
+        bottom_menu.add_child(container{.size = {100, 100},
+                                        .position = {0, 0},
+                                        .gap = 0.f,
+                                        .dir = container::direction::vertical,
+                                        .children = {},
+                                        .lyflags = layout_flags::no_space,
+                                        .alflags = h_alignment::center});
+    subcont->add_child<button>(
+        "mini", colors::green, Vector2{30, 50},
+        [](auto &) { std::cout << "Hello, World!" << std::endl; });
     return bottom_menu;
 }
 
 int main()
 {
     SetConfigFlags(FLAG_WINDOW_UNDECORATED);
-    InitWindow(400, 600, "howdy");
-    SetTargetFPS(30);
+    SetTraceLogLevel(LOG_WARNING | LOG_ERROR);
+    const int win_x{400}, win_y{600};
+    InitWindow(win_x, win_y, "howdy");
+    const int target_fps{30};
+    SetTargetFPS(target_fps);
 
     using gui_t = std::pair<std::string_view, container>;
     gui_t bottom_bar{"bottom_bar", make_bottom_bar()};
+    bool allow_move_container_to_mouse = false;
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(colors::white);
-        if (WindowShouldClose())
+        if (IsKeyPressed(KEY_Q))
         {
             break;
         }
-        // Create a text widget
-        // c1.draw();
-        // c1.draw_box_model();
+        if (IsKeyPressed(KEY_M))
+        {
+            allow_move_container_to_mouse = !allow_move_container_to_mouse;
+        }
+
+        if (allow_move_container_to_mouse)
+        {
+            bottom_bar.second.position = GetMousePosition();
+        }
         bottom_bar.second.draw();
+        auto txt = std::string("horizontal alignment:") +
+                   to_string(bottom_bar.second.alflags).data();
+        const Vector2 debugpos{100, 50};
+        const auto font_size{20.f};
+        // DrawText(txt.c_str(), debugpos.x, debugpos.y, font_size,
+        // colors::brown);
+        DrawTextEx(GetFontDefault(), txt.c_str(), debugpos, font_size, 1.f,
+                   colors::brown);
+
+        if (IsKeyPressed(KEY_L))
+        {
+
+            using enum gui::v2::container::direction;
+            bottom_bar.second.dir =
+                bottom_bar.second.dir == horizontal ? vertical : horizontal;
+        }
+        if (IsKeyPressed(KEY_C))
+        {
+            using enum gui::v2::h_alignment;
+            switch (bottom_bar.second.alflags)
+            {
+            case left:
+                bottom_bar.second.alflags = right;
+                break;
+            case right:
+                bottom_bar.second.alflags = center;
+                break;
+            case center:
+                bottom_bar.second.alflags = left;
+                break;
+            }
+        }
+
         bottom_bar.second.draw_box_model();
         EndDrawing();
     }

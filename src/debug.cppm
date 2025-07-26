@@ -47,14 +47,16 @@ constexpr void my_assert(
 
 void draw_debug(std::vector<message> &messages)
 {
-    int start_y{10};
-    int line_height{20};
+    const int start_y{10};
+    const int pos_x {10};
+    const int line_height{20};
+    const int font_size{20};
     for (int i = 0; auto &message : messages)
     {
         if (message.lifetime_seconds > 0.f)
         {
             message.lifetime_seconds -= GetFrameTime();
-            DrawText(message.text.c_str(), 10, start_y + line_height * i, 20,
+            DrawText(message.text.c_str(), pos_x, start_y + line_height * i, font_size,
                      message.color);
         }
         ++i;

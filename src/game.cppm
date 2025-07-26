@@ -12,10 +12,6 @@ export {
     class scene
     {
       public:
-        scene(game &game);
-        ginseng::database *m_world{nullptr};
-        game *m_game{nullptr};
-        std::span<debug::message> m_debug_messages;
         bool m_should_exit = false;
 
         [[nodiscard]] bool should_exit() const
@@ -38,11 +34,8 @@ export {
     {
       public:
         game(config::app_info spec);
+        static auto get() -> game &;
         void exit();
-        auto get_world() -> ginseng::database &
-        {
-            return m_world;
-        }
         void set_scene(std::unique_ptr<scene> scene);
         [[nodiscard]] int run();
         auto get_debug_messages() -> std::vector<debug::message> &
@@ -52,6 +45,10 @@ export {
         [[nodiscard]] auto get_spec() const -> const config::app_info
         {
             return m_spec;
+        }
+        auto get_world() -> ginseng::database &
+        {
+            return m_world;
         }
 
       private:

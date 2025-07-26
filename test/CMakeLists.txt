@@ -3,7 +3,7 @@ file(GLOB TEST_SOURCES "src/*.cpp")
 foreach(TEST_SOURCE ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE) # name without extension
     add_executable(${TEST_NAME} ${TEST_SOURCE})
-    target_compile_features(${TEST_NAME} PRIVATE cxx_std_23)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_23)
     target_compile_options(${TEST_NAME} PRIVATE -fno-omit-frame-pointer
                                                )
     target_link_libraries(${TEST_NAME} PRIVATE -fno-omit-frame-pointer

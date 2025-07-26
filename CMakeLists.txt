@@ -14,7 +14,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 include(FetchContent)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations -std=gnu++23")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 
 # use clang tidy find_program(CLANG_TIDY_EXE NAMES "clang-tidy" QUIET)
 #
@@ -52,13 +52,13 @@ target_link_libraries(vendor PUBLIC raylib)
 target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})# suprress header warnings
 
 target_link_libraries(vendor PUBLIC glfw)
-target_compile_features(vendor PRIVATE cxx_std_23)
+target_compile_features(vendor PRIVATE cxx_std_26)
 # target_link_libraries(vendor PUBLIC nlohmann_json::nlohmann_json)
 target_link_libraries(vendor PUBLIC RapidJSON rapidjson)
 target_link_libraries(vendor PUBLIC fmt::fmt)
 target_link_libraries(gamelib PUBLIC vendor)
 
-target_compile_features(gamelib PUBLIC cxx_std_23)
+target_compile_features(gamelib PUBLIC cxx_std_26)
 # debug use sanitizers
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_options(gamelib PUBLIC -fsanitize=address -fsanitize=leak

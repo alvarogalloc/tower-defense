@@ -1,10 +1,13 @@
 module systems.enemy;
 import components.enemy;
+import systems.player;
 import components.bullet;
 import components.movement;
 import components.tags;
+import debug;
 import std;
 import raylib;
+using namespace rooster;
 namespace systems::enemy
 {
 std::function<ginseng::database::ent_id(ginseng::database &, float, float)>
@@ -23,27 +26,44 @@ make_spawner(const components::bounding_box box, const components::enemy enemy)
 
 void update(ginseng::database &db, float dt)
 {
-    Vector2 player_pos = [&db] {
-        Vector2 player_pos = {0.f, 0.f};
-        db.visit([&db, &player_pos](ginseng::database::ent_id id,
-                                    components::tags::player) {
-            player_pos = db.get_component<components::movement>(id).position;
-        });
-        return player_pos;
+
+    auto player_id = [&db] {
+        std::optional<ginseng::database::ent_id> player_id;
+        db.visit([&player_id](ginseng::database::ent_id id,
+                              components::tags::player) { player_id = id; });
+        debug::my_assert(bool(player_id), "player not found");
+        return *player_id;
     }();
+
+    Vector2 player_pos =
+        db.get_component<components::movement>(player_id).position;
+    auto &player_health = db.get_component<systems::player::health>(player_id);
     // std::println("player pos: (x: {}, y: {})", player_pos.x, player_pos.y);
-    db.visit([dt, player_pos](components::enemy &e,
-                              components::bounding_box &b) {
+    db.visit([dt, player_pos, &player_health](components::enemy &e,
+                                              components::bounding_box &b) {
         Vector2 direction = Vector2Subtract(player_pos, {b.x, b.y});
         float distance = Vector2Length(direction);
         if (distance > 0)
         {
             direction = Vector2Scale(Vector2Normalize(direction), e.speed * dt);
         }
+        const float damage_threeshold = 5.f;
+        if (distance > damage_threeshold)
+        {
+            static float time_to_next_hit = 0.f;
+            const float time_between_hits_s = 3.f;
+            const std::uint8_t damage_p_hit = 10;
+            time_to_next_hit -= GetFrameTime();
+            if (time_to_next_hit <= 0.f && player_health.current >= damage_p_hit)
+            {
+                std::puts("damaging player\n");
+                player_health.current -= damage_p_hit;
+                time_to_next_hit = time_between_hits_s;
+            }
+        }
         auto [x, y] = Vector2Add({b.x, b.y}, direction);
         b.x = x;
         b.y = y;
-
     });
 }
 void draw(ginseng::database &db)

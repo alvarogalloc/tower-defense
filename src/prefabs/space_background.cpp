@@ -2,6 +2,7 @@ module prefabs.space_background;
 import config;
 import std;
 import debug;
+using namespace rooster;
 
 
 namespace prefabs::v2

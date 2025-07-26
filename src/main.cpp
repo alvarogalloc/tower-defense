@@ -6,6 +6,6 @@ import config;
 int main()
 {
     game mygame{config::game_info};
-    mygame.set_scene(std::make_unique<scenes::menu>(mygame));
+    mygame.set_scene(std::make_unique<scenes::menu>());
     return mygame.run();
 }

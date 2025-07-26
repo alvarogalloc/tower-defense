@@ -28,15 +28,15 @@ export {
 
       public:
         target_manager() = default;
-        target_manager(std::ifstream &&file)
+        target_manager(std::ifstream &file)
         {
-            load_targets_from_file(std::move(file));
+            load_targets_from_file(file);
         }
         target_manager(const std::string &contents)
         {
             load_from_json(contents);
         }
-        void load_targets_from_file(std::ifstream &&file)
+        void load_targets_from_file(std::ifstream &file)
         {
             debug::my_assert(file.is_open(), "file is not open");
             std::string contents =
@@ -44,10 +44,10 @@ export {
                             std::istreambuf_iterator<char>());
             load_from_json(contents);
         }
-        auto &closest_to(const Vector2 pos) const
+        [[nodiscard]] auto &closest_to(const Vector2 pos) const
         {
-            return *std::min_element(
-                m_targets.begin(), m_targets.end(),
+            return *std::ranges::min_element(
+                m_targets,
                 [&](const auto &lhs, const auto &rhs) {
                     return std::hypot(lhs.pos.x - pos.x, lhs.pos.y - pos.y) <
                            std::hypot(rhs.pos.x - pos.x, rhs.pos.y - pos.y);
@@ -58,7 +58,7 @@ export {
         {
             return m_targets;
         }
-        auto &get_targets() const
+        [[nodiscard]] auto &get_targets() const
         {
             return m_targets;
         }

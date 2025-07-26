@@ -13,5 +13,4 @@ struct node
     virtual void draw(Vector2 parent_pos) = 0;
 };
 
-using child_t = std::shared_ptr<node>;
 }
