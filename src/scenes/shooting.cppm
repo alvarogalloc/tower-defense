@@ -5,6 +5,7 @@ import ginseng;
 import raylib;
 import systems.enemy;
 import prefabs.stars_particles;
+import scenes.gameover;
 
 export namespace scenes {
 
@@ -13,6 +14,12 @@ export namespace scenes {
     std::vector<Texture2D> m_to_clean{};
     systems::enemy::spawner m_enemy_spawner{};
     prefabs::stars_particles m_bg;
+    Camera2D m_camera;
+    ginseng::database::ent_id m_player_entity;
+
+
+
+    game_stats m_stats;
 
     
 public:

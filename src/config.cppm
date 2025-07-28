@@ -21,12 +21,15 @@ rapidjson::Document &get_game_config()
 #else
     using namespace rapidjson;
     static Document data;
-    std::println("Loading game config from {}", config_file_path);
-    std::ifstream f(config_file_path.data());
-    std::string contents((std::istreambuf_iterator<char>(f)),
-                         (std::istreambuf_iterator<char>()));
-    data = Document();
-    data.Parse(contents.c_str());
+    if (data.IsNull())
+    {
+      std::println("Loading game config from {}", config_file_path);
+      std::ifstream f(config_file_path.data());
+      std::string contents((std::istreambuf_iterator<char>(f)),
+                           (std::istreambuf_iterator<char>()));
+      data = Document();
+      data.Parse(contents.c_str());
+    }
 #endif
     return data;
 }
