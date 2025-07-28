@@ -1,6 +1,5 @@
 module systems.player;
 import systems.bullet;
-import fmt;
 import components.bullet;
 using namespace rooster;
 
@@ -92,7 +91,7 @@ void update(ginseng::database &db, float dt)
         // Update position
         player.position =
             Vector2Add(player.position, Vector2Scale(player.velocity, dt));
-        fmt::println("player health {}", player_health.current);
+        std::println("player health {}", player_health.current);
         if (player_health.current == 0)
         {
           // lost the game

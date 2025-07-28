@@ -2,7 +2,6 @@ module;
 #include <cstdio>
 module game;
 import debug;
-import fmt;
 namespace
 {
 

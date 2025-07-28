@@ -2,7 +2,6 @@ module scenes.menu;
 import raygui;
 import scenes.shooting;
 import asset_routes;
-import fmt;
 import gui;
 using namespace rooster;
 inline constexpr int font_size = 96;

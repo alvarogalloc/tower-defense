@@ -1,7 +1,6 @@
 export module config;
 import json;
 import std;
-import fmt;
 import raylib;
 
 export namespace config
