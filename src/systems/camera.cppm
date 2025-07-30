@@ -8,11 +8,13 @@ export namespace systems::camera
 {
 Camera2D make_camera()
 {
-    Camera2D camera{};
-    camera.target = {0.0f, 0.0f};
-    camera.offset = {game::get().get_spec().size/2.f};
-    camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    const auto init_pos = game::get().get_spec().size * 0.5f;
+    Camera2D camera{
+        .offset = init_pos,
+        .target{0.f, 0.f},
+        .rotation = 0.0f,
+        .zoom = 1.0f,
+    };
     return camera;
 }
 void use(Camera2D &camera, ginseng::database &db,

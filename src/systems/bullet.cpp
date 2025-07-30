@@ -12,14 +12,9 @@ void shoot_bullet(ginseng::database &db, components::bullet info)
     db.add_component(new_bullet, std::move(info));
 }
 
-void update(ginseng::database &db, float dt)
+void update(ginseng::database &db, float dt, Rectangle bounds)
 {
-    const auto is_out_of_bounds = [&](const components::bullet &bullet) {
-        return bullet.position.x < 0 ||
-               bullet.position.x > config::game_info.size.x ||
-               bullet.position.y < 0 ||
-               bullet.position.y > config::game_info.size.y;
-    };
+        std::vector<ginseng::database::ent_id> entities_to_destroy;
     db.visit([&](ginseng::database::ent_id bullet_id,
                  components::bullet &bullet) {
         const auto sin_value = std::sin(bullet.rotation - 3.14f / 2.f);
@@ -28,7 +23,7 @@ void update(ginseng::database &db, float dt)
         bullet.velocity = Vector2Scale({cos_value, sin_value}, bullet_speed);
         bullet.position =
             Vector2Add(bullet.position, Vector2Scale(bullet.velocity, dt));
-        if (is_out_of_bounds(bullet))
+        if (CheckCollisionPointRec(bullet.position, bounds))
         {
             db.destroy_entity(bullet_id);
             return;
@@ -40,13 +35,16 @@ void update(ginseng::database &db, float dt)
             if (CheckCollisionCircleRec(bullet.position, bullet.radius, box))
             {
                 enemy.health -= bullet.damage;
-                db.destroy_entity(bullet_id);
+                entities_to_destroy.emplace_back(bullet_id);
                 if (enemy.health <= 0)
                 {
-                    db.destroy_entity(enemy_id);
+                entities_to_destroy.emplace_back(enemy_id);
                 }
             }
         });
+    });
+    std::ranges::for_each (entities_to_destroy, [&](auto id) {
+      db.destroy_entity(id);
     });
 }
 

@@ -17,18 +17,22 @@ namespace scenes
 using debug::my_assert;
 
 using namespace systems;
+constexpr int n_particles = 150;
 
 shooting::shooting()
-    : m_bg(200),
-      m_camera(systems::camera::make_camera()),
+    : m_bg(n_particles), m_camera(systems::camera::make_camera()),
       m_player_entity(game::get().get_world().create_entity()),
-      m_stats{.won = false, .score = 0, .time_seconds = int(GetTime())}
+      m_stats{
+          .won = false,
+          .score = 0,
+          .time_seconds = int(GetTime()),
+      }
 {
 }
 void shooting::on_start()
 {
     m_systems.emplace_back(player::update);
-    m_systems.emplace_back(bullet::update);
+    // m_systems.emplace_back(bullet::update);
     m_systems.emplace_back(enemy::update);
 
     auto &world = game::get().get_world();
@@ -50,7 +54,9 @@ void shooting::on_start()
                              .shoot_sfx = LoadSound(routes::SHOOT_SFX)});
     world.add_component(m_player_entity, systems::player::action::none);
     world.add_component(m_player_entity, components::tags::player{});
-    world.add_component(m_player_entity, systems::player::health{30});
+    const int player_start_health = 200;
+    world.add_component(m_player_entity,
+                        systems::player::health{player_start_health});
     auto spaceship = LoadTexture(SRC_DIR "/assets/spaceship.png");
     m_to_clean.push_back(spaceship);
     world.add_component(m_player_entity, spaceship);
@@ -78,7 +84,14 @@ void shooting::on_update()
     {
         system(world, dt);
     }
-    m_bg.update(dt);
+    systems::bullet::update(world, dt,
+                            Rectangle{
+                                .x = m_camera.offset.x,
+                                .y = m_camera.offset.y,
+                                .width = float(m_camera.target.x * 2),
+                                .height = float(m_camera.target.y * 2),
+                            });
+    m_bg.update(dt, m_camera);
 
     auto player_health = [&world] {
         std::optional<systems::player::health> player_h;

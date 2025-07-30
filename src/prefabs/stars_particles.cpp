@@ -49,18 +49,30 @@ stars_particles::stars_particles(int count)
     }
 }
 
-void stars_particles::update(float)
+void stars_particles::update(float, Camera2D cam)
 {
-    const auto size = game::get().get_spec().size;
-    std::uniform_int_distribution<int> dist_x(0, int(size.x));
+    Rectangle bounds{cam.offset.x, cam.offset.y, float(cam.target.x * 2),
+                     float(cam.target.y * 2)};
+    // const auto size = game::get().get_spec().size;
+    // make dist_x and dist_y uniform distributions
+    std::uniform_int_distribution<int> dist_x(int(bounds.x), int(bounds.width));
+    std::uniform_int_distribution<int> dist_y(int(bounds.y),
+                                              int(bounds.height));
 
     for (auto &s : m_stars)
     {
         s.position.y += s.speed;
-        if (s.position.y > size.y)
+        // is the star out of bounds?
+        // use raylib's CheckCollisionPointRec
+        if (!CheckCollisionPointRec(s.position, bounds))
         {
-            s.position.y = 0;
-            s.position.x = static_cast<float>(dist_x(rng));
+            // reset the star to the top of the screen
+            s.position.y = float(dist_y(rng));
+            s.position.x = float(dist_x(rng));
+            s.speed = random_speed();
+            s.color = Color{static_cast<std::uint8_t>(random_color()),
+                            static_cast<std::uint8_t>(random_color()),
+                            static_cast<std::uint8_t>(random_color()), 255};
         }
         if (random_twinkle() < 2)
         {

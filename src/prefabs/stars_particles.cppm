@@ -17,7 +17,7 @@ class stars_particles
     constexpr static auto default_count = 200;
     stars_particles(int count = default_count);
 
-    void update(float delta_time);
+    void update(float delta_time, Camera2D);
     void draw() const;
 
   private:

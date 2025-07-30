@@ -34,8 +34,7 @@ namespace systems::player
 using namespace components;
 void update(ginseng::database &db, float dt)
 {
-    db.visit([&](movement &player,
-                 health &player_health) {
+    db.visit([&](movement &player, health &player_health) {
         const auto starting_pos = player.position;
         Vector2 thrust = {0.0f, 0.0f};
         constexpr static float rotation_factor = 3.14f / 50.f;
@@ -94,7 +93,7 @@ void update(ginseng::database &db, float dt)
         std::println("player health {}", player_health.current);
         if (player_health.current == 0)
         {
-          // lost the game
+            // lost the game
         }
     });
 
@@ -112,9 +111,13 @@ void update(ginseng::database &db, float dt)
             const auto &player = db.get_component<movement>(entity);
             systems::bullet::shoot_bullet(
                 db, components::bullet{
-                        player.position,
-                        Vector2Scale(Vector2Normalize(player.velocity), 100.f),
-                        player.rotation, 10, 4.5});
+                        .position = player.position,
+                        .velocity = Vector2Scale(
+                            Vector2Normalize(player.velocity), 100.f),
+                        .rotation = player.rotation,
+                        .damage = 10,
+                        .radius = 4.5,
+                    });
             PlaySound(gun.shoot_sfx);
 
             break;

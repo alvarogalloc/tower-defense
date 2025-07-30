@@ -8,7 +8,7 @@ export namespace systems::bullet {
 
   void shoot_bullet(ginseng::database& db, components::bullet info);
 
-  void update(ginseng::database& db, float dt);
+  void update(ginseng::database& db, float dt, Rectangle bounds);
   void draw(ginseng::database& db);
 
 } // namespace systems::bullet
