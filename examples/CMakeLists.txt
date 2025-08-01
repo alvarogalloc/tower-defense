@@ -9,12 +9,12 @@ foreach(EXAMPLE ${EXAMPLES})
 
     target_compile_features("${EXAMPLE_NAME}.example" PRIVATE cxx_std_23)
 
-    target_compile_options("${EXAMPLE_NAME}.example" PRIVATE
-        -fno-omit-frame-pointer
-        -fsanitize=address,undefined)
+    # target_compile_options("${EXAMPLE_NAME}.example" PRIVATE
+    #     -fno-omit-frame-pointer
+    #     -fsanitize=address,undefined)
 
-    target_link_options("${EXAMPLE_NAME}.example" PRIVATE
-        -fsanitize=address,undefined)
+    # target_link_options("${EXAMPLE_NAME}.example" PRIVATE
+    #     -fsanitize=address,undefined)
 
     target_link_libraries("${EXAMPLE_NAME}.example" PRIVATE gamelib)
 endforeach()

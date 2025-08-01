@@ -30,7 +30,7 @@ stars_particles::stars_particles(int count)
 
 {
     rng = std::minstd_rand{std::random_device{}()};
-    const auto size = game::get().get_spec().size;
+    const auto size = game::get().get_spec().game_res;
     m_stars.reserve(std::size_t(count));
     std::uniform_int_distribution<int> dist_x(0, int(size.x));
     std::uniform_int_distribution<int> dist_y(0, int(size.y));

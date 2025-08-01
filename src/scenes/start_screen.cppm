@@ -1,4 +1,4 @@
-export module scenes.menu;
+export module scenes.start_screen;
 import game;
 import raylib;
 import std;
@@ -6,7 +6,7 @@ import prefabs.space_background;
 
 export namespace scenes
 {
-class menu : public scene
+class start_screen : public scene
 {
     Font m_title_font{};
     bool m_should_exit_game = false;
@@ -15,7 +15,7 @@ class menu : public scene
     Music m_music{};
 
   public:
-    menu();
+    start_screen();
     [[nodiscard]] bool should_exit_game() const override
     {
         return m_should_exit_game;

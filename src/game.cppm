@@ -52,6 +52,7 @@ export {
         }
 
       private:
+        RenderTexture m_target{};
         config::app_info m_spec;
         std::unique_ptr<scene> m_scene;
         ginseng::database m_world;

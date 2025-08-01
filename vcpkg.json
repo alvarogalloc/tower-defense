@@ -1,8 +1,8 @@
 {
   "dependencies": [
+    "fmt",
     "rapidjson",
     "raygui",
-    "raylib",
-    "fmt"
+    "raylib"
   ]
 }

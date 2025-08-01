@@ -41,7 +41,7 @@ void gameover::on_render()
     GuiSetStyle(DEFAULT, BACKGROUND_COLOR, ColorToInt(btn_color));
     GuiSetStyle(DEFAULT, TEXT_SIZE, font_size);
     GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, ColorToInt(txt_color));
-    auto [width, height] = game::get().get_spec().size;
+    auto [width, height] = game::get().get_spec().game_res;
     const auto label_rect = Vector2{0, 0};
     DrawTextEx(GetFontDefault(), title.c_str(), {label_rect.x, label_rect.y},
                float(font_size), 2.0f, txt_color);

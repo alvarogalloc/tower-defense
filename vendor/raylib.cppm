@@ -15,6 +15,7 @@ export {
     using ::operator/;
     using ::operator-;
     using ::BeginShaderMode;
+    using ::BeginTextureMode;
     using ::CheckCollisionCircleLine;
     using ::CheckCollisionCircleRec;
     using ::CheckCollisionCircles;
@@ -22,15 +23,18 @@ export {
     using ::CheckCollisionPointCircle;
     using ::CheckCollisionPointLine;
     using ::CheckCollisionPointPoly;
+    using ::SetTextureFilter;
     using ::CheckCollisionPointRec;
     using ::CheckCollisionPointTriangle;
     using ::CheckCollisionRecs;
     using ::EndShaderMode;
+    using ::EndTextureMode;
     using ::GetShaderLocation;
     using ::LoadMusicStream;
     using ::LoadShader;
     using ::Music;
     using ::PlayMusicStream;
+    using ::RenderTexture;
     using ::SetShaderValue;
     using ::Shader;
     using ::StopMusicStream;
@@ -47,9 +51,10 @@ export {
     using ::GetFontDefault;
     using ::GetFrameTime;
     using ::GetMousePosition;
-    using ::GetScreenHeight;
-    using ::GetScreenWidth;
+    // using ::GetScreenHeight;
+    // using ::GetScreenWidth;
     using ::GetWindowPosition;
+    using ::UnloadRenderTexture;
     using ::InitAudioDevice;
     using ::InitWindow;
     using ::rlglClose;
@@ -147,6 +152,7 @@ export {
     using ::Camera2D;
     using ::ColorIsEqual;
     using ::ConfigFlags;
+    using ::DrawPixelV;
     using ::EndMode2D;
     using ::GetCharPressed;
     using ::GetKeyPressed;
@@ -155,18 +161,17 @@ export {
     using ::IsKeyPressed;
     using ::IsKeyReleased;
     using ::IsKeyUp;
+    using ::LoadSound;
+    using ::PlaySound;
     using ::SetConfigFlags;
     using ::SetExitKey;
     using ::SetTraceLogCallback;
     using ::SetTraceLogLevel;
     using ::SetWindowTitle;
+    using ::Sound;
     using ::TakeScreenshot;
     using ::TraceLog;
     using ::UpdateCamera;
-    using ::DrawPixelV;
-    using ::Sound;
-    using ::LoadSound;
-    using ::PlaySound;
 
     namespace rooster::colors
     {

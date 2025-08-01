@@ -29,16 +29,21 @@ void custom_raylib_log(int msgType, const char *text, va_list args)
     std::cout << debug::reset << '\n';
 }
 // NOLINTNEXTLINE
-game *g_instance = nullptr;
+static game *g_instance = nullptr;
 } // namespace
 
 game::game(config::app_info spec) : m_spec(std::move(spec))
 {
     SetTraceLogCallback(custom_raylib_log);
-    InitWindow(static_cast<int>(spec.size.x), static_cast<int>(spec.size.y),
-               spec.window_name.data());
+    const auto [wx, wy] = spec.size;
+    const auto [x, y] = spec.game_res;
+    InitWindow(int(wx), int(wy), spec.window_name.data());
     SetTargetFPS(spec.fps);
     InitAudioDevice();
+    m_target = LoadRenderTexture(int(x), int(y));
+    std::println("Game resolution: w: {}, h:{}", x, y);
+    std::println("Game window:  w: {}, h:{}", wx, wy);
+    SetTextureFilter(m_target.texture, TEXTURE_FILTER_POINT);
     g_instance = this;
 }
 game &game::get()
@@ -86,16 +91,39 @@ int game::run()
             // f1 to toggle debug
             debug_mode = IsKeyPressed(KEY_F1) ? !debug_mode : debug_mode;
 
-            if (debug_mode)
+            BeginTextureMode(m_target);
             {
-                debug::draw_debug(m_debug_messages);
+
+                if (debug_mode)
+                {
+                    debug::draw_debug(m_debug_messages);
+                }
+                {
+                    m_scene->on_render();
+                }
+
+                EndTextureMode();
             }
             BeginDrawing();
             {
-                m_scene->on_render();
-            }
 
-            EndDrawing();
+                ClearBackground(rooster::colors::black);
+                DrawTexturePro(m_target.texture,
+                               Rectangle{
+                                   0,
+                                   0,
+                                   m_spec.game_res.x,
+                                   -m_spec.game_res.y,
+                               },
+                               Rectangle{
+                                   0,
+                                   0,
+                                   m_spec.size.x,
+                                   m_spec.size.y,
+                               },
+                               Vector2{0, 0}, 0.0f, rooster::colors::white);
+                EndDrawing();
+            }
         }
         this->exit();
         return 0;

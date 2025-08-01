@@ -5,6 +5,17 @@
     "fg_color": [0, 255, 0, 255],
     "font_size": 80
 
-  }
+  },
 
+  "space bg": {
+    "bg_texture": "title_bg/blue-back.png",
+    "objects_textures": [
+      "title_bg/asteroid-1.png",
+      "title_bg/asteroid-2.png",
+      "title_bg/prop-planet-big.png",
+      "title_bg/prop-planet-small.png",
+      "title_bg/blue-stars.png"
+    ],
+    "scroll_speed":0.5
+  }
 }
