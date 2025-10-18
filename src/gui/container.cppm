@@ -106,7 +106,6 @@ struct container
     layout_flags lyflags = layout_flags::no_space;
     h_alignment alflags = h_alignment::left;
 
-
     auto add_child(auto &&child)
     {
         auto ret =
@@ -135,8 +134,6 @@ struct container
     {
         return size;
     }
-
-
 
     void draw() const;
     // maybe make private as it is only used inside its parent

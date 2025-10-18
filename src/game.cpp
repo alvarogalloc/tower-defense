@@ -2,142 +2,166 @@ module;
 #include <cstdio>
 module game;
 import debug;
-namespace
-{
+import raygui;
+namespace {
 
-void custom_raylib_log(int msgType, const char *text, va_list args)
-{
-    std::cout << debug::colors::bold;
-    switch (msgType)
-    {
-
+void custom_raylib_log(int msgType, const char *text, va_list args) {
+  std::cout << debug::colors::bold;
+  switch (msgType) {
     case LOG_INFO:
-        std::cout << "\033[38;5;27m" << "[INFO]";
-        break;
+      std::cout << debug::info << "[INFO]";
+      break;
     case LOG_ERROR:
-        std::cout << "\033[38;5;9m" << "[ERROR]";
-        break;
+      std::cout << debug::error << "[ERROR]";
+      break;
     case LOG_WARNING:
-        std::cout << "\033[38;5;208m" << "[WARN]";
-        break;
+      std::cout << debug::warn << "[WARN]";
+      break;
     case LOG_DEBUG:
-        std::cout << "\033[38;5;214m" << "[DEBUG]";
-        break;
-    }
-    std::cout << ": ";
-    std::vprintf(text, args);
-    std::cout << debug::reset << '\n';
+      std::cout << debug::success << "[DEBUG]";
+      break;
+  }
+  std::cout << ": ";
+  std::vprintf(text, args);
+  std::cout << debug::reset << '\n';
 }
 // NOLINTNEXTLINE
 static game *g_instance = nullptr;
-} // namespace
+}  // namespace
 
-game::game(config::app_info spec) : m_spec(std::move(spec))
-{
-    SetTraceLogCallback(custom_raylib_log);
-    const auto [wx, wy] = spec.size;
-    const auto [x, y] = spec.game_res;
-    InitWindow(int(wx), int(wy), spec.window_name.data());
-    SetTargetFPS(spec.fps);
-    InitAudioDevice();
-    m_target = LoadRenderTexture(int(x), int(y));
-    std::println("Game resolution: w: {}, h:{}", x, y);
-    std::println("Game window:  w: {}, h:{}", wx, wy);
-    SetTextureFilter(m_target.texture, TEXTURE_FILTER_POINT);
-    g_instance = this;
+game::game(config::app_info spec) : m_spec(std::move(spec)) {
+  // use_glfw_wayland();
+
+  SetTraceLogCallback(custom_raylib_log);
+  const auto [wx, wy] = spec.size;
+  const auto [x, y] = spec.game_res;
+  SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT);
+  InitWindow(int(wx), int(wy), spec.window_name.data());
+  SetTargetFPS(spec.fps);
+  InitAudioDevice();
+  m_target = LoadRenderTexture(int(x), int(y));
+  SetTextureFilter(m_target.texture, TEXTURE_FILTER_POINT);
+  SetMouseScale(x / wx, y / wy);
+  g_instance = this;
 }
-game &game::get()
-{
-    return *g_instance;
-}
-void game::exit()
-{
-    auto _ = m_scene->on_exit();
-    if (m_scene)
-    {
-        this->m_scene.reset();
-    }
-    CloseAudioDevice();
-    CloseWindow();
-}
-void game::set_scene(std::unique_ptr<scene> scene)
-{
+game &game::get() { return *g_instance; }
+void game::exit() {
+  auto _ = m_scene->on_exit();
+  if (m_scene) {
     this->m_scene.reset();
-    this->m_scene = std::move(scene);
-    this->m_scene->on_start();
+  }
+  CloseAudioDevice();
+  CloseWindow();
 }
-int game::run()
-{
-    try
-    {
-        bool debug_mode = false;
-        debug::my_assert(bool(m_scene), "Scene not set");
-        while (!WindowShouldClose())
-        {
-            if (m_scene->should_exit_game())
-            {
-                break;
-            }
-            if (m_scene->should_exit())
-            {
-                auto new_scene = m_scene->on_exit();
-                if (!new_scene)
-                {
-                    break;
-                }
-                this->set_scene(std::move(new_scene));
-            }
-            m_scene->on_update();
-            // f1 to toggle debug
-            debug_mode = IsKeyPressed(KEY_F1) ? !debug_mode : debug_mode;
+void game::set_scene(std::unique_ptr<scene> scene) {
+  this->m_scene.reset();
+  this->m_scene = std::move(scene);
+  this->m_scene->on_start();
+}
+void game::draw_debug_messages() const {
+  if (m_debug_messages.empty()) {
+    return;
+  }
+  // makea grayish rectangle in the right thirsd of the screen
+  // const auto col = Color{50, 50, 50, 200};
+  auto [x, y] = m_spec.game_res;
+  const auto rect = Rectangle{x * 2 / 3.f, 0, x / 3.0f, y};
 
-            BeginTextureMode(m_target);
-            {
-
-                if (debug_mode)
-                {
-                    debug::draw_debug(m_debug_messages);
-                }
-                {
-                    m_scene->on_render();
-                }
-
-                EndTextureMode();
-            }
-            BeginDrawing();
-            {
-
-                ClearBackground(rooster::colors::black);
-                DrawTexturePro(m_target.texture,
-                               Rectangle{
-                                   0,
-                                   0,
-                                   m_spec.game_res.x,
-                                   -m_spec.game_res.y,
-                               },
-                               Rectangle{
-                                   0,
-                                   0,
-                                   m_spec.size.x,
-                                   m_spec.size.y,
-                               },
-                               Vector2{0, 0}, 0.0f, rooster::colors::white);
-                EndDrawing();
-            }
+  // use GuiListView
+  // make a string from the debug messages joined by semicolon
+  auto result = std::accumulate(
+      m_debug_messages.begin(), m_debug_messages.end(), std::string{},
+      [](std::string a, const debug::message &b) {
+        if (b.lifetime_seconds <= 0 and b.lifetime_seconds != -1) {
+          return a;
         }
-        this->exit();
-        return 0;
+        return std::move(a) +
+               std::format("{} ({:.2});", b.text, b.lifetime_seconds);
+      });
+  result.pop_back();  // remove last semicolon
+  static int scroll_index = 0;
+  int active = -1;
+  GuiListView(rect, result.c_str(), &scroll_index, &active);
+}
+
+int game::run() {
+  try {
+    bool debug_mode = false;
+    debug::my_assert(bool(m_scene), "Scene not set");
+    while (!WindowShouldClose()) {
+      if (m_scene->should_exit_game()) {
+        break;
+      }
+      if (m_scene->should_exit()) {
+        auto new_scene = m_scene->on_exit();
+        if (!new_scene) {
+          break;
+        }
+        this->set_scene(std::move(new_scene));
+      }
+      m_scene->on_update();
+      // f1 to toggle debug
+      debug_mode = IsKeyPressed(KEY_TWO) ? !debug_mode : debug_mode;
+      std::ranges::for_each(m_debug_messages, [dt = GetFrameTime()](auto &msg) {
+        if (msg.lifetime_seconds > 0) msg.lifetime_seconds -= dt;
+      });
+
+      BeginTextureMode(m_target);
+      {
+        m_scene->on_render();
+        if (debug_mode) {
+          this->draw_debug_messages();
+        }
+        EndTextureMode();
+      }
+      BeginDrawing();
+      {
+        ClearBackground(rooster::colors::white);
+        DrawTexturePro(m_target.texture,
+                       Rectangle{
+                           0,
+                           0,
+                           m_spec.game_res.x,
+                           -m_spec.game_res.y,
+                       },
+                       Rectangle{
+                           0,
+                           0,
+                           m_spec.size.x,
+                           m_spec.size.y,
+                       },
+                       Vector2{0, 0}, 0.0f, rooster::colors::white);
+        EndDrawing();
+      }
+      // {
+      //   ClearBackground(rooster::colors::blue);
+      //   DrawTexturePro(m_target.texture,
+      //                  Rectangle{
+      //                      0,
+      //                      0,
+      //                      m_spec.game_res.x,
+      //                      -m_spec.game_res.y,
+      //                  },
+      //                  Rectangle{
+      //                      0,
+      //                      0,
+      //                      m_spec.size.x,
+      //                      m_spec.size.y,
+      //                  },
+      //                  Vector2{0, 0}, 0.0f, rooster::colors::white);
+      //   EndDrawing();
+      // }
     }
-    catch (const std::exception &e)
-    {
-        std::print("{}Error: {}\n{}", debug::error, e.what(), debug::reset);
-        this->exit();
-        return -1;
-    }
-    catch (...)
-    {
-        std::print("{}Error: Unknown error\n{}", debug::error, debug::reset);
-        this->exit();
-        return -1;
-    }
+    this->exit();
+    return 0;
+  } catch (const std::exception &e) {
+    std::println("{}Exception Caught: {}{}", debug::error, e.what(),
+                 debug::reset);
+    this->exit();
+    return -1;
+  } catch (...) {
+    std::print("Error: Unknown error\n");
+    this->exit();
+    return -1;
+  }
 }

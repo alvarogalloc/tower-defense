@@ -7,22 +7,23 @@ import systems.enemy;
 import prefabs.stars_particles;
 import scenes.gameover;
 
-export namespace scenes {
+export namespace scenes
+{
 
-  class shooting : public scene {
-    std::vector<std::function<void(ginseng::database&, float)>> m_systems{};
-    std::vector<Texture2D> m_to_clean{};
+class shooting : public scene
+{
+    std::vector<std::function<void(ginseng::database &, float)>> m_systems{};
+    std::vector<std::variant<Texture2D, Sound>> m_to_clean{};
+    std::vector<systems::enemy::spawner> m_enemy_spawners{};
     systems::enemy::spawner m_enemy_spawner{};
-    prefabs::stars_particles m_bg;
+    prefabs::stars_particles m_particles;
     Camera2D m_camera;
     ginseng::database::ent_id m_player_entity;
-
-
+    Sound m_gun_shoot_sfx;
 
     game_stats m_stats;
 
-    
-public:
+  public:
     shooting();
 
     void on_start() override;
@@ -30,5 +31,5 @@ public:
 
     std::unique_ptr<scene> on_exit() override;
     void on_render() override;
-  };
+};
 } // namespace scenes

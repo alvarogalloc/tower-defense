@@ -24,18 +24,11 @@ void gameover::on_render()
 
     const std::string score = std::format("Score: {}\nTime: {} seconds",
                                           stats.score, stats.time_seconds);
-    const auto &game_cfg = config::get_game_config();
-    // pallete of bg and text
-    const auto color_from_json = [](const auto &v) -> Color {
-        return Color{static_cast<unsigned char>(v[0].GetInt()),
-                     static_cast<unsigned char>(v[1].GetInt()),
-                     static_cast<unsigned char>(v[2].GetInt()),
-                     static_cast<unsigned char>(v[3].GetInt())};
-    };
-    const auto bg_color = color_from_json(game_cfg["gameover"]["bg_color"]);
-    const auto btn_color = color_from_json(game_cfg["gameover"]["btn_color"]);
-    const auto txt_color = color_from_json(game_cfg["gameover"]["fg_color"]);
-    const auto font_size = game_cfg["gameover"]["font_size"].GetInt();
+    const auto &game_cfg = config::get_config();
+    const auto bg_color = game_cfg.gameover.bg_color;
+    const auto btn_color = game_cfg.gameover.btn_color;
+    const auto txt_color = game_cfg.gameover.fg_color;
+    const auto font_size = game_cfg.gameover.font_size;
 
     ClearBackground(bg_color);
     GuiSetStyle(DEFAULT, BACKGROUND_COLOR, ColorToInt(btn_color));

@@ -1,0 +1,22 @@
+{
+    "movement": {
+      "position": { "x": 400.0, "y": 300.0 },
+      "velocity": { "x": 0.0, "y": 0.0 },
+      "acceleration_rate": 100.0,
+      "deceleration_rate": 15.0,
+      "max_speed": 500.0,
+      "rotation": 0.0
+    },
+    "gun": {
+      "reload_time": 0.5,
+      "last_shot": 0.0,
+      "ammo": 50,
+      "max_ammo": 50,
+      "shoot_sfx_path": "assets/shoot.wav"
+    },
+    "health": {
+      "current": 100,
+      "max": 100
+    },
+    "texture": "assets/spaceship.png"
+}

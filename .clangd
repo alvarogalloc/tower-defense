@@ -1,4 +1,3 @@
--I /Users/macuser/vcpkg/installed/x64-osx/include/
--std=c++23
--Wall
--Werror
+CompileFlags:
+  # Tell clangd to look in the 'build-cmake' subdirectory
+  CompilationDatabase: build-cmake

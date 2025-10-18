@@ -1,8 +1,8 @@
 export module prefabs.space_background;
 import raylib;
-import json;
 import std;
 
+import config;
 export namespace prefabs
 {
 class space_background
@@ -28,10 +28,9 @@ class space_background
 {
   public:
     space_background(std::string_view background_texture_path,
-                     rapidjson::Value const & object_texture_paths,
+                     std::vector<std::string> const &object_texture_paths,
                      const float scroll_speed);
-
-    space_background(rapidjson::Value const & );
+    space_background(config::space_bg const &);
     ~space_background();
 
     void update();
@@ -39,7 +38,7 @@ class space_background
 
   private:
     Texture2D m_background;
-    std::vector<std::pair<Texture2D, Vector2>> m_object_data;
+    std::vector<std::tuple<Texture2D, Vector2, float>> m_object_data;
 
     float m_scroll_speed;
 };

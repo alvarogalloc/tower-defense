@@ -1,8 +1,11 @@
 {
   "dependencies": [
     "fmt",
+    "glaze",
     "rapidjson",
+    "entt",
     "raygui",
-    "raylib"
+    "raylib",
+    "glfw3"
   ]
 }

@@ -90,14 +90,15 @@ void update(ginseng::database &db, float dt)
         // Update position
         player.position =
             Vector2Add(player.position, Vector2Scale(player.velocity, dt));
-        std::println("player health {}", player_health.current);
+        // std::println("player health {}", player_health.current);
         if (player_health.current == 0)
         {
             // lost the game
         }
     });
 
-    db.visit([&](ginseng::database::ent_id entity, action &action, gun &gun) {
+    db.visit([&](ginseng::database::ent_id entity, action &action, gun &gun,
+                 Sound sfx_shoot) {
         // get action
         action = get_player_action();
         // then poll current action
@@ -118,7 +119,7 @@ void update(ginseng::database &db, float dt)
                         .damage = 10,
                         .radius = 4.5,
                     });
-            PlaySound(gun.shoot_sfx);
+            PlaySound(sfx_shoot);
 
             break;
         }
@@ -134,16 +135,16 @@ void update(ginseng::database &db, float dt)
 void draw(ginseng::database &db)
 {
     db.visit([&](ginseng::database::ent_id id, movement &player,
-                 Texture2D &spaceship) {
-        const Rectangle src = {0, 0, static_cast<float>(spaceship.width),
-                               static_cast<float>(spaceship.height)};
+                 Texture2D &player_texture) {
+        const Rectangle src = {0, 0, static_cast<float>(player_texture.width),
+                               static_cast<float>(player_texture.height)};
         const Rectangle dest = {player.position.x, player.position.y,
-                                static_cast<float>(spaceship.width),
-                                static_cast<float>(spaceship.height)};
+                                static_cast<float>(player_texture.width/2),
+                                static_cast<float>(player_texture.height/2)};
         const auto center =
-            Vector2{spaceship.width / 2.f, spaceship.height / 2.f};
+            Vector2{dest.width/2, dest.height / 2.f};
         const auto rotation_deg = player.rotation * 180.f / 3.14f;
-        DrawTexturePro(spaceship, src, dest, center, rotation_deg,
+        DrawTexturePro(player_texture, src, dest, center, rotation_deg,
                        colors::white);
         // Draw aim direction, first pointing up
         const auto sin_value = std::sin(player.rotation - 3.14f / 2.f);

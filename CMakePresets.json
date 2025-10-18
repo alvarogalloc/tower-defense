@@ -31,7 +31,7 @@
   ],
   "testPresets": [
     {
-      "name": "maintest",
+      "name": "test",
       "description": "",
       "displayName": "",
       "configurePreset": "default",

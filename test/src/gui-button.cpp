@@ -14,7 +14,7 @@ int main()
     InitWindow(0, 0, "testing");
     gui::container c;
     c.alflags = gui::h_alignment::left;
-    auto btn =
+    const auto btn =
         c.add_child(gui::button{"holamundo",
                                 rooster::colors::white,
                                 10.f,

@@ -18,16 +18,16 @@ void container::draw(Vector2 parent_end) const
 {
     if (children.size() == 0)
         return;
-    
+
     auto start_pos = [&] {
-      
-      if (Vector2Equals(parent_end, Vector2{0,0}))
-        return position;
-      else 
-         {
-        // std::println("offset of container x {} y {}", parent_end.x, parent_end.y);
-        return parent_end;
-         }
+        if (Vector2Equals(parent_end, Vector2{0, 0}))
+            return position;
+        else
+        {
+            // std::println("offset of container x {} y {}", parent_end.x,
+            // parent_end.y);
+            return parent_end;
+        }
     }();
 
     if (dir == direction::horizontal)
@@ -56,44 +56,45 @@ void container::draw(Vector2 parent_end) const
         Vector2 acc_offset = start_pos;
         for (const auto &el : view)
         {
-            std::visit(overloaded{
-                           [&](auto w) {
-                               Vector2 pos = {0, 0};
-                               if (dir == direction::vertical)
-                               {
-                                   using enum h_alignment;
-                                   pos.y = acc_offset.y;
-                                   switch (alflags)
-                                   {
-                                   case left:
-                                       pos.x = start_pos.x;
-                                       break;
-                                   case right:
-                                       pos.x = start_pos.x + get_size().x - w->get_size().x;
-                                       break;
-                                   case center:
-                                       pos.x = start_pos.x +
-                                               (get_size().x / 2) -
-                                               (w->get_size().x / 2);
-                                       break;
-                                   }
-                               }
-                               else if (dir == direction::horizontal)
-                               {
-                                   pos.y = start_pos.y;
-                                   pos.x = acc_offset.x;
-                               }
+            std::visit(
+                overloaded{
+                    [&](auto w) {
+                        Vector2 pos = {0, 0};
+                        if (dir == direction::vertical)
+                        {
+                            using enum h_alignment;
+                            pos.y = acc_offset.y;
+                            switch (alflags)
+                            {
+                            case left:
+                                pos.x = start_pos.x;
+                                break;
+                            case right:
+                                pos.x = start_pos.x + get_size().x -
+                                        w->get_size().x;
+                                break;
+                            case center:
+                                pos.x = start_pos.x + (get_size().x / 2) -
+                                        (w->get_size().x / 2);
+                                break;
+                            }
+                        }
+                        else if (dir == direction::horizontal)
+                        {
+                            pos.y = start_pos.y;
+                            pos.x = acc_offset.x;
+                        }
 
-                               w->draw(pos);
-                               acc_offset += w->get_size() + Vector2{gap, gap};
-                           }
-                           // [&](container::container_t cont) {
-                           //     cont->draw(acc_offset);
-                           //     acc_offset += cont->get_size() + Vector2{gap, gap};
-                           // },
+                        w->draw(pos);
+                        acc_offset += w->get_size() + Vector2{gap, gap};
+                    }
+                    // [&](container::container_t cont) {
+                    //     cont->draw(acc_offset);
+                    //     acc_offset += cont->get_size() + Vector2{gap, gap};
+                    // },
 
-                       },
-                       el);
+                },
+                el);
         }
     };
 

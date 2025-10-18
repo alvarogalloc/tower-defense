@@ -15,20 +15,17 @@ enum class action : std::uint8_t
 };
 struct health
 {
-    std::uint8_t max;
-    std::uint8_t current;
-    health(std::uint8_t mx) : max(mx), current(mx)
-    {
-    }
+    int max;
+    int current;
 };
 
 struct gun
 {
     float reload_time;
     float last_shot;
-    std::uint8_t ammo;
-    std::uint8_t max_ammo;
-    Sound shoot_sfx;
+    int ammo;
+    int max_ammo;
+    std::string shoot_sfx_path;
 };
 void update(ginseng::database &db, float dt);
 void draw(ginseng::database &db);

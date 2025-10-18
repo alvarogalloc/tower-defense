@@ -17,11 +17,12 @@ class stars_particles
     constexpr static auto default_count = 200;
     stars_particles(int count = default_count);
 
-    void update(float delta_time, Camera2D);
+    void update(float delta_time, Rectangle cam);
     void draw() const;
 
   private:
     star make_star(std::minstd_rand &rng);
+    std::minstd_rand rng;
 
     std::vector<star> m_stars;
 };

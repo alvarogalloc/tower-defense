@@ -1,37 +1,68 @@
 export module config;
-import json;
 import std;
 import raylib;
+import debug;
+import glaze;
 
 export namespace config
 {
-rapidjson::Document &get_game_config()
+struct start_screen
 {
+    std::string title;
+    std::string subtitle;
+    std::string text_key;
+    int font_size;
+};
+
+struct gameover
+{
+    Color bg_color;
+    Color btn_color;
+    Color fg_color;
+    int font_size;
+};
+
+struct space_bg
+{
+    std::string bg_texture;
+    std::vector<std::string> objects_textures;
+    float scroll_speed{};
+};
+
+struct game_config
+{
+    start_screen start_screen;
+    gameover gameover;
+    space_bg space_bg;
+};
+auto get_config()
+{
+    static std::optional<game_config> config;
+    if (config.has_value())
+    {
+        return config.value();
+    }
+
     constexpr static std::string_view config_file_path =
         SRC_DIR "/assets/game_config.json";
-#if 0
-    using nlohmann::json;
-    static std::optional<json> data;
-    if (!data.has_value())
+    std::println("Loading game config from {}", config_file_path);
+    using namespace glz;
+
+    std::string buf;
+    auto ec = read_file_json(config, config_file_path, buf);
+
+    if (ec)
     {
-        std::println("Loading game config from {}", config_file_path);
-        std::ifstream f(config_file_path.data());
-        data = json::parse(f);
+        debug::my_assert(false,
+                         std::format("Error parsing configuration file: {}",
+                                     format_error(ec, buf)));
+        config.reset(); // Reset to empty on error
     }
-#else
-    using namespace rapidjson;
-    static Document data;
-    if (data.IsNull())
+    else
     {
-        std::println("Loading game config from {}", config_file_path);
-        std::ifstream f(config_file_path.data());
-        std::string contents((std::istreambuf_iterator<char>(f)),
-                             (std::istreambuf_iterator<char>()));
-        data = Document();
-        data.Parse(contents.c_str());
+        std::println("Configuration loaded successfully.");
     }
-#endif
-    return data;
+    return config.value();
 }
 
 struct app_info
@@ -41,14 +72,6 @@ struct app_info
     Vector2 size;
     Vector2 game_res;
     int fps;
-};
-
-constexpr inline app_info game_info{
-    .window_name = "Hello, World!",
-    .asset_path = SRC_DIR "/assets",
-    .size {640*2, 360*2},
-    .game_res{640, 360},
-    .fps = 30,
 };
 
 } // namespace config

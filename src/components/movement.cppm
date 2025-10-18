@@ -3,15 +3,15 @@ import raylib;
 
 export namespace components {
 
-  struct movement {
-    Vector2 position;
-    Vector2 velocity;
-    float acceleration_rate;
-    float deceleration_rate;
-    float max_speed;
-    float rotation;
-  };
+struct movement {
+  Vector2 position;
+  Vector2 velocity;
+  float acceleration_rate;
+  float deceleration_rate;
+  float max_speed;
+  float rotation;
+};
 
-  struct bounding_box : Rectangle {};
+using bounding_box = Rectangle;
 
-} // namespace components
+}  // namespace components
