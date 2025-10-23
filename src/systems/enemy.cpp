@@ -5,21 +5,36 @@ import components.bullet;
 import components.movement;
 import components.misc;
 import debug;
+import glaze;
 import std;
 import raylib;
 using namespace rooster;
 namespace systems::enemy {
 spawner make_spawner(const spawner_cfg &cfg) {
-  auto &[enemy, box] = cfg;
-  return [enemy, box](ginseng::database &db, float x, float y) {
+  return [cfg](ginseng::database &db) {
+  auto &[enemy, box, pos, rad] = cfg;
+    std::string pretty;
+    auto _ = glz::write<glz::opts{.prettify = true}>(cfg, pretty);
+    std::println(" loading enemy with info {}", pretty);
+
     // this call represent a new enemy with the 'enemy' preset
     auto id = db.create_entity();
-    const auto new_box = components::bounding_box{x, y, box.width, box.height};
+    const auto new_box = components::bounding_box{
+        pos.x + float(GetRandomValue(-rad, rad)),
+        pos.y + float(GetRandomValue(-rad, rad)),
+        box.width,
+        box.height,
+    };
+    std::println("making a new enemy at {}, {}", new_box.x, new_box.y);
+    auto text_path = std::format("{}/{}", SRC_DIR, enemy.texture_path);
+    debug::my_assert(std::filesystem::exists(std::filesystem::path(text_path)),
+                     "texture for enemy does not exist");
     db.add_component(id, new_box);
     db.add_component(id, enemy);
     db.add_component(
         id,
-        LoadTexture(std::format("{}/{}", SRC_DIR, enemy.texture_path).c_str()));
+        // this neeeds cache
+        LoadTexture(text_path.c_str()));
     return id;
   };
 }

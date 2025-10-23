@@ -6,6 +6,7 @@ import raylib;
 import systems.enemy;
 import prefabs.stars_particles;
 import scenes.gameover;
+import systems.waves;
 
 export namespace scenes
 {
@@ -15,6 +16,9 @@ class shooting : public scene
     std::vector<std::function<void(ginseng::database &, float)>> m_systems{};
     std::vector<std::variant<Texture2D, Sound>> m_to_clean{};
     std::vector<systems::enemy::spawner> m_enemy_spawners{};
+
+    std::vector<systems::waves::level_cfg> m_levels;
+
     systems::enemy::spawner m_enemy_spawner{};
     prefabs::stars_particles m_particles;
     Camera2D m_camera;

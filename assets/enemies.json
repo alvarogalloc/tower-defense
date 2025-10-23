@@ -12,7 +12,12 @@
       "width": 32,
       "x": 0,
       "y": 0
-    }
+    },
+    "spawn_point": {
+      "x": 100,
+      "y": 200
+    },
+    "spawn_radius": 100
   },
   {
     "enemy": {
@@ -27,6 +32,34 @@
       "width": 32,
       "x": 0,
       "y": 0
-    }
+    },
+    "spawn_point": {
+      "x": 100,
+      "y": 200
+    },
+    "spawn_radius": 100
+
+  },
+    {
+    "enemy": {
+      "health": 300,
+      "max_health": 300,
+      "damage": 20,
+      "texture_path": "assets/blueguy.png",
+      "speed": 300
+    },
+    "box": {
+      "height": 32,
+      "width": 32,
+      "x": 0,
+      "y": 0
+    },
+    "spawn_point": {
+      "x": 100,
+      "y": 200
+    },
+    "spawn_radius": 100
+
   }
+
 ]

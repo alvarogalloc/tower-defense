@@ -11,6 +11,8 @@ using glz::read_file_json;
 using glz::read_json;
 using glz::write_file_json;
 using glz::write_json;
+using glz::write;
+using glz::opts;
 namespace ex
 {
 using glz::ex::read_file_json;

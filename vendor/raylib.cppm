@@ -7,6 +7,12 @@ export module raylib;
 
 export {
   using ::operator*=;
+  using enum ::ConfigFlags;
+  using enum ::TraceLogLevel;
+  using enum ::MouseButton;
+  using enum ::MouseCursor;
+  using enum ::TextureFilter;
+  using enum ::KeyboardKey;
   using ::SetConfigFlags;
   using ::operator+=;
   using ::operator/=;

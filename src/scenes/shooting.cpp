@@ -50,49 +50,58 @@ void shooting::on_start() {
 
   auto &world = game::get().get_world();
 
-  player_cfg cfg;
-  std::string buffer;
-  auto ec = glz::read_file_json(cfg, SRC_DIR "/assets/player.json", buffer);
-  debug::my_assert(!ec, std::format("Failed to read player config: {}",
-                                    glz::format_error(ec, buffer)));
+  const auto spawn_player = [&] {
+    std::string buffer;
+    player_cfg cfg;
+    const auto ec =
+        glz::read_file_json(cfg, SRC_DIR "/assets/player.json", buffer);
+    debug::my_assert(!ec, std::format("Failed to read player config: {}",
+                                      glz::format_error(ec, buffer)));
 
-  world.add_component(m_player_entity, cfg.movement);
-  world.add_component(m_player_entity, cfg.gun);
-  world.add_component(m_player_entity, cfg.gun);
-  world.add_component(m_player_entity, systems::player::action::none);
-  world.add_component(m_player_entity, components::misc::player{});
-  world.add_component(m_player_entity, cfg.health);
-  auto spaceship =
-      LoadTexture(std::format("{}/{}", SRC_DIR, cfg.texture).c_str());
-  auto shoot_sfx =
-      LoadSound(std::format("{}/{}", SRC_DIR, cfg.gun.shoot_sfx_path).c_str());
-  const float shoot_volume = 0.5f;
-  SetSoundVolume(shoot_sfx, shoot_volume);
-  m_to_clean.emplace_back(spaceship);
-  m_to_clean.emplace_back(shoot_sfx);
-  world.add_component(m_player_entity, spaceship);
-  world.add_component(m_player_entity, shoot_sfx);
+    world.add_component(m_player_entity, cfg.movement);
+    world.add_component(m_player_entity, cfg.gun);
+    world.add_component(m_player_entity, systems::player::action::none);
+    world.add_component(m_player_entity, components::misc::player{});
+    world.add_component(m_player_entity, cfg.health);
+    const auto spaceship =
+        LoadTexture(std::format("{}/{}", SRC_DIR, cfg.texture).c_str());
+    const auto shoot_sfx = LoadSound(
+        std::format("{}/{}", SRC_DIR, cfg.gun.shoot_sfx_path).c_str());
+    const float shoot_volume = 0.5f;
+    SetSoundVolume(shoot_sfx, shoot_volume);
+    m_to_clean.emplace_back(spaceship);
+    m_to_clean.emplace_back(shoot_sfx);
+    world.add_component(m_player_entity, spaceship);
+    world.add_component(m_player_entity, shoot_sfx);
+  };
+  const auto load_enemies = [&] {
+    std::vector<systems::enemy::spawner_cfg> enemies;
+    std::string buffer;
+    const auto ec =
+        glz::read_file_json(enemies, SRC_DIR "/assets/enemies.json", buffer);
+    debug::my_assert(!ec, std::format("Failed to read enemies config: {}",
+                                      glz::format_error(ec, buffer)));
+    for (const auto &e : enemies) {
+      m_enemy_spawners.push_back(systems::enemy::make_spawner(e));
+    }
+  };
+  const auto load_levels = [&] {
+    std::string buffer;
+    const auto ec =
+        glz::read_file_json(m_levels, SRC_DIR "/assets/levels.json", buffer);
+    debug::my_assert(!ec, std::format("Failed to read levels config: {}",
+                                      glz::format_error(ec, buffer)));
+    my_assert(m_levels.size(), "there should be at least one level");
+  };
 
-  std::vector<systems::enemy::spawner_cfg> enemies;
-  buffer = "";
-  ec = glz::read_file_json(enemies, SRC_DIR "/assets/enemies.json", buffer);
-  debug::my_assert(!ec, std::format("Failed to read enemies config: {}",
-                                    glz::format_error(ec, buffer)));
-  for (const auto &e : enemies) {
-    m_enemy_spawners.push_back(systems::enemy::make_spawner(e));
-  }
-  std::vector<systems::waves::level_cfg> levels;
-  buffer = "";
-  ec = glz::read_file_json(levels, SRC_DIR "/assets/levels.json", buffer);
-  debug::my_assert(!ec, std::format("Failed to read levels config: {}",
-                                    glz::format_error(ec, buffer)));
-
-  // m_enemy_spawner = systems::enemy::make_spawner(enemies[0]);
-  // m_enemy_spawner(world, 0.f, 120.f);
-  // m_enemy_spawner(world, 150.f, 30.f);
+  spawn_player();
+  load_enemies();
+  load_levels();
+  m_systems.emplace_back(systems::waves::make_level_update(m_levels, m_enemy_spawners));
 }
 void shooting::on_update() {
   float dt = GetFrameTime();
+  // static float time_for_next_spawn = 0.f;
 
   auto &world = game::get().get_world();
   for (auto &system : m_systems) {
