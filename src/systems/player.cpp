@@ -1,6 +1,8 @@
 module systems.player;
 import systems.bullet;
 import components.bullet;
+import system_manager;
+import event_system;
 using namespace rooster;
 
 namespace
@@ -32,7 +34,24 @@ auto get_player_action() -> action
 namespace systems::player
 {
 using namespace components;
-void update(ginseng::database &db, float dt)
+
+// New unified system function with phase support
+void system(ginseng::database &db, float dt, systems::Phase phase, systems::EventBus* event_bus)
+{
+    if (phase == systems::Phase::Init) {
+        // Nothing to initialize for player system currently
+        return;
+    }
+    if (phase == systems::Phase::Cleanup) {
+        // Nothing to cleanup for player system currently
+        return;
+    }
+    // Phase::Update - run the update logic
+    update_impl(db, dt, event_bus);
+}
+
+// Internal implementation that can be used by both old and new APIs
+static void update_impl(ginseng::database &db, float dt, systems::EventBus* event_bus = nullptr)
 {
     db.visit([&](movement &player, health &player_health) {
         const auto starting_pos = player.position;
@@ -110,15 +129,26 @@ void update(ginseng::database &db, float dt)
             gun.last_shot = float(GetTime());
             gun.ammo -= 1;
             const auto &player = db.get_component<movement>(entity);
-            systems::bullet::shoot_bullet(
-                db, components::bullet{
-                        .position = player.position,
-                        .velocity = Vector2Scale(
-                            Vector2Normalize(player.velocity), 100.f),
-                        .rotation = player.rotation,
-                        .damage = 10,
-                        .radius = 4.5,
-                    });
+            
+            // Use event system if available, otherwise fallback to direct call
+            if (event_bus) {
+                event_bus->publish(systems::ShootEvent{
+                    .position = player.position,
+                    .velocity = Vector2Scale(Vector2Normalize(player.velocity), 100.f),
+                    .rotation = player.rotation,
+                    .damage = 10
+                });
+            } else {
+                systems::bullet::shoot_bullet(
+                    db, components::bullet{
+                            .position = player.position,
+                            .velocity = Vector2Scale(
+                                Vector2Normalize(player.velocity), 100.f),
+                            .rotation = player.rotation,
+                            .damage = 10,
+                            .radius = 4.5,
+                        });
+            }
             PlaySound(sfx_shoot);
 
             break;
@@ -130,6 +160,12 @@ void update(ginseng::database &db, float dt)
             break;
         }
     });
+}
+
+// Legacy function for backward compatibility
+void update(ginseng::database &db, float dt)
+{
+    update_impl(db, dt, nullptr);
 }
 
 void draw(ginseng::database &db)

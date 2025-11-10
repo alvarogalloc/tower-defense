@@ -1,0 +1,226 @@
+# ECS Architecture Diagram
+
+## High-Level Overview
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              GAME                                        │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │                          SCENE (shooting)                         │  │
+│  │                                                                    │  │
+│  │  ┌─────────────────┐  ┌──────────────────┐  ┌─────────────────┐ │  │
+│  │  │ SystemManager   │  │ ResourceManager  │  │   EventBus      │ │  │
+│  │  │                 │  │                  │  │                 │ │  │
+│  │  │ - register()    │  │ - load_texture() │  │ - publish()     │ │  │
+│  │  │ - execute()     │  │ - load_sound()   │  │ - subscribe()   │ │  │
+│  │  │ - set_enabled() │  │ - auto cleanup   │  │ - clear()       │ │  │
+│  │  └────────┬────────┘  └──────────────────┘  └────────┬────────┘ │  │
+│  │           │                                            │          │  │
+│  └───────────┼────────────────────────────────────────────┼──────────┘  │
+│              │                                            │             │
+└──────────────┼────────────────────────────────────────────┼─────────────┘
+               │                                            │
+               ▼                                            ▼
+    ┌──────────────────────┐                    ┌─────────────────────┐
+    │   SYSTEM LIFECYCLE   │                    │   EVENT HANDLERS    │
+    │                      │                    │                     │
+    │  Phase::Init         │◄───────────────────┤ Subscribe in Init   │
+    │    - Load config     │                    │                     │
+    │    - Subscribe events│                    │ Publish in Update   │
+    │                      │                    │                     │
+    │  Phase::Update       │────────────────────►                     │
+    │    - Process input   │    Publish Event   │                     │
+    │    - Update entities │                    │                     │
+    │    - Game logic      │                    │                     │
+    │                      │                    │                     │
+    │  Phase::Cleanup      │                    │                     │
+    │    - Save state      │                    │                     │
+    │    - Unload resources│                    │                     │
+    └──────────┬───────────┘                    └─────────────────────┘
+               │
+               ▼
+    ┌──────────────────────┐
+    │   ECS DATABASE       │
+    │   (ginseng)          │
+    │                      │
+    │  Entities:           │
+    │  ├─ Player           │
+    │  ├─ Enemies          │
+    │  └─ Bullets          │
+    │                      │
+    │  Components:         │
+    │  ├─ Position         │
+    │  ├─ Velocity         │
+    │  ├─ Health           │
+    │  └─ Texture          │
+    └──────────────────────┘
+
+
+## System Execution Flow
+
+1. SCENE.on_start()
+   ├─ Register systems with priorities
+   │  ├─ system_mgr.register("input", 10)
+   │  ├─ system_mgr.register("player", 20)
+   │  ├─ system_mgr.register("enemy", 30)
+   │  └─ system_mgr.register("bullet", 40)
+   │
+   └─ Initialize all systems
+      └─ system_mgr.execute(db, 0, Phase::Init)
+         ├─ input::system(db, 0, Init)
+         ├─ player::system(db, 0, Init)
+         │  └─ event_bus.subscribe<ShootEvent>()
+         ├─ enemy::system(db, 0, Init)
+         └─ bullet::system(db, 0, Init)
+
+2. SCENE.on_update() [Every Frame]
+   └─ system_mgr.execute(db, dt, Phase::Update)
+      ├─ input::system(db, dt, Update)
+      ├─ player::system(db, dt, Update)
+      │  └─ event_bus.publish(ShootEvent)
+      ├─ enemy::system(db, dt, Update)
+      └─ bullet::system(db, dt, Update)
+         └─ Handle ShootEvent → create bullet
+
+3. SCENE.on_exit()
+   ├─ system_mgr.execute(db, 0, Phase::Cleanup)
+   │  ├─ input::system(db, 0, Cleanup)
+   │  ├─ player::system(db, 0, Cleanup)
+   │  ├─ enemy::system(db, 0, Cleanup)
+   │  └─ bullet::system(db, 0, Cleanup)
+   │
+   └─ Auto cleanup (ResourceManager destructor)
+      ├─ Unload all textures
+      ├─ Unload all sounds
+      └─ Unload all music
+
+
+## Event Flow Example: Player Shoots
+
+┌────────────┐         ┌──────────┐         ┌────────────┐
+│   Input    │         │  Player  │         │   Bullet   │
+│   System   │         │  System  │         │   System   │
+└─────┬──────┘         └────┬─────┘         └─────┬──────┘
+      │                     │                     │
+      │ Detect SPACE        │                     │
+      ├────────────────────►│                     │
+      │                     │                     │
+      │                     │ Publish             │
+      │                     │ ShootEvent          │
+      │                     ├─────────────────────►
+      │                     │                     │
+      │                     │                     │ Create
+      │                     │                     │ Bullet
+      │                     │                     │ Entity
+      │                     │                     │
+      │                     │     Play Sound      │
+      │                     ├────────────────────►│
+      │                     │                     │
+      ▼                     ▼                     ▼
+
+
+## Resource Management Flow
+
+┌────────────────────────────────────────────────────────────┐
+│                    ResourceManager                          │
+│                                                             │
+│  on_start() {                                               │
+│    auto tex = resources.load_texture("player.png");        │
+│    ├─ LoadTexture()                                        │
+│    ├─ Store in vector                                      │
+│    └─ Return handle                                        │
+│                                                             │
+│    db.add_component(entity, tex);                          │
+│  }                                                          │
+│                                                             │
+│  on_exit() {                                                │
+│    // ResourceManager destructor called automatically       │
+│    ├─ for (texture : textures)                            │
+│    │   └─ UnloadTexture(texture)                          │
+│    ├─ for (sound : sounds)                                │
+│    │   └─ UnloadSound(sound)                              │
+│    └─ for (music : musics)                                │
+│        └─ UnloadMusicStream(music)                        │
+│  }                                                          │
+└────────────────────────────────────────────────────────────┘
+
+
+## Data Flow: Component Update
+
+┌────────────┐
+│   Input    │ Modify player component
+└─────┬──────┘
+      │
+      ▼
+┌────────────┐
+│  Player    │ Read enemy components
+│  System    │ Publish events
+└─────┬──────┘
+      │
+      ▼
+┌────────────┐
+│   Enemy    │ Read player component
+│   System   │ Modify enemy components
+└─────┬──────┘
+      │
+      ▼
+┌────────────┐
+│   Bullet   │ Read bullet/enemy components
+│   System   │ Destroy entities on collision
+└─────┬──────┘
+      │
+      ▼
+┌────────────────────┐
+│   ECS Database     │
+│   (ginseng)        │
+│                    │
+│  All components    │
+│  updated           │
+└────────────────────┘
+
+
+## Priority-Based Execution Order
+
+Priority 10: Input System
+  ↓
+Priority 20: Player System
+  ↓
+Priority 30: Enemy System
+  ↓
+Priority 40: Bullet System
+  ↓
+Priority 50: Physics System
+  ↓
+Priority 60: Collision System
+  ↓
+Priority 100: Render System
+
+Lower priority = Runs first
+Higher priority = Runs later
+
+
+## Key Design Patterns Used
+
+1. Entity Component System (ECS)
+   - Entities: Game objects (player, enemies, bullets)
+   - Components: Pure data (position, velocity, health)
+   - Systems: Logic operating on components
+
+2. RAII (Resource Acquisition Is Initialization)
+   - ResourceManager automatically cleans resources
+   - Exception-safe
+   - No manual cleanup needed
+
+3. Publish-Subscribe (Observer Pattern)
+   - EventBus decouples systems
+   - Systems publish events
+   - Other systems subscribe to events
+
+4. Strategy Pattern
+   - SystemManager executes systems polymorphically
+   - All systems follow same interface
+   - Easy to add/remove systems
+
+5. Phase-Based Lifecycle
+   - Init: One-time setup
+   - Update: Per-frame logic
+   - Cleanup: Shutdown

@@ -12,6 +12,9 @@ import components.misc;
 import systems.camera;
 import asset_routes;
 import debug;
+import system_manager;
+import resource_manager;
+import event_system;
 
 using namespace rooster;
 
@@ -44,9 +47,21 @@ shooting::shooting()
 void shooting::on_start() {
   camera_msg =
       &game::get().push_debug_message({.lifetime_seconds = -1.f, .text = ""});
-  m_systems.emplace_back(player::update);
-  // m_systems.emplace_back(bullet::update);
-  m_systems.emplace_back(enemy::update);
+  
+  // Register systems with priorities (lower numbers run first)
+  m_system_mgr.register_system("player", 
+      [this](ginseng::database& db, float dt, systems::Phase phase) {
+          systems::player::system(db, dt, phase, &m_event_bus);
+      }, 10);
+  
+  m_system_mgr.register_system("enemy", 
+      [](ginseng::database& db, float dt, systems::Phase phase) {
+          systems::enemy::system(db, dt, phase);
+      }, 20);
+  
+  // Legacy systems (will be migrated in future)
+  m_legacy_systems.emplace_back(player::update);
+  m_legacy_systems.emplace_back(enemy::update);
 
   auto &world = game::get().get_world();
 
@@ -63,14 +78,15 @@ void shooting::on_start() {
     world.add_component(m_player_entity, systems::player::action::none);
     world.add_component(m_player_entity, components::misc::player{});
     world.add_component(m_player_entity, cfg.health);
-    const auto spaceship =
-        LoadTexture(std::format("{}/{}", SRC_DIR, cfg.texture).c_str());
-    const auto shoot_sfx = LoadSound(
+    
+    // Use resource manager for automatic cleanup
+    const auto spaceship = m_resources.load_texture(
+        std::format("{}/{}", SRC_DIR, cfg.texture).c_str());
+    const auto shoot_sfx = m_resources.load_sound(
         std::format("{}/{}", SRC_DIR, cfg.gun.shoot_sfx_path).c_str());
     const float shoot_volume = 0.5f;
     SetSoundVolume(shoot_sfx, shoot_volume);
-    m_to_clean.emplace_back(spaceship);
-    m_to_clean.emplace_back(shoot_sfx);
+    
     world.add_component(m_player_entity, spaceship);
     world.add_component(m_player_entity, shoot_sfx);
   };
@@ -97,16 +113,24 @@ void shooting::on_start() {
   spawn_player();
   load_enemies();
   load_levels();
-  m_systems.emplace_back(systems::waves::make_level_update(m_levels, m_enemy_spawners));
+  m_legacy_systems.emplace_back(systems::waves::make_level_update(m_levels, m_enemy_spawners));
+  
+  // Initialize all systems
+  m_system_mgr.execute(world, 0.0f, systems::Phase::Init);
 }
 void shooting::on_update() {
   float dt = GetFrameTime();
-  // static float time_for_next_spawn = 0.f;
 
   auto &world = game::get().get_world();
-  for (auto &system : m_systems) {
+  
+  // Execute new architecture systems (commented out to maintain backward compatibility)
+  // m_system_mgr.execute(world, dt, systems::Phase::Update);
+  
+  // Execute legacy systems for now
+  for (auto &system : m_legacy_systems) {
     system(world, dt);
   }
+  
   const auto cam = Rectangle{
       .x = m_camera.target.x - m_camera.offset.x,
       .y = m_camera.target.y - m_camera.offset.y,
@@ -134,17 +158,12 @@ void shooting::on_update() {
 }
 
 std::unique_ptr<scene> shooting::on_exit() {
-  for (auto res : m_to_clean) {
-    std::visit(
-        [](auto &t) {
-          if constexpr (std::is_same_v<decltype(t), Texture2D>) {
-            UnloadTexture(t);
-          } else if constexpr (std::is_same_v<decltype(t), Sound>) {
-            UnloadSound(t);
-          }
-        },
-        res);
-  }
+  // Cleanup systems
+  auto &world = game::get().get_world();
+  m_system_mgr.execute(world, 0.0f, systems::Phase::Cleanup);
+  
+  // Resources are automatically cleaned up by ResourceManager destructor
+  
   m_stats.time_seconds = int(GetTime() - m_stats.time_seconds);
   return std::make_unique<scenes::gameover>(m_stats);
 }

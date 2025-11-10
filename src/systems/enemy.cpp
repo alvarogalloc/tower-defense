@@ -8,6 +8,7 @@ import debug;
 import glaze;
 import std;
 import raylib;
+import system_manager;
 using namespace rooster;
 namespace systems::enemy {
 spawner make_spawner(const spawner_cfg &cfg) {
@@ -37,6 +38,20 @@ spawner make_spawner(const spawner_cfg &cfg) {
         LoadTexture(text_path.c_str()));
     return id;
   };
+}
+
+// New unified system function with phase support
+void system(ginseng::database &db, float dt, systems::Phase phase) {
+  if (phase == systems::Phase::Init) {
+    // Nothing to initialize for enemy system currently
+    return;
+  }
+  if (phase == systems::Phase::Cleanup) {
+    // Nothing to cleanup for enemy system currently
+    return;
+  }
+  // Phase::Update - run the update logic
+  update(db, dt);
 }
 
 void update(ginseng::database &db, float dt) {
