@@ -2,6 +2,8 @@ module systems.bullet;
 import config;
 import components.enemy;
 import components.movement;
+import system_manager;
+import event_system;
 using namespace rooster;
 
 namespace systems::bullet
@@ -10,6 +12,33 @@ void shoot_bullet(ginseng::database &db, components::bullet info)
 {
     auto new_bullet = db.create_entity();
     db.add_component(new_bullet, std::move(info));
+}
+
+// New unified system function with phase support
+void system(ginseng::database &db, float dt, systems::Phase phase, Rectangle bounds, systems::EventBus* event_bus)
+{
+    if (phase == systems::Phase::Init) {
+        // Subscribe to shoot events
+        if (event_bus) {
+            event_bus->subscribe<systems::ShootEvent>([&db](const systems::Event& base_event) {
+                const auto& event = static_cast<const systems::ShootEvent&>(base_event);
+                shoot_bullet(db, components::bullet{
+                    .position = event.position,
+                    .velocity = event.velocity,
+                    .rotation = event.rotation,
+                    .damage = static_cast<std::uint8_t>(event.damage),
+                    .radius = 4.5f
+                });
+            });
+        }
+        return;
+    }
+    if (phase == systems::Phase::Cleanup) {
+        // Nothing to cleanup for bullet system currently
+        return;
+    }
+    // Phase::Update - run the update logic
+    update(db, dt, bounds);
 }
 
 void update(ginseng::database &db, float dt, Rectangle )
