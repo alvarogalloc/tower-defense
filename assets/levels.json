@@ -3,7 +3,7 @@
     "title": "BLUEGUY MENACE",
     "waves": [
       {
-        "enemy_sequence": [0, 2,1],
+        "enemy_sequence": [0, 0,0],
         "count": 50,
         "spawn_interval_seconds": 1.0
       }

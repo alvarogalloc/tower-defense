@@ -2,6 +2,7 @@ module systems.enemy;
 import components.enemy;
 import systems.player;
 import components.bullet;
+import utils.assets_cache;
 import components.movement;
 import components.misc;
 import debug;
@@ -12,7 +13,7 @@ using namespace rooster;
 namespace systems::enemy {
 spawner make_spawner(const spawner_cfg &cfg) {
   return [cfg](ginseng::database &db) {
-  auto &[enemy, box, pos, rad] = cfg;
+    auto &[enemy, box, pos, rad] = cfg;
     std::string pretty;
     auto _ = glz::write<glz::opts{.prettify = true}>(cfg, pretty);
     std::println(" loading enemy with info {}", pretty);
@@ -27,14 +28,13 @@ spawner make_spawner(const spawner_cfg &cfg) {
     };
     std::println("making a new enemy at {}, {}", new_box.x, new_box.y);
     auto text_path = std::format("{}/{}", SRC_DIR, enemy.texture_path);
-    debug::my_assert(std::filesystem::exists(std::filesystem::path(text_path)),
-                     "texture for enemy does not exist");
     db.add_component(id, new_box);
     db.add_component(id, enemy);
-    db.add_component(
-        id,
-        // this neeeds cache
-        LoadTexture(text_path.c_str()));
+
+    using namespace utils;
+    db.add_component(id,
+                     // this neeeds cache
+                     get_asset<asset_type::texture>(asset_path{text_path}));
     return id;
   };
 }

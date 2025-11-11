@@ -78,6 +78,7 @@ export {
   using ::ClearBackground;
   using ::CloseWindow;
   using ::Color;
+  using ::Texture;
   using ::ColorToInt;
   using ::DrawLineEx;
   using ::DrawRectangleLines;

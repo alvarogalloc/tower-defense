@@ -1,0 +1,12 @@
+{
+  "window_name": "Hello, World!",
+  "size": {
+    "x": 1280,
+    "y": 720
+  },
+  "game_res": {
+    "x": 640,
+    "y": 460
+  },
+  "fps": 60
+}

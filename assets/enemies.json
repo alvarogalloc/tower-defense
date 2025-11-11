@@ -1,8 +1,8 @@
 [
   {
     "enemy": {
-      "health": 100,
-      "max_health": 100,
+      "health": 30,
+      "max_health": 30,
       "damage": 10,
       "texture_path": "assets/blueguy.png",
       "speed": 150

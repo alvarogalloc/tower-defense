@@ -2,18 +2,20 @@ import game;
 import std;
 import scenes.start_screen;
 import config;
-import raylib;
+import glaze;
+import debug;
 
 int main() {
-  const config::app_info game_info{
-      .window_name = "Hello, World!",
-      .asset_path = SRC_DIR "/assets",
-      // .size{float(GetScreenWidth()/2), float(GetScreenHeight()/2)},
-      // .game_res{float(GetScreenWidth()/2), float(GetScreenHeight()/2)},
-      .size{640, 360},
-      .game_res{640, 360},
-      .fps = 60,
-  };
+  config::app_info game_info{};
+  const auto game_info_path{SRC_DIR "/assets/game_info.json"};
+  std::string b{};
+  const auto ec = glz::read_file_json(game_info, game_info_path, b);
+  if (ec) {
+    debug::my_assert(false, std::format("failed to load game info, error {}",
+                                        glz::format_error(ec)));
+  } else {
+    std::println("game info loaded  {}", b);
+  }
 
   game mygame{game_info};
   mygame.set_scene(std::make_unique<scenes::start_screen>());

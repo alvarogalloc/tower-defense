@@ -17,10 +17,9 @@ jobs:
         os:
           - ubuntu-24.04
         compiler:
-          - llvm-20
+          - llvm-21
         buildtype:
           - Debug
-          - Release
     steps:
       # caches all the ccache, vcpkg cmake build files for better recompilation times
       - uses: actions/checkout@v3
@@ -52,13 +51,13 @@ jobs:
             ${{ env.XDG_CACHE_HOME }}/ccache
           key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.BUILD_TYPE }}-
+            ${{ runner.os }}-${{ env.BUILD_TYPE }}
 
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
           compiler: ${{ matrix.compiler }}
-          cmake: true
+          cmake: 4.1.2
           ninja: true
           vcpkg: true
           # cppcheck: true
@@ -71,11 +70,11 @@ jobs:
 
       - name: "Build with cmake"
         run: >
-          cmake --build build-cmake --config ${{ matrix.buildtype }}
+          cmake --build build-cmake
       - name: "Upload executable"
         uses: actions/upload-artifact@v4
         with:
           name: magster-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.buildtype }}
-          path: build-cmake/${{ matrix.buildtype }}/magster
+          path: build-cmake/magster
 
 

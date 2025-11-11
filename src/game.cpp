@@ -6,6 +6,7 @@ import raygui;
 namespace {
 
 void custom_raylib_log(int msgType, const char *text, va_list args) {
+  return ;
   std::cout << debug::colors::bold;
   switch (msgType) {
     case LOG_INFO:
@@ -30,14 +31,13 @@ static game *g_instance = nullptr;
 }  // namespace
 
 game::game(config::app_info spec) : m_spec(std::move(spec)) {
-  // use_glfw_wayland();
-
   SetTraceLogCallback(custom_raylib_log);
-  const auto [wx, wy] = spec.size;
-  const auto [x, y] = spec.game_res;
+  const auto [wx, wy] = m_spec.size;
+  const auto [x, y] = m_spec.game_res;
+  std::println("window is {} {} ", wx, wy);
   SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT);
-  InitWindow(int(wx), int(wy), spec.window_name.data());
-  SetTargetFPS(spec.fps);
+  InitWindow(int(wx), int(wy), m_spec.window_name.data());
+  SetTargetFPS(m_spec.fps);
   InitAudioDevice();
   m_target = LoadRenderTexture(int(x), int(y));
   SetTextureFilter(m_target.texture, TEXTURE_FILTER_POINT);

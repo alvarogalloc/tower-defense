@@ -7,11 +7,11 @@ set_languages("c++latest")
 --  use libc++
 add_ldflags("-stdlib=libc++")
 
-add_requires("raylib", "raygui", "glaze", "fmt", "glfw")
+add_requires("raylib", "raygui", "glaze", "fmt", "glfw", "entt")
 
 target("vendor")
   set_kind("static")
-  add_packages("raylib", "raygui", "glaze","fmt","glfw", { public = true })
+  add_packages("raylib", "raygui", "glaze","fmt","glfw", "entt", { public = true })
   add_files("vendor/*.cpp")
   add_files("vendor/*.cppm", { public = true })
 

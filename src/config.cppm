@@ -68,7 +68,6 @@ auto get_config()
 struct app_info
 {
     std::string_view window_name;
-    std::string_view asset_path;
     Vector2 size;
     Vector2 game_res;
     int fps;
