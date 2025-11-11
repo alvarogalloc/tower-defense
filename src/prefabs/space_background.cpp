@@ -2,6 +2,7 @@ module prefabs.space_background;
 import game;
 import std;
 import debug;
+import utils.assets_cache;
 using namespace rooster;
 
 namespace prefabs::v2 {
@@ -10,13 +11,10 @@ space_background::space_background(
     std::string_view background_texture_path,
     std::vector<std::string> const &object_texture_paths,
     const float scroll_speed)
-    : m_background(LoadTexture(background_texture_path.data())),
+    : m_background(utils::get_asset<utils::asset_type::texture>(background_texture_path)),
       m_object_data(),
       m_scroll_speed(scroll_speed) {
   auto [w, h] = game::get().get_spec().game_res;
-  debug::my_assert(
-      std::filesystem::exists(background_texture_path),
-      std::format("File does not exist: {}", background_texture_path));
   auto generate_start_pos = [&] {
     return Vector2{
         float(GetRandomValue(0, int(w))),
@@ -27,10 +25,7 @@ space_background::space_background(
   const int amount_per_texture = 2;
 
   for (const auto &path : object_texture_paths) {
-    auto str_path = std::format("{}/assets/{}", SRC_DIR, path);
-    debug::my_assert(std::filesystem::exists(str_path),
-                     std::format("File does not exist: {} ", str_path));
-    auto tex = LoadTexture(str_path.c_str());
+    auto tex = utils::get_asset<utils::asset_type::texture>(path);
     for (int _ : std::views::iota(0, amount_per_texture)) {
       m_object_data.emplace_back(tex, generate_start_pos(), gen_scale());
       m_object_data.emplace_back(tex, generate_start_pos(), gen_scale());
@@ -41,15 +36,9 @@ space_background::space_background(
 
 space_background::space_background(config::space_bg const &config_node)
     : space_background(
-          std::format("{}/assets/{}", SRC_DIR, config_node.bg_texture),
+          config_node.bg_texture,
           config_node.objects_textures, config_node.scroll_speed) {}
 
-space_background::~space_background() {
-  UnloadTexture(m_background);
-  for (const auto &[texture, _, _] : m_object_data) {
-    UnloadTexture(texture);
-  }
-}
 
 void space_background::update() {
   auto [w, _] = game::get().get_spec().game_res;

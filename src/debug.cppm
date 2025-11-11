@@ -1,6 +1,5 @@
 export module debug;
 import std;
-import ginseng;
 import raylib;
 export namespace debug
 {

@@ -6,7 +6,7 @@ import raygui;
 namespace {
 
 void custom_raylib_log(int msgType, const char *text, va_list args) {
-  return ;
+  return;
   std::cout << debug::colors::bold;
   switch (msgType) {
     case LOG_INFO:
@@ -32,10 +32,13 @@ static game *g_instance = nullptr;
 
 game::game(config::app_info spec) : m_spec(std::move(spec)) {
   SetTraceLogCallback(custom_raylib_log);
-  const auto [wx, wy] = m_spec.size;
   const auto [x, y] = m_spec.game_res;
+  auto wx = x*m_spec.scale;
+  auto wy = y*m_spec.scale;
+  unsigned int flags =
+      FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT | FLAG_FULLSCREEN_MODE;
   std::println("window is {} {} ", wx, wy);
-  SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT);
+  SetConfigFlags(flags);
   InitWindow(int(wx), int(wy), m_spec.window_name.data());
   SetTargetFPS(m_spec.fps);
   InitAudioDevice();
@@ -127,8 +130,8 @@ int game::run() {
                        Rectangle{
                            0,
                            0,
-                           m_spec.size.x,
-                           m_spec.size.y,
+                           m_spec.game_res.x*m_spec.scale,
+                           m_spec.game_res.y*m_spec.scale,
                        },
                        Vector2{0, 0}, 0.0f, rooster::colors::white);
         EndDrawing();

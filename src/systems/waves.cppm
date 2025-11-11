@@ -1,5 +1,5 @@
 export module systems.waves;
-import ginseng;
+import entt;
 import systems.enemy;
 import raylib;
 import std;
@@ -19,9 +19,11 @@ struct level_cfg {
   float timer = 0.f;
 };
 
-auto make_level_update( std::vector<level_cfg> &levels,
-                       const std::vector<systems::enemy::spawner> &spawners) -> std::function<void(ginseng::database &db,float dt)> {
-  return [&levels,&spawners, i = std::size_t(0)](ginseng::database &db,float dt)  {
+auto make_level_update(std::vector<level_cfg> &levels,
+                       const std::vector<systems::enemy::spawner> &spawners)
+    -> std::function<void(entt::registry &db, float dt)> {
+  return [&levels, &spawners, i = std::size_t(0)](entt::registry &db,
+                                                  float dt) {
     debug::my_assert(i < levels.size(), "out of bounds level");
     auto &curr = levels.at(i);
     auto &wave = curr.waves.at(curr.current_wave);
@@ -38,18 +40,17 @@ auto make_level_update( std::vector<level_cfg> &levels,
         auto spawner_id = wave.enemy_sequence[wave.enemy_index];
         debug::my_assert(spawner_id < spawners.size(), "index out of bounds");
         std::println("el id es {}", spawner_id);
-        auto enemy_spawner =spawners.at( spawner_id );
+        auto enemy_spawner = spawners.at(spawner_id);
         enemy_spawner(db);
         wave.enemy_index++;
       } else {
-
         wave.enemy_index = 0;
       }
     }
   };
 }
 
-void update_level(ginseng::database &, float, level_cfg &level,
+void update_level(entt::registry &, float, level_cfg &level,
                   const std::vector<systems::enemy::spawner_cfg> &) {
   // if all waves are finished, finish level, do nothing
   if (level.waves.size() - 1 <= level.current_wave) {

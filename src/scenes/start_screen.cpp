@@ -1,8 +1,8 @@
 module scenes.start_screen;
 import scenes.shooting;
-import asset_routes;
 import config;
 import gui;
+import utils.assets_cache;
 using namespace rooster;
 inline constexpr int font_size = 48;
 inline constexpr Color base_color{.r = colors::darkpurple.r,
@@ -10,20 +10,26 @@ inline constexpr Color base_color{.r = colors::darkpurple.r,
                                   .b = colors::darkpurple.b,
                                   .a = 100};
 
+constexpr auto TITLE_FONT = "/assets/monogram.ttf";
+constexpr auto BLUE_GUY_TEXTURE = "/assets/blueguy.png";
+constexpr auto MENU_MUSIC = "/assets/bgmusic.ogg";
 inline constexpr float text_space = 0.2f;
 namespace scenes {
 
 start_screen::start_screen()
     : m_space_background(config::get_config().space_bg) {}
 void start_screen::on_start() {
+  constexpr float seconds_notification{15.f};
   game::get().push_debug_message({
-      .lifetime_seconds = 15.f,
+      .lifetime_seconds = seconds_notification,
       .text = "Entered start screen scene",
   });
 
-  m_title_font = LoadFontEx(routes::TITLE_FONT, font_size, nullptr, 0);
-  m_blue_guy = LoadTexture(routes::BLUE_GUY_TEXTURE);
-  m_music = LoadMusicStream(routes::MENU_MUSIC);
+  m_title_font = LoadFontEx(config::get_path(TITLE_FONT).c_str(),
+                            font_size, nullptr, 0);
+  m_blue_guy =
+      utils::get_asset<utils::asset_type::texture>(BLUE_GUY_TEXTURE);
+  m_music = utils::get_asset<utils::asset_type::music>(MENU_MUSIC);
   PlayMusicStream(m_music);
 }
 

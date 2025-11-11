@@ -1,15 +1,15 @@
 export module systems.bullet;
 import raylib;
-import ginseng;
+import entt;
 import std;
 import components.bullet;
 
 export namespace systems::bullet
 {
 
-void shoot_bullet(ginseng::database &db, components::bullet info);
+void shoot_bullet(entt::registry &db, components::bullet info);
 
-void update(ginseng::database &db, float dt, Rectangle bounds);
-void draw(ginseng::database &db);
+void update(entt::registry &db, float dt, Rectangle bounds);
+void draw(entt::registry &db);
 
 } // namespace systems::bullet

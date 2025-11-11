@@ -31,7 +31,6 @@ class space_background
                      std::vector<std::string> const &object_texture_paths,
                      const float scroll_speed);
     space_background(config::space_bg const &);
-    ~space_background();
 
     void update();
     void draw() const;

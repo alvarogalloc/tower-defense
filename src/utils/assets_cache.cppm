@@ -1,24 +1,16 @@
 export module utils.assets_cache;
 import std;
 import debug;
+import config;
 import raylib;
 
 using namespace std::filesystem;
 
-export namespace utils {
-
-struct asset_path : path {
-  asset_path(path const& p) : std::filesystem::path(p) {
-    debug::my_assert(exists(p), std::format("{} does not exist", p.string()));
-  }
-};
-}  // namespace rooster::utils
 
 // getters from cache
-using namespace utils;
-Texture get_texture(asset_path const& p);
-Music get_music(asset_path const& p);
-Sound get_sfx(asset_path const& p);
+Texture get_texture(std::string const& p);
+Music get_music(std::string const& p);
+Sound get_sfx(std::string const& p);
 
 export namespace utils {
 enum class asset_type : std::uint8_t {
@@ -30,8 +22,10 @@ enum class asset_type : std::uint8_t {
 // always valid paths, 
 
 template <asset_type at>
-auto get_asset(const asset_path& p) {
+auto get_asset(const std::string_view p_str) {
   using enum asset_type;
+
+  auto p = config::get_path(p_str);
   if constexpr (at == texture) {
     return get_texture(p);
   } else if constexpr (at == music) {

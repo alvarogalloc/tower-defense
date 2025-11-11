@@ -1,7 +1,7 @@
 export module systems.player;
 import raylib;
 import std;
-import ginseng;
+import entt;
 import components.movement;
 
 export namespace systems::player
@@ -27,7 +27,7 @@ struct gun
     int max_ammo;
     std::string shoot_sfx_path;
 };
-void update(ginseng::database &db, float dt);
-void draw(ginseng::database &db);
+void update(entt::registry &db, float dt);
+void draw(entt::registry &db);
 
 } // namespace systems::player

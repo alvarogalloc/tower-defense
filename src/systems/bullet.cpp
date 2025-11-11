@@ -6,16 +6,17 @@ using namespace rooster;
 
 namespace systems::bullet
 {
-void shoot_bullet(ginseng::database &db, components::bullet info)
+void shoot_bullet(entt::registry &db, components::bullet info)
 {
-    auto new_bullet = db.create_entity();
-    db.add_component(new_bullet, std::move(info));
+    auto new_bullet = db.create();
+    db.emplace<components::bullet>(new_bullet, std::move(info));
 }
 
-void update(ginseng::database &db, float dt, Rectangle )
+void update(entt::registry &db, float dt, Rectangle )
 {
-    std::vector<ginseng::database::ent_id> entities_to_destroy;
-    db.visit([&](ginseng::database::ent_id bullet_id,
+    std::vector<entt::entity> entities_to_destroy;
+    auto view = db.view<components::bullet>();
+    view.each([&](entt::entity bullet_id,
                  components::bullet &bullet) {
         const auto sin_value = std::sin(bullet.rotation - 3.14f / 2.f);
         const auto cos_value = std::cos(bullet.rotation - 3.14f / 2.f);
@@ -30,7 +31,8 @@ void update(ginseng::database &db, float dt, Rectangle )
         // }
 
         // now collision with enemies
-        db.visit([&](ginseng::database::ent_id enemy_id,
+        auto view2 = db.view<components::enemy , components::bounding_box>();
+        view2.each([&](entt::entity enemy_id,
                      components::enemy &enemy, components::bounding_box &box) {
             if (CheckCollisionCircleRec(bullet.position, bullet.radius, box))
             {
@@ -44,12 +46,12 @@ void update(ginseng::database &db, float dt, Rectangle )
         });
     });
     std::ranges::for_each(entities_to_destroy,
-                          [&](auto id) { db.destroy_entity(id); });
+                          [&](auto id) { db.destroy(id); });
 }
 
-void draw(ginseng::database &db)
+void draw(entt::registry &db)
 {
-    db.visit([&](const components::bullet &bullet) {
+    db.view<components::bullet>().each([&](const components::bullet &bullet) {
         DrawCircleV(bullet.position, bullet.radius, colors::white);
     });
 }

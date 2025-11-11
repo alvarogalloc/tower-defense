@@ -1,7 +1,7 @@
 export module scenes.shooting;
 import game;
 import std;
-import ginseng;
+import entt;
 import raylib;
 import systems.enemy;
 import prefabs.stars_particles;
@@ -13,7 +13,7 @@ export namespace scenes
 
 class shooting : public scene
 {
-    std::vector<std::function<void(ginseng::database &, float)>> m_systems{};
+    std::vector<std::function<void(entt::registry &, float)>> m_systems{};
     std::vector<std::variant<Texture2D, Sound>> m_to_clean{};
     std::vector<systems::enemy::spawner> m_enemy_spawners{};
 
@@ -22,7 +22,7 @@ class shooting : public scene
     systems::enemy::spawner m_enemy_spawner{};
     prefabs::stars_particles m_particles;
     Camera2D m_camera;
-    ginseng::database::ent_id m_player_entity;
+    entt::entity m_player_entity;
     Sound m_gun_shoot_sfx;
 
     game_stats m_stats;

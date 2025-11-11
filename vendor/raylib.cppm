@@ -7,6 +7,9 @@ export module raylib;
 
 export {
   using ::operator*=;
+  using ::GetCurrentMonitor;
+  using ::GetMonitorHeight;
+  using ::GetMonitorWidth;
   using enum ::ConfigFlags;
   using enum ::TraceLogLevel;
   using enum ::MouseButton;

@@ -1,5 +1,5 @@
 export module game;
-import ginseng;
+import entt;
 import raylib;
 import std;
 import config;
@@ -40,7 +40,7 @@ export {
     [[nodiscard]] auto get_spec() const -> const config::app_info {
       return m_spec;
     }
-    auto get_world() -> ginseng::database & { return m_world; }
+    auto get_world() -> entt::registry & { return m_world; }
 
    private:
 
@@ -48,7 +48,7 @@ export {
     RenderTexture m_target{};
     config::app_info m_spec;
     std::unique_ptr<scene> m_scene;
-    ginseng::database m_world;
+    entt::registry m_world;
     std::vector<debug::message> m_debug_messages;
   };
 }

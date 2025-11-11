@@ -12,12 +12,12 @@
     "font_size": 80
   },
   "space_bg": {
-    "bg_texture": "title_bg/blue-with-stars.png",
+    "bg_texture": "assets/title_bg/blue-with-stars.png",
     "objects_textures": [
-      "title_bg/asteroid-1.png",
-      "title_bg/asteroid-2.png",
-      "title_bg/prop-planet-big.png",
-      "title_bg/prop-planet-small.png"
+      "assets/title_bg/asteroid-1.png",
+      "assets/title_bg/asteroid-2.png",
+      "assets/title_bg/prop-planet-big.png",
+      "assets/title_bg/prop-planet-small.png"
     ],
     "scroll_speed": 0.5
   }

@@ -1,8 +1,8 @@
 export module systems.camera;
-import ginseng;
 import components.movement;
 import raylib;
 import game;
+import entt;
 
 export namespace systems::camera {
 Camera2D make_camera() {
@@ -15,10 +15,10 @@ Camera2D make_camera() {
   };
   return camera;
 }
-void use(Camera2D &camera, ginseng::database &db,
-         const ginseng::database::ent_id &target_entity,
+void use(Camera2D &camera, entt::registry &db,
+         const entt::entity target_entity,
          const auto &render_fn) {
-  const auto &mov = db.get_component<components::movement>(target_entity);
+  const auto &mov = db.get<components::movement>(target_entity);
   camera.target = mov.position;
   BeginMode2D(camera);
   render_fn();

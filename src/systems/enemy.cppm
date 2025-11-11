@@ -1,9 +1,9 @@
 export module systems.enemy;
-import ginseng;
 import components.enemy;
 import components.movement;
 import std;
 import raylib;
+import entt;
 
 export namespace systems::enemy {
 struct spawner_cfg { //NOLINT
@@ -14,9 +14,9 @@ struct spawner_cfg { //NOLINT
 };
 
 using spawner =
-    std::function<ginseng::database::ent_id(ginseng::database &)>;
+    std::function<entt::entity(entt::registry &)>;
 
 spawner make_spawner(const spawner_cfg &cfg);
-void update(ginseng::database &db, float dt);
-void draw(ginseng::database &db);
+void update(entt::registry &db, float dt);
+void draw(entt::registry &db);
 }  // namespace systems::enemy

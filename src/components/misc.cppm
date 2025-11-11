@@ -1,12 +1,11 @@
 export module components.misc;
 
-import ginseng;
+import entt;
 import std;
-export namespace components::misc
-{
+export namespace components::misc {
 
-using player = ginseng::tag<struct _player>;
-using enemy = ginseng::tag<struct _enemy>;
-using bullet = ginseng::tag<struct _bullet>;
+struct player {};
+struct enemy {};
+struct bullet {};
 
-} // namespace components::tags
+}  // namespace components::misc
