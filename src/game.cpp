@@ -2,7 +2,6 @@ module;
 #include <cstdio>
 module game;
 import debug;
-import raygui;
 namespace {
 
 void custom_raylib_log(int msgType, const char *text, va_list args) {
@@ -30,17 +29,17 @@ void custom_raylib_log(int msgType, const char *text, va_list args) {
 static game *g_instance = nullptr;
 }  // namespace
 
-game::game(config::app_info spec) : m_spec(std::move(spec)) {
+game::game() {
   SetTraceLogCallback(custom_raylib_log);
-  const auto [x, y] = m_spec.game_res;
-  auto wx = x*m_spec.scale;
-  auto wy = y*m_spec.scale;
+  const auto [x, y] = get_config().get_app_info().game_res;
+  auto wx = x * m_cfg.get_app_info().scale;
+  auto wy = y * get_config().get_app_info().scale;
   unsigned int flags =
-      FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT | FLAG_FULLSCREEN_MODE;
+      FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT;
   std::println("window is {} {} ", wx, wy);
   SetConfigFlags(flags);
-  InitWindow(int(wx), int(wy), m_spec.window_name.data());
-  SetTargetFPS(m_spec.fps);
+  InitWindow(int(wx), int(wy), get_config().get_app_info().window_name.data());
+  SetTargetFPS(get_config().get_app_info().fps);
   InitAudioDevice();
   m_target = LoadRenderTexture(int(x), int(y));
   SetTextureFilter(m_target.texture, TEXTURE_FILTER_POINT);
@@ -67,7 +66,7 @@ void game::draw_debug_messages() const {
   }
   // makea grayish rectangle in the right thirsd of the screen
   // const auto col = Color{50, 50, 50, 200};
-  auto [x, y] = m_spec.game_res;
+  auto [x, y] = get_config().get_app_info().game_res;
   const auto rect = Rectangle{x * 2 / 3.f, 0, x / 3.0f, y};
 
   // use GuiListView
@@ -119,19 +118,21 @@ int game::run() {
       }
       BeginDrawing();
       {
-        ClearBackground(rooster::colors::white);
+        ClearBackground(rooster::colors::black);
         DrawTexturePro(m_target.texture,
                        Rectangle{
                            0,
                            0,
-                           m_spec.game_res.x,
-                           -m_spec.game_res.y,
+                           get_config().get_app_info().game_res.x,
+                           -get_config().get_app_info().game_res.y,
                        },
                        Rectangle{
                            0,
                            0,
-                           m_spec.game_res.x*m_spec.scale,
-                           m_spec.game_res.y*m_spec.scale,
+                           get_config().get_app_info().game_res.x *
+                               get_config().get_app_info().scale,
+                           get_config().get_app_info().game_res.y *
+                               get_config().get_app_info().scale,
                        },
                        Vector2{0, 0}, 0.0f, rooster::colors::white);
         EndDrawing();

@@ -17,7 +17,7 @@ inline constexpr float text_space = 0.2f;
 namespace scenes {
 
 start_screen::start_screen()
-    : m_space_background(config::get_config().space_bg) {}
+    : m_space_background(game::get().get_config().get_game_config().space_bg) {}
 void start_screen::on_start() {
   constexpr float seconds_notification{15.f};
   game::get().push_debug_message({
@@ -25,10 +25,10 @@ void start_screen::on_start() {
       .text = "Entered start screen scene",
   });
 
-  m_title_font = LoadFontEx(config::get_path(TITLE_FONT).c_str(),
-                            font_size, nullptr, 0);
-  m_blue_guy =
-      utils::get_asset<utils::asset_type::texture>(BLUE_GUY_TEXTURE);
+  m_title_font =
+      LoadFontEx(game::get().get_config().get_path(TITLE_FONT).c_str(),
+                 font_size, nullptr, 0);
+  m_blue_guy = utils::get_asset<utils::asset_type::texture>(BLUE_GUY_TEXTURE);
   m_music = utils::get_asset<utils::asset_type::music>(MENU_MUSIC);
   PlayMusicStream(m_music);
 }
@@ -54,8 +54,9 @@ void start_screen::on_render() {
   m_space_background.draw();
 
   [&]() {
-    const auto title = config::get_config().start_screen.title;
-    auto [w, h] = game::get().get_spec().game_res;
+    const auto title =
+        game::get().get_config().get_game_config().start_screen.title;
+    auto [w, h] = game::get().get_config().get_app_info().game_res;
 
     const auto text_size =
         MeasureTextEx(m_title_font, title.c_str(), font_size, 0.f);

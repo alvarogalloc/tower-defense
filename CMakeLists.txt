@@ -25,7 +25,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 
 
 
-find_package(RapidJSON CONFIG REQUIRED)
+# find_package(RapidJSON CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
@@ -54,7 +54,7 @@ target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})# suprres
 
 target_compile_features(vendor PRIVATE cxx_std_26)
 # target_link_libraries(vendor PUBLIC nlohmann_json::nlohmann_json)
-target_link_libraries(vendor PUBLIC RapidJSON rapidjson)
+# target_link_libraries(vendor PUBLIC RapidJSON rapidjson)
 target_link_libraries(vendor PRIVATE glaze::glaze)
 
 target_link_libraries(gamelib PUBLIC vendor)

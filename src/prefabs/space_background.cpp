@@ -6,7 +6,6 @@ import utils.assets_cache;
 using namespace rooster;
 
 namespace prefabs::v2 {
-namespace {}  // namespace
 space_background::space_background(
     std::string_view background_texture_path,
     std::vector<std::string> const &object_texture_paths,
@@ -14,7 +13,7 @@ space_background::space_background(
     : m_background(utils::get_asset<utils::asset_type::texture>(background_texture_path)),
       m_object_data(),
       m_scroll_speed(scroll_speed) {
-  auto [w, h] = game::get().get_spec().game_res;
+  auto [w, h] = game::get().get_config().get_app_info().game_res;
   auto generate_start_pos = [&] {
     return Vector2{
         float(GetRandomValue(0, int(w))),
@@ -41,7 +40,7 @@ space_background::space_background(config::space_bg const &config_node)
 
 
 void space_background::update() {
-  auto [w, _] = game::get().get_spec().game_res;
+  auto [w, _] = game::get().get_config().get_app_info().game_res;
   for (auto &[texture, position, _] : m_object_data) {
     position.x -= m_scroll_speed;
     if (position.x < -float(texture.width)) {
@@ -53,7 +52,7 @@ void space_background::update() {
 
 void space_background::draw() const {
   // DrawTexturePro(m_background, 0, 0, colors::white);
-  auto [w, h] = game::get().get_spec().game_res;
+  auto [w, h] = game::get().get_config().get_app_info().game_res;
   DrawTexturePro(m_background,
                  {0, 0, float(m_background.width), float(m_background.height)},
                  {0, 0, w, h}, {0, 0}, 0, colors::white);

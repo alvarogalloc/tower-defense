@@ -2,7 +2,6 @@ export module gui.label;
 import gui.node;
 import std;
 import raylib;
-import raygui;
 export namespace gui::v2 {
 
 struct label : node {

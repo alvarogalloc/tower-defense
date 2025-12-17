@@ -5,11 +5,10 @@ import systems.bullet;
 import systems.waves;
 import utils.assets_cache;
 import systems.enemy;
-import config;
+import game;
 import glaze;
 import components.movement;
 import components.enemy;
-import raylib_utils;
 import components.misc;
 import systems.camera;
 import debug;
@@ -55,7 +54,7 @@ void shooting::on_start() {
     std::string buffer;
     player_cfg cfg;
     const auto ec = glz::read_file_json(
-        cfg, config::get_path("assets/player.json"), buffer);
+        cfg, game::get().get_config().get_path("assets/player.json"), buffer);
     debug::my_assert(!ec, std::format("Failed to read player config: {}",
                                       glz::format_error(ec, buffer)));
 
@@ -63,10 +62,9 @@ void shooting::on_start() {
     world.emplace<systems::player::gun>(m_player_entity, cfg.gun);
     world.emplace<systems::player::action>(m_player_entity,
                                            systems::player::action::none);
-    world.emplace<components::misc::player>(m_player_entity,
-                                            components::misc::player{});
+    world.emplace<components::misc::player>(m_player_entity);
     world.emplace<systems::player::health>(m_player_entity, cfg.health);
-    const auto spaceship = 
+    const auto spaceship =
         utils::get_asset<utils::asset_type::texture>(cfg.texture);
     const auto shoot_sfx =
         utils::get_asset<utils::asset_type::sfx>(cfg.gun.shoot_sfx_path);
@@ -81,7 +79,7 @@ void shooting::on_start() {
     std::vector<systems::enemy::spawner_cfg> enemies;
     std::string buffer;
     const auto ec = glz::read_file_json(
-        enemies, config::get_path("assets/enemies.json"), buffer);
+        enemies, game::get().get_config().get_path("assets/enemies.json"), buffer);
     debug::my_assert(!ec, std::format("Failed to read enemies config: {}",
                                       glz::format_error(ec, buffer)));
     for (const auto &e : enemies) {
@@ -91,7 +89,7 @@ void shooting::on_start() {
   const auto load_levels = [&] {
     std::string buffer;
     const auto ec = glz::read_file_json(
-        m_levels, config::get_path("assets/levels.json"), buffer);
+        m_levels, game::get().get_config().get_path("assets/levels.json"), buffer);
     debug::my_assert(!ec, std::format("Failed to read levels config: {}",
                                       glz::format_error(ec, buffer)));
     my_assert(m_levels.size(), "there should be at least one level");
@@ -119,7 +117,7 @@ void shooting::on_update() {
   };
   systems::bullet::update(world, dt, cam);
   m_particles.update(dt, cam);
-  camera_msg->text = std::format("camera {}", to_string(cam));
+  camera_msg->text = std::format("camera {}", ::to_string(cam));
 
   auto player_health = world.get<systems::player::health>(m_player_entity);
 

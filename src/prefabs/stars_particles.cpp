@@ -28,7 +28,7 @@ namespace prefabs
 stars_particles::stars_particles(int count) : rng(std::random_device{}())
 
 {
-    const auto size = game::get().get_spec().game_res;
+    const auto size = game::get().get_config().get_app_info().game_res;
     m_stars.reserve(std::size_t(count));
     std::uniform_int_distribution<int> dist_x(0, int(size.x));
     std::uniform_int_distribution<int> dist_y(0, int(size.y));
@@ -49,7 +49,7 @@ stars_particles::stars_particles(int count) : rng(std::random_device{}())
 
 void stars_particles::update(float, Rectangle cam)
 {
-    // const auto size = game::get().get_spec().size;
+    // const auto size = game::get().get_app_info().size;
     // make dist_x and dist_y uniform distributions
     std::uniform_int_distribution<int> dist_x(int(cam.x), int(cam.x+cam.width));
     std::uniform_int_distribution<int> dist_y(int(cam.y),

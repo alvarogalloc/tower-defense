@@ -1,3 +1,0 @@
-CompileFlags:
-  # Tell clangd to look in the 'build-cmake' subdirectory
-  CompilationDatabase: build-cmake

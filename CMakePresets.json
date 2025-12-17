@@ -4,39 +4,87 @@
     "major": 3,
     "minor": 30
   },
+
   "configurePresets": [
     {
-      "name": "default",
-      "description": "Default preset",
+      "name": "base",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build-cmake",
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "toolchainFile": "$env{HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+        "BUILD_EXAMPLES": false,
+        "BUILD_TESTING": false
+      }
+    },
+
+    {
+      "name": "debug_clang",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-debug-clang",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
         "CMAKE_LINKER_TYPE": "LLD",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "BUILD_EXAMPLES": "ON",
-        "BUILD_TESTING": "ON"
+        "CMAKE_LINKER": "lld"
+      }
+    },
+
+    {
+      "name": "rel_clang",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-rel-clang",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
+        "CMAKE_LINKER_TYPE": "LLD",
+        "CMAKE_LINKER": "lld"
+      }
+    },
+
+    {
+      "name": "debug_gcc",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-debug-gcc",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_CXX_FLAGS": "$env{CXXFLAGS}"
+      }
+    },
+
+    {
+      "name": "rel_gcc",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-rel-gcc",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_CXX_FLAGS": "$env{CXXFLAGS}"
       }
     }
   ],
+
   "buildPresets": [
-    {
-      "name": "default",
-      "description": "",
-      "displayName": "",
-      "configurePreset": "default"
-    }
+    { "name": "debug_clang", "configurePreset": "debug_clang" },
+    { "name": "debug_gcc",   "configurePreset": "debug_gcc" },
+    { "name": "rel_clang",   "configurePreset": "rel_clang" },
+    { "name": "rel_gcc",     "configurePreset": "rel_gcc" }
   ],
+
   "testPresets": [
     {
-      "name": "test",
-      "description": "",
-      "displayName": "",
-      "configurePreset": "default",
-      "output": {"outputOnFailure": true},
-      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+      "name": "test_debug_clang",
+      "configurePreset": "debug_clang",
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error", "stopOnFailure": true }
+    },
+    {
+      "name": "test_debug_gcc",
+      "configurePreset": "debug_gcc",
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error", "stopOnFailure": true }
     }
   ]
 }

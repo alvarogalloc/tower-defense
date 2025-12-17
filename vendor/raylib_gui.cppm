@@ -1,8 +1,6 @@
-module;
-#include <raylib.h>
-export module raygui;
+export module raylib:gui;
 
-export {
+export extern "C" {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-enum-compare-conditional"
 #include "raygui.h"
@@ -11,3 +9,4 @@ export {
   using enum ::GuiControlProperty;
   using enum ::GuiDefaultProperty;
 }
+

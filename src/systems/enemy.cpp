@@ -2,7 +2,7 @@ module systems.enemy;
 import components.enemy;
 import systems.player;
 import components.bullet;
-import utils.assets_cache;
+import assets;
 import components.movement;
 import components.misc;
 import debug;

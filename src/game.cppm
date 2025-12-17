@@ -1,10 +1,14 @@
+#include <entt/entity/fwd.hpp>
+#include <type_traits>
 export module game;
 import entt;
 import raylib;
 import std;
 import config;
-import debug;
+import assets;
 
+import debug;
+#if 0
 export {
   class game;
   class scene;
@@ -25,7 +29,7 @@ export {
 
   class game {
    public:
-    game(config::app_info spec);
+    game();
     static auto get() -> game &;
     void exit();
     void set_scene(std::unique_ptr<scene> scene);
@@ -37,18 +41,36 @@ export {
     auto get_debug_messages() -> std::vector<debug::message> & {
       return m_debug_messages;
     }
-    [[nodiscard]] auto get_spec() const -> const config::app_info {
-      return m_spec;
+    [[nodiscard]] auto get_config() const -> config::config {
+      return m_cfg;
     }
     auto get_world() -> entt::registry & { return m_world; }
 
    private:
 
-    void draw_debug_messages()const ;
+    void draw_debug_messages() const;
     RenderTexture m_target{};
-    config::app_info m_spec;
+    config::config m_cfg;
     std::unique_ptr<scene> m_scene;
     entt::registry m_world;
     std::vector<debug::message> m_debug_messages;
   };
 }
+
+#endif
+
+export {
+  class game {
+   public:
+    game();
+    void run();
+
+   private:
+    entt::registry m_ecs;
+    config::config m_cfg;
+    assets m_assets;
+  };
+}
+
+static_assert(std::is_default_constructible<game>,
+              "game should be default constructible");

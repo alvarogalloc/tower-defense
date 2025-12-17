@@ -6,7 +6,7 @@ import entt;
 
 export namespace systems::camera {
 Camera2D make_camera() {
-  const auto init_pos = game::get().get_spec().game_res * 0.5f;
+  const auto init_pos = game::get().get_config().get_app_info().game_res * 0.5f;
   Camera2D camera{
       .offset = init_pos,
       .target{0.f, 0.f},

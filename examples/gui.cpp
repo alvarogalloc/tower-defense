@@ -1,5 +1,4 @@
 import std;
-import raygui;
 import raylib;
 import gui;
 

@@ -2,7 +2,6 @@
 module scenes.gameover;
 import config;
 import raylib;
-import raygui;
 
 namespace scenes
 {
@@ -24,7 +23,7 @@ void gameover::on_render()
 
     const std::string score = std::format("Score: {}\nTime: {} seconds",
                                           stats.score, stats.time_seconds);
-    const auto &game_cfg = config::get_config();
+    const auto &game_cfg = game::get().get_config().get_game_config();
     const auto bg_color = game_cfg.gameover.bg_color;
     const auto btn_color = game_cfg.gameover.btn_color;
     const auto txt_color = game_cfg.gameover.fg_color;
@@ -34,7 +33,7 @@ void gameover::on_render()
     GuiSetStyle(DEFAULT, BACKGROUND_COLOR, ColorToInt(btn_color));
     GuiSetStyle(DEFAULT, TEXT_SIZE, font_size);
     GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, ColorToInt(txt_color));
-    auto [width, height] = game::get().get_spec().game_res;
+    auto [width, height] = game::get().get_config().get_app_info().game_res;
     const auto label_rect = Vector2{0, 0};
     DrawTextEx(GetFontDefault(), title.c_str(), {label_rect.x, label_rect.y},
                float(font_size), 2.0f, txt_color);
