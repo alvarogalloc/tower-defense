@@ -1,5 +1,5 @@
 export module scenes.shooting;
-import game;
+import state;
 import std;
 import entt;
 import raylib;
@@ -11,7 +11,7 @@ import systems.waves;
 export namespace scenes
 {
 
-class shooting : public scene
+class shooting : public state
 {
     std::vector<std::function<void(entt::registry &, float)>> m_systems{};
     std::vector<std::variant<Texture2D, Sound>> m_to_clean{};
@@ -33,7 +33,7 @@ class shooting : public scene
     void on_start() override;
     void on_update() override;
 
-    std::unique_ptr<scene> on_exit() override;
+    std::unique_ptr<state> on_exit() override;
     void on_render() override;
 };
 } // namespace scenes

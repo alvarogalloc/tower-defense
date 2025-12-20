@@ -1,4 +1,5 @@
 module assets;
+import game;
 namespace {
 
 Texture load_texture_cached(std::unordered_map<std::string, Texture>& cache,
@@ -34,4 +35,7 @@ Sound load_sfx_cached(std::unordered_map<std::string, Sound>& cache,
   return cache[p];
 }
 
+auto resolve_path(std::string_view logical_path) -> std::string {
+  return game::get().get_config().get_path(logical_path);
+}
 }  // namespace

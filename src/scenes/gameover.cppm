@@ -1,5 +1,5 @@
 export module scenes.gameover;
-import game;
+import state;
 import raylib;
 import std;
 
@@ -12,7 +12,7 @@ struct game_stats
     int time_seconds;
 };
 
-class gameover : public scene
+class gameover : public state
 {
   private:
     game_stats stats;
@@ -21,8 +21,7 @@ class gameover : public scene
     gameover(const game_stats);
     void on_start() override;
     void on_update() override;
-
-    std::unique_ptr<scene> on_exit() override
+    std::unique_ptr<state> on_exit() override
     {
         return nullptr;
     }

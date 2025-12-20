@@ -2,24 +2,30 @@ export module state_manager;
 import std;
 import state;
 
-export  {
+export {
+  class state_manager {
+   public:
+    state_manager(std::unique_ptr<state> initial)
+        : current(std::move(initial)) {}
+    void change() {
+      auto next = current->on_exit();
+      if (bool(next)) {
+        current = std::move(next);
+      }
+      current->on_start();
+    }
 
-class state_manager {
- public:
-  void change(std::unique_ptr<state> next) {
-    if (current) current->on_exit();
-    current = std::move(next);
-    current->on_enter();
-  }
+    void update() {
+      if (current) {
+        if (current->should_exit()) change();
+        current->on_update();
+      }
+    }
+    void render() {
+      if (current) current->on_render();
+    }
 
-  void update(double dt) {
-    if (current) current->update(dt);
-  }
-  void draw() {
-    if (current) current->draw();
-  }
-
- private:
-  std::unique_ptr<state> current{nullptr};
-};
+   private:
+    std::unique_ptr<state> current;
+  };
 }

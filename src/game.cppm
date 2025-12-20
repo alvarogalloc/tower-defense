@@ -1,5 +1,3 @@
-#include <entt/entity/fwd.hpp>
-#include <type_traits>
 export module game;
 import entt;
 import raylib;
@@ -60,17 +58,22 @@ export {
 #endif
 
 export {
+  struct game_context {
+    entt::registry ecs;
+    config::config config;
+    assets assets;
+  };
+
   class game {
    public:
     game();
     void run();
 
+    entt::registry& get_ecs() { return m_context.ecs; }
+    config::config& get_config() { return m_context.config; }
+    assets& get_assets() { return m_context.assets; }
+
    private:
-    entt::registry m_ecs;
-    config::config m_cfg;
-    assets m_assets;
+    game_context m_context;
   };
 }
-
-static_assert(std::is_default_constructible<game>,
-              "game should be default constructible");

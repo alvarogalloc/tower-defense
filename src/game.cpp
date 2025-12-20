@@ -2,6 +2,7 @@ module;
 #include <cstdio>
 module game;
 import debug;
+#if 0
 namespace {
 
 void custom_raylib_log(int msgType, const char *text, va_list args) {
@@ -169,3 +170,8 @@ int game::run() {
     return -1;
   }
 }
+#endif
+
+
+
+// new implementation

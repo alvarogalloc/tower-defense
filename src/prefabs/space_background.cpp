@@ -1,16 +1,15 @@
 module prefabs.space_background;
-import game;
 import std;
+import state
 import debug;
-import utils.assets_cache;
 using namespace rooster;
 
 namespace prefabs::v2 {
 space_background::space_background(
     std::string_view background_texture_path,
     std::vector<std::string> const &object_texture_paths,
-    const float scroll_speed)
-    : m_background(utils::get_asset<utils::asset_type::texture>(background_texture_path)),
+    const float scroll_speed, context_view ctx)
+    : m_background(ctx.assets.get<asset_type::texture>(background_texture_path)),
       m_object_data(),
       m_scroll_speed(scroll_speed) {
   auto [w, h] = game::get().get_config().get_app_info().game_res;
