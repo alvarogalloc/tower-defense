@@ -1,0 +1,10 @@
+{
+  "bg_texture_path": "assets/title_bg/blue-with-stars.png",
+  "objects_textures_paths": [
+    "assets/title_bg/asteroid-1.png",
+    "assets/title_bg/asteroid-2.png",
+    "assets/title_bg/prop-planet-big.png",
+    "assets/title_bg/prop-planet-small.png"
+  ],
+  "scroll_speed": 0.5
+}

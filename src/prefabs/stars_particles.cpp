@@ -29,7 +29,7 @@ namespace prefabs
 stars_particles::stars_particles(int count, context_view ctx) : rng(std::random_device{}())
 
 {
-    const auto size = ctx.config.get_app_info().game_res;
+    const auto size = ctx.app_info.game_res;
     m_stars.reserve(std::size_t(count));
     std::uniform_int_distribution<int> dist_x(0, int(size.x));
     std::uniform_int_distribution<int> dist_y(0, int(size.y));

@@ -26,7 +26,8 @@
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
         "CMAKE_LINKER_TYPE": "LLD",
-        "CMAKE_LINKER": "lld"
+        "CMAKE_LINKER": "lld",
+        "BUILD_TESTING": true
       }
     },
 
@@ -50,7 +51,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_CXX_FLAGS": "$env{CXXFLAGS}"
+        "CMAKE_CXX_FLAGS": "$env{CXXFLAGS}",
+        "BUILD_TESTING": true
       }
     },
 
@@ -68,9 +70,9 @@
 
   "buildPresets": [
     { "name": "debug_clang", "configurePreset": "debug_clang" },
-    { "name": "debug_gcc",   "configurePreset": "debug_gcc" },
-    { "name": "rel_clang",   "configurePreset": "rel_clang" },
-    { "name": "rel_gcc",     "configurePreset": "rel_gcc" }
+    { "name": "debug_gcc", "configurePreset": "debug_gcc" },
+    { "name": "rel_clang", "configurePreset": "rel_clang" },
+    { "name": "rel_gcc", "configurePreset": "rel_gcc" }
   ],
 
   "testPresets": [

@@ -2,7 +2,7 @@ module scenes.start_screen;
 import scenes.shooting;
 import config;
 import gui;
-import utils.assets_cache;
+import assets;
 using namespace rooster;
 inline constexpr int font_size = 48;
 inline constexpr Color base_color{.r = colors::darkpurple.r,
@@ -16,20 +16,12 @@ constexpr auto MENU_MUSIC = "/assets/bgmusic.ogg";
 inline constexpr float text_space = 0.2f;
 namespace scenes {
 
-start_screen::start_screen()
-    : m_space_background(game::get().get_config().get_game_config().space_bg) {}
+start_screen::start_screen(context_view view)
+    : state(view), m_space_background("assets/space_config.json", view) {}
 void start_screen::on_start() {
-  constexpr float seconds_notification{15.f};
-  game::get().push_debug_message({
-      .lifetime_seconds = seconds_notification,
-      .text = "Entered start screen scene",
-  });
-
-  m_title_font =
-      LoadFontEx(game::get().get_config().get_path(TITLE_FONT).c_str(),
-                 font_size, nullptr, 0);
-  m_blue_guy = utils::get_asset<utils::asset_type::texture>(BLUE_GUY_TEXTURE);
-  m_music = utils::get_asset<utils::asset_type::music>(MENU_MUSIC);
+  m_title_font = ctx.assets.get<asset_type::font>(TITLE_FONT, font_size);
+  m_blue_guy = ctx.assets.get<asset_type::texture>(BLUE_GUY_TEXTURE);
+  m_music = ctx.assets.get<asset_type::music>(MENU_MUSIC);
   PlayMusicStream(m_music);
 }
 
@@ -42,24 +34,30 @@ void start_screen::on_update() {
   UpdateMusicStream(m_music);
 }
 
-std::unique_ptr<scene> start_screen::on_exit() {
+std::unique_ptr<state> start_screen::on_exit() {
   UnloadTexture(m_blue_guy);
   // UnloadFont(m_title_font); font is shared with raygui so we don't unload
   // it
-  return std::make_unique<scenes::shooting>();
+  return std::make_unique<scenes::shooting>(ctx);
 }
 
+struct start_screen_json_data {
+  std::string title;
+  std::string subtitle;
+  std::string text_key;
+  int font_size = 0;
+};
 void start_screen::on_render() {
   ClearBackground(colors::darkblue);
   m_space_background.draw();
 
+  static const auto json_cfg =
+      ctx.assets.get_config<start_screen_json_data>("start_screen.json");
   [&]() {
-    const auto title =
-        game::get().get_config().get_game_config().start_screen.title;
-    auto [w, h] = game::get().get_config().get_app_info().game_res;
+    auto [w, h] = ctx.app_info.game_res;
 
     const auto text_size =
-        MeasureTextEx(m_title_font, title.c_str(), font_size, 0.f);
+        MeasureTextEx(m_title_font, json_cfg.title.c_str(), font_size, 0.f);
     const Vector2 text_pos{
         w / 2 - text_size.x / 2,
         50,
@@ -72,8 +70,8 @@ void start_screen::on_render() {
         text_size.y + 10,
     };
     DrawRectangleRec(title_rect, base_color);
-    DrawTextEx(m_title_font, title.c_str(), text_pos, font_size, text_space,
-               colors::yellow);
+    DrawTextEx(m_title_font, json_cfg.title.c_str(), text_pos, font_size,
+               text_space, colors::yellow);
   }();  // draw title
   // draw blending text saying 'Press any key to play'
   constexpr static auto start_text{"Press any key to play"};

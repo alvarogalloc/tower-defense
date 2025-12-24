@@ -1,9 +1,8 @@
+module;
+#include <cstdlib>
 module assets;
-import game;
-namespace {
 
-Texture load_texture_cached(std::unordered_map<std::string, Texture>& cache,
-                            std::string const& p) {
+Texture load_texture_cached(Collection<Texture>& cache, std::string const& p) {
   if (!cache.contains(p)) {
     std::println("loading texture {} and putting in cache", p);
     cache[p] = LoadTexture(p.c_str());
@@ -13,8 +12,7 @@ Texture load_texture_cached(std::unordered_map<std::string, Texture>& cache,
   return cache[p];
 }
 
-Music load_music_cached(std::unordered_map<std::string, Music>& cache,
-                        std::string const& p) {
+Music load_music_cached(Collection<Music>& cache, std::string const& p) {
   if (!cache.contains(p)) {
     std::println("loading music {} and putting in cache", p);
     cache[p] = LoadMusicStream(p.c_str());
@@ -24,8 +22,7 @@ Music load_music_cached(std::unordered_map<std::string, Music>& cache,
   return cache[p];
 }
 
-Sound load_sfx_cached(std::unordered_map<std::string, Sound>& cache,
-                      std::string const& p) {
+Sound load_sfx_cached(Collection<Sound>& cache, std::string const& p) {
   if (!cache.contains(p)) {
     std::println("loading sfx {} and putting in cache", p);
     cache[p] = LoadSound(p.c_str());
@@ -35,7 +32,43 @@ Sound load_sfx_cached(std::unordered_map<std::string, Sound>& cache,
   return cache[p];
 }
 
-auto resolve_path(std::string_view logical_path) -> std::string {
-  return game::get().get_config().get_path(logical_path);
+Font load_font_cached(Collection<Font>& cache, std::string const& p,
+                      const int font_size) {
+  if (!cache.contains(p)) {
+    std::println("loading font {} and putting in cache", p);
+    cache[p] = LoadFontEx(p.c_str(), font_size, nullptr, 0);
+  } else {
+    std::println("cache hit! sfx {} is already loaded", p);
+  }
+  return cache[p];
 }
-}  // namespace
+
+assets::assets(std::string_view assets_path_env_var) {
+  const char* assets_path = ::getenv(assets_path_env_var.data());
+  namespace fs = std::filesystem;
+
+  debug::my_assert(
+      assets_path,
+      std::format("the assets path environment variable ({}) does not exist, set it to load your assets",
+                  assets_path_env_var));
+  const fs::path p{assets_path};
+  debug::my_assert(
+      fs::exists(p),
+      std::format("path to assets does not exist ({})", p.string()));
+  m_assets_path = fs::canonical(p);
+}
+
+assets::~assets() {
+  for (const auto& [p, m] : music_cache) {
+    UnloadMusicStream(m);
+    std::println("Unloaded music {}", p);
+  }
+  for (const auto& [p, s] : sfx_cache) {
+    UnloadSound(s);
+    std::println("Unloaded sfx {}", p);
+  }
+  for (const auto& [p, t] : texture_cache) {
+    UnloadTexture(t);
+    std::println("Unloaded texture {}", p);
+  }
+}

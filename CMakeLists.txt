@@ -15,7 +15,11 @@ set(CMAKE_CXX_EXTENSIONS ON)
 include(FetchContent)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
-
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+   add_compile_options (-fdiagnostics-color=always)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+   add_compile_options (-fcolor-diagnostics)
+endif ()
 # use clang tidy find_program(CLANG_TIDY_EXE NAMES "clang-tidy" QUIET)
 #
 # if(CLANG_TIDY_EXE) set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}")

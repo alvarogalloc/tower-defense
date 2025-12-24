@@ -4,76 +4,32 @@ import raylib;
 import std;
 import config;
 import assets;
-
+import state_manager;
+import state;
 import debug;
-#if 0
-export {
-  class game;
-  class scene;
-
-  class scene {
-   public:
-    bool m_should_exit = false;
-
-    [[nodiscard]] bool should_exit() const { return m_should_exit; }
-    [[nodiscard]] virtual bool should_exit_game() const { return false; }
-
-    virtual void on_start() = 0;
-    virtual void on_update() = 0;
-    virtual void on_render() = 0;
-    virtual std::unique_ptr<scene> on_exit() = 0;
-    virtual ~scene() = default;
-  };
-
-  class game {
-   public:
-    game();
-    static auto get() -> game &;
-    void exit();
-    void set_scene(std::unique_ptr<scene> scene);
-    [[nodiscard]] int run();
-    auto& push_debug_message(const debug::message &msg) {
-      return m_debug_messages.emplace_back(msg);
-    }
-
-    auto get_debug_messages() -> std::vector<debug::message> & {
-      return m_debug_messages;
-    }
-    [[nodiscard]] auto get_config() const -> config::config {
-      return m_cfg;
-    }
-    auto get_world() -> entt::registry & { return m_world; }
-
-   private:
-
-    void draw_debug_messages() const;
-    RenderTexture m_target{};
-    config::config m_cfg;
-    std::unique_ptr<scene> m_scene;
-    entt::registry m_world;
-    std::vector<debug::message> m_debug_messages;
-  };
-}
-
-#endif
 
 export {
   struct game_context {
+    game_context(std::string_view game_dir_env_var) : assets(game_dir_env_var) {}
     entt::registry ecs;
-    config::config config;
+    config::app_info app_info;
     assets assets;
   };
 
   class game {
    public:
-    game();
-    void run();
+    game(std::string_view game_dir_env_var) : m_context(game_dir_env_var), m_state(nullptr) { init(); }
+    void init();
 
+    void run(std::unique_ptr<state> first_state);
+
+    game_context& get_context() { return m_context; }
     entt::registry& get_ecs() { return m_context.ecs; }
-    config::config& get_config() { return m_context.config; }
+    config::app_info& get_app_info() { return m_context.app_info; }
     assets& get_assets() { return m_context.assets; }
 
    private:
     game_context m_context;
+    state_manager m_state;
   };
 }

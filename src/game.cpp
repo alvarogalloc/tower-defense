@@ -2,12 +2,11 @@ module;
 #include <cstdio>
 module game;
 import debug;
-#if 0
 namespace {
 
 void custom_raylib_log(int msgType, const char *text, va_list args) {
-  return;
   std::cout << debug::colors::bold;
+  bool should_quit = false;
   switch (msgType) {
     case LOG_INFO:
       std::cout << debug::info << "[INFO]";
@@ -25,10 +24,10 @@ void custom_raylib_log(int msgType, const char *text, va_list args) {
   std::cout << ": ";
   std::vprintf(text, args);
   std::cout << debug::reset << '\n';
+  debug::my_assert(!should_quit, "raylib error, exiting...");
 }
-// NOLINTNEXTLINE
-static game *g_instance = nullptr;
 }  // namespace
+#if 0
 
 game::game() {
   SetTraceLogCallback(custom_raylib_log);
@@ -172,6 +171,26 @@ int game::run() {
 }
 #endif
 
-
-
 // new implementation
+
+void game::init() {
+  SetTraceLogCallback(custom_raylib_log);
+  const auto [x, y] = get_app_info().game_res;
+  auto wx = x * m_context.app_info.scale;
+  auto wy = y * get_app_info().scale;
+  unsigned int flags =
+      FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT;
+  std::println("window is {} {} ", wx, wy);
+  SetConfigFlags(flags);
+  InitWindow(int(wx), int(wy), get_app_info().window_name.data());
+  SetTargetFPS(get_app_info().fps);
+  InitAudioDevice();
+  // m_target = LoadRenderTexture(int(x), int(y));
+  // SetTextureFilter(m_target.texture, TEXTURE_FILTER_POINT);
+  SetMouseScale(x / wx, y / wy);
+}
+void game::run(std::unique_ptr<state> first_state) {
+  m_state.unsafe_change(std::move(first_state));
+
+  std::println("exiting game!!");
+}

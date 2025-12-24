@@ -8,18 +8,18 @@ export namespace scenes {
 class start_screen : public state {
   Font m_title_font{};
   Texture2D m_blue_guy{};
-  prefabs::v2::space_background m_space_background;
+  prefabs::space_background m_space_background;
   Music m_music{};
-  bool m_should_exit;
+  bool m_should_exit{false};
 
  public:
-  start_screen();
+  start_screen(context_view);
   void on_start() override;
   void on_update() override;
-  bool should_exit() const override { return m_should_exit; }
+  [[nodiscard]] bool should_exit() const override { return m_should_exit; }
 
   std::unique_ptr<state> on_exit() override;
-  void on_render() const override;
+  void on_render()  override;
 };
 
 }  // namespace scenes

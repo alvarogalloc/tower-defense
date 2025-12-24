@@ -14,8 +14,8 @@ import entt;
 
 using namespace rooster;
 namespace systems::enemy {
-spawner make_spawner(const spawner_cfg &cfg) {
-  return [cfg](entt::registry &db) {
+spawner make_spawner(const spawner_cfg &cfg, context_view ctx) {
+  return [&](entt::registry &db) {
     auto &[enemy, box, pos, rad] = cfg;
     std::string pretty;
     auto _ = glz::write<glz::opts{.prettify = true}>(cfg, pretty);
@@ -33,10 +33,7 @@ spawner make_spawner(const spawner_cfg &cfg) {
     db.emplace<Rectangle>(id, new_box);
     db.emplace<components::enemy>(id, enemy);
 
-    using namespace utils;
-    db.emplace<Texture>(id,
-                        // this neeeds cache
-                        get_asset<asset_type::texture>(enemy.texture_path));
+    db.emplace<Texture>(id, ctx.assets.get<asset_type::texture>(enemy.texture_path));
     return id;
   };
 }

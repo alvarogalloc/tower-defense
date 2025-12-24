@@ -1,24 +1,8 @@
 {
-  "start_screen": {
-    "title": "Rooster Space",
-    "subtitle": "A Space Adventure",
-    "text_key": "Press any key to start",
-    "font_size": 60
-  },
   "gameover": {
     "bg_color": { "a": 255, "r": 13,  "g": 25,  "b": 20 },
     "btn_color": { "a": 255, "r": 255, "g": 255, "b": 255 },
     "fg_color": { "a": 255, "r": 0,   "g": 255, "b": 0 },
     "font_size": 80
-  },
-  "space_bg": {
-    "bg_texture": "assets/title_bg/blue-with-stars.png",
-    "objects_textures": [
-      "assets/title_bg/asteroid-1.png",
-      "assets/title_bg/asteroid-2.png",
-      "assets/title_bg/prop-planet-big.png",
-      "assets/title_bg/prop-planet-small.png"
-    ],
-    "scroll_speed": 0.5
   }
 }

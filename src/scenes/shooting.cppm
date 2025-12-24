@@ -7,6 +7,8 @@ import systems.enemy;
 import prefabs.stars_particles;
 import scenes.gameover;
 import systems.waves;
+import assets;
+import config;
 
 export namespace scenes
 {
@@ -24,16 +26,18 @@ class shooting : public state
     Camera2D m_camera;
     entt::entity m_player_entity;
     Sound m_gun_shoot_sfx;
+    bool m_should_exit;
 
     game_stats m_stats;
 
   public:
-    shooting();
+    shooting(context_view);
 
     void on_start() override;
     void on_update() override;
 
     std::unique_ptr<state> on_exit() override;
+    [[nodiscard]] bool should_exit() const override {return m_should_exit;}
     void on_render() override;
 };
 } // namespace scenes
