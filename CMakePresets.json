@@ -24,9 +24,9 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
         "CMAKE_LINKER_TYPE": "LLD",
         "CMAKE_LINKER": "lld",
+        "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
         "BUILD_TESTING": true
       }
     },
@@ -38,8 +38,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
         "CMAKE_LINKER_TYPE": "LLD",
+        "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
         "CMAKE_LINKER": "lld"
       }
     },

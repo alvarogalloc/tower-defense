@@ -1,7 +1,7 @@
-export module gui.button;
-import gui.node;
+export module gui:button;
 import std;
 import raylib;
+import :node;
 export namespace gui::v2
 {
 

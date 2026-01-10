@@ -55,6 +55,7 @@ assets::assets(std::string_view assets_path_env_var) {
   debug::my_assert(
       fs::exists(p),
       std::format("path to assets does not exist ({})", p.string()));
+  std::println("setting path to {}", fs::canonical(p).string());
   m_assets_path = fs::canonical(p);
 }
 

@@ -1,5 +1,6 @@
 export module debug;
 import std;
+import cpptrace;
 import raylib;
 export namespace debug {
 namespace colors {
@@ -17,20 +18,6 @@ struct message {
   std::string text;
 };
 
-struct assert_error : std::exception {
-    explicit assert_error(std::string_view message) : msg(std::format("\n    ASSERT ERROR: {}", message)) {}
-
-        // Override the what() method to return the custom error message
-        [[nodiscard("this is an error bro, you definitely need it")]]
-        const char* what() const noexcept override {
-            return msg.c_str();
-        }
-
-    private:
-        std::string msg;
-
-};
-
 constexpr std::string_view reset = "\033[0m";
 const std::string warn = std::format("{}{}", colors::bold, colors::yellow);
 const std::string error = std::format("{}{}", colors::bold, colors::red);
@@ -43,6 +30,7 @@ constexpr void my_assert(
   if (!condition) {
     auto msg = std::format("assertion failed: {} (at {}:{})", message,
                            loc.file_name(), loc.line());
+    cpptrace::generate_trace().print();
 
     throw std::runtime_error(msg);
   }

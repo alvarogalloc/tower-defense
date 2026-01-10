@@ -1,4 +1,4 @@
-module gui.button;
+module gui:button;
 namespace gui::v2 {
 void button::draw(Vector2 parent_pos) {
   if (GuiButton({parent_pos.x, parent_pos.y, get_size().x, get_size().y},

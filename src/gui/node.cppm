@@ -1,4 +1,4 @@
-export module gui.node;
+export module gui:node;
 import std;
 import raylib;
 

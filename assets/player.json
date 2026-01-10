@@ -12,11 +12,11 @@
       "last_shot": 0.0,
       "ammo": 50,
       "max_ammo": 50,
-      "shoot_sfx_path": "/assets/shoot.wav"
+      "shoot_sfx_path": "assets/shoot.wav"
     },
     "health": {
       "current": 100,
       "max": 100
     },
-    "texture": "/assets/spaceship.png"
+    "texture": "assets/spaceship.png"
 }

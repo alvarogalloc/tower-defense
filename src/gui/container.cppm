@@ -1,7 +1,7 @@
-export module gui.container;
+export module gui:container;
 import std;
 import raylib;
-import gui.node;
+import :node;
 
 export namespace gui::v2
 {

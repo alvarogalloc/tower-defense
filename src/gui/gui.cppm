@@ -1,5 +1,5 @@
 export module gui;
-export import gui.node;
-export import gui.container;
-export import gui.button;
-export import gui.label;
+export import :node;
+export import :container;
+export import :button;
+export import :label;

@@ -10,7 +10,7 @@ import debug;
 
 export {
   struct game_context {
-    game_context(std::string_view game_dir_env_var) : assets(game_dir_env_var) {}
+    game_context(std::string_view game_dir_env_var);
     entt::registry ecs;
     config::app_info app_info;
     assets assets;
@@ -18,7 +18,10 @@ export {
 
   class game {
    public:
-    game(std::string_view game_dir_env_var) : m_context(game_dir_env_var), m_state(nullptr) { init(); }
+    game(std::string_view game_dir_env_var)
+        : m_context(game_dir_env_var), m_state(nullptr) {
+      init();
+    }
     void init();
 
     void run(std::unique_ptr<state> first_state);

@@ -1,6 +1,4 @@
-
-
-module gui.container;
+module gui:container;
 using namespace rooster;
 
 namespace

@@ -1,9 +1,9 @@
 {
   "window_name": "Hello, World!",
   "game_res": {
-    "x": 320,
-    "y": 180
+    "x": 640,
+    "y": 360
   },
-  "scale": 5.0,
+  "scale": 4.0,
   "fps": 60
 }

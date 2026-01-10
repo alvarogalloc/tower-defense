@@ -4,7 +4,7 @@ set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444")
 project(magster)
 
 set(CMAKE_CXX_MODULE_STD ON)
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 # Currently CMake requires extensions enabled when using import std.
 # https://gitlab.kitware.com/cmake/cmake/-/issues/25916
@@ -19,7 +19,12 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    add_compile_options (-fdiagnostics-color=always)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
    add_compile_options (-fcolor-diagnostics)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi") # May be needed for Linux
+
 endif ()
+string(APPEND CMAKE_EXE_LINKER_FLAGS " -lc++abi")
+
 # use clang tidy find_program(CLANG_TIDY_EXE NAMES "clang-tidy" QUIET)
 #
 # if(CLANG_TIDY_EXE) set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}")
@@ -35,6 +40,7 @@ find_package(glfw3 CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 # todo change this when module support
 find_package(glaze CONFIG REQUIRED)
+find_package(cpptrace CONFIG REQUIRED)
 
 # find_package(nlohmann_json CONFIG REQUIRED)
 
@@ -53,6 +59,7 @@ target_sources(
   PRIVATE ${VENDOR_SOURCE_FILES})
 target_link_libraries(vendor PUBLIC raylib)
 target_link_libraries(vendor PUBLIC glfw)
+target_link_libraries(vendor PUBLIC cpptrace::cpptrace)
 # make these use c++23 
 target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})# suprress header warnings
 

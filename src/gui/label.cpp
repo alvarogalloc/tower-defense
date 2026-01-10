@@ -1,4 +1,4 @@
-module gui.label;
+module gui:label;
 namespace gui::v2 {
 void label::draw(Vector2 parent_pos) {
   GuiLabel({parent_pos.x, parent_pos.y, get_size().x, get_size().y},

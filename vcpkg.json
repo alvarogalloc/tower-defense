@@ -1,10 +1,10 @@
 {
   "dependencies": [
-    "glaze",
-    "rapidjson",
     "entt",
+    "glaze",
+    "glfw3",
     "raygui",
     "raylib",
-    "glfw3"
+    "cpptrace"
   ]
 }
