@@ -1,8 +1,8 @@
-export module state;
+export module wey:state;
+import :assets;
+import :config;
 import entt;
-import config;
 import std;
-import assets;
 
 export {
   struct context_view {

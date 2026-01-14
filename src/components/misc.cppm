@@ -1,4 +1,4 @@
-export module components.misc;
+export module components:misc;
 
 import entt;
 import std;

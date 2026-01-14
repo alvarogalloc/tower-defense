@@ -1,15 +1,10 @@
-module systems.enemy;
-import components.enemy;
-import systems.player;
-import components.bullet;
-import assets;
-import components.movement;
-import components.misc;
-import debug;
+module systems;
+import components;
+import :player;
 import glaze;
 import std;
 import raylib;
-import config;
+import wey;
 import entt;
 
 using namespace rooster;

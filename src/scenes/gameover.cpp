@@ -1,5 +1,5 @@
-module scenes.gameover;
-import config;
+module scenes;
+import wey;
 import raylib;
 
 namespace scenes

@@ -1,4 +1,4 @@
-export module components.movement;
+export module components:movement;
 import raylib;
 
 export namespace components {

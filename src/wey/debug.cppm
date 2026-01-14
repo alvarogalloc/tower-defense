@@ -1,4 +1,4 @@
-export module debug;
+export module wey:debug;
 import std;
 import cpptrace;
 import raylib;

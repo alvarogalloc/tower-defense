@@ -1,16 +1,9 @@
-module scenes.shooting;
+module scenes;
 import raylib;
-import systems.player;
-import systems.bullet;
-import systems.waves;
-import systems.enemy;
-import game;
+import systems;
+import wey;
 import glaze;
-import components.movement;
-import components.enemy;
-import components.misc;
-import systems.camera;
-import debug;
+import components;
 
 using namespace rooster;
 

@@ -1,4 +1,4 @@
-export module components.bullet;
+export module components:bullet;
 import std;
 import raylib;
 export namespace components

@@ -1,9 +1,9 @@
-export module systems.waves;
+export module systems:waves;
 import entt;
-import systems.enemy;
+import :enemy;
 import raylib;
 import std;
-import debug;
+import wey;
 export namespace systems::waves {
 
 struct wave_cfg {

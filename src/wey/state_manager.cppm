@@ -1,7 +1,7 @@
-export module state_manager;
+export module wey:state_manager;
 import std;
-import state;
-import debug;
+import :state;
+import :debug;
 
 export {
   class state_manager {

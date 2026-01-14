@@ -1,4 +1,4 @@
-export module components.enemy;
+export module components:enemy;
 import std;
 import raylib;
 

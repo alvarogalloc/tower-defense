@@ -1,7 +1,5 @@
-import state;
-import state_manager;
+import wey;
 import ut;
-import game;
 
 struct mock_state : state {
   using state::state;

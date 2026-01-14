@@ -27,6 +27,7 @@
         "CMAKE_LINKER_TYPE": "LLD",
         "CMAKE_LINKER": "lld",
         "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
+        "CMAKE_EXE_LINKER_FLAGS": "-stdlib=libc++ -lc++abi ",
         "BUILD_TESTING": true
       }
     },
@@ -40,51 +41,23 @@
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_LINKER_TYPE": "LLD",
         "CMAKE_CXX_FLAGS": "-stdlib=libc++ $env{CXXFLAGS}",
+        "CMAKE_EXE_LINKER_FLAGS": "-stdlib=libc++ -lc++abi",
         "CMAKE_LINKER": "lld"
       }
-    },
-
-    {
-      "name": "debug_gcc",
-      "inherits": "base",
-      "binaryDir": "${sourceDir}/build-debug-gcc",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_CXX_FLAGS": "$env{CXXFLAGS}",
-        "BUILD_TESTING": true
-      }
-    },
-
-    {
-      "name": "rel_gcc",
-      "inherits": "base",
-      "binaryDir": "${sourceDir}/build-rel-gcc",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_CXX_FLAGS": "$env{CXXFLAGS}"
-      }
     }
+
+    
   ],
 
   "buildPresets": [
     { "name": "debug_clang", "configurePreset": "debug_clang" },
-    { "name": "debug_gcc", "configurePreset": "debug_gcc" },
-    { "name": "rel_clang", "configurePreset": "rel_clang" },
-    { "name": "rel_gcc", "configurePreset": "rel_gcc" }
+    { "name": "rel_clang", "configurePreset": "rel_clang" }
   ],
 
   "testPresets": [
     {
       "name": "test_debug_clang",
       "configurePreset": "debug_clang",
-      "output": { "outputOnFailure": true },
-      "execution": { "noTestsAction": "error", "stopOnFailure": true }
-    },
-    {
-      "name": "test_debug_gcc",
-      "configurePreset": "debug_gcc",
       "output": { "outputOnFailure": true },
       "execution": { "noTestsAction": "error", "stopOnFailure": true }
     }

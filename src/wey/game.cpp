@@ -1,7 +1,5 @@
-module;
-#include <cstdio>
-module game;
-import debug;
+module wey;
+import std;
 namespace {
 
 void custom_raylib_log(int msgType, const char *text, va_list args) {
@@ -20,6 +18,8 @@ void custom_raylib_log(int msgType, const char *text, va_list args) {
     case LOG_DEBUG:
       std::cout << debug::success << "[DEBUG]";
       break;
+    default:
+      break;
   }
   std::cout << ": ";
   std::vprintf(text, args);
@@ -30,7 +30,8 @@ void custom_raylib_log(int msgType, const char *text, va_list args) {
 
 // new implementation
 
-game_context::game_context(std::string_view game_dir_env_var) : assets(game_dir_env_var) {
+game_context::game_context(std::string_view game_dir_env_var)
+    : assets(game_dir_env_var) {
   app_info = assets.get_config<config::app_info>("assets/game_info.json");
 }
 void game::init() {
@@ -39,31 +40,33 @@ void game::init() {
   const auto scale = get_app_info().scale;
   const auto wx = x * scale;
   const auto wy = y * scale;
-  // unsigned int flags =
-  //     FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT;
+  unsigned int flags =
+      FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT;
   std::println("window is {} {} ", wx, wy);
-  // SetConfigFlags(flags);
-  InitWindow(int(wx), int(wy), get_app_info().window_name.data());
+  SetConfigFlags(flags);
+  InitWindow(static_cast<int>(wx), static_cast<int>(wy), get_app_info().window_name.data());
   SetTargetFPS(get_app_info().fps);
   InitAudioDevice();
   SetMouseScale(x / wx, y / wy);
 }
 void game::run(std::unique_ptr<state> first_state) {
-  debug::my_assert(bool(first_state),
+  debug::my_assert(static_cast<bool>(first_state),
                    "cannot start game without a first state");
 
   m_state.unsafe_change(std::move(first_state));
   m_state.get_current()->on_start();
-  bool is_running = true;
-
   // load target texture
   const auto [_, resolution, scale, _2] = this->get_app_info();
   RenderTexture2D draw_target = LoadRenderTexture(
       static_cast<int>(resolution.x), static_cast<int>(resolution.y));
   SetTextureFilter(draw_target.texture, TEXTURE_FILTER_POINT);
 
-  while (is_running) {
+  while (true) {
+    if (GetKeyPressed() == KEY_ESCAPE) break;
     this->m_state.update();
+    if (this->m_state.get_current() == nullptr) {
+      break;
+    }
 
     BeginTextureMode(draw_target);
     this->m_state.render();

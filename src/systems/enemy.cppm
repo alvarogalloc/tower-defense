@@ -1,10 +1,9 @@
-export module systems.enemy;
-import components.enemy;
-import components.movement;
+export module systems:enemy;
+import components;
 import std;
 import raylib;
 import entt;
-import state;
+import wey;
 
 export namespace systems::enemy {
 struct spawner_cfg { //NOLINT

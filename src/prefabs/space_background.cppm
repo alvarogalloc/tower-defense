@@ -1,7 +1,8 @@
-export module prefabs.space_background;
+export module prefabs:space_background;
 import raylib;
 import std;
-import state;
+// import state;
+import wey;
 
 export namespace prefabs {
 

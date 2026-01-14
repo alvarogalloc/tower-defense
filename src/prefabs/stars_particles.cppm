@@ -1,7 +1,7 @@
-export module prefabs.stars_particles;
+export module prefabs:stars_particles;
 import raylib;
 import std;
-import state;
+import wey;
 export namespace prefabs
 {
 

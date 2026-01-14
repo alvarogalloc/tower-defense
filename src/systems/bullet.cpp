@@ -1,7 +1,6 @@
-module systems.bullet;
-import config;
-import components.enemy;
-import components.movement;
+module systems;
+import wey;
+import components;
 using namespace rooster;
 
 namespace systems::bullet

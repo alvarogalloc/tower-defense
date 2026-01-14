@@ -1,4 +1,4 @@
-import assets;
+import wey;
 import raylib;
 import ut;
 import std;

@@ -1,8 +1,6 @@
-module prefabs.space_background;
+module prefabs;
 import std;
-import state;
-import assets;
-import debug;
+import wey;
 using namespace rooster;
 
 namespace prefabs {

@@ -6,6 +6,8 @@ set_languages("c++latest")
 --  use libc++
 -- add_ldflags("-stdlib=libc++")
 
+set_toolchains("llvm")
+set_runtimes("c++_shared")
 add_requires("raylib", "raygui", "glaze", "glfw", "entt", "cpptrace")
 
 target("vendor")
@@ -20,8 +22,8 @@ target("magsterlib")
 do
 	set_kind("static")
 	add_files(
-		"src/*.cpp",
 		"src/components/*.cpp",
+		"src/wey/*.cpp",
 		"src/gui/*.cpp",
 		"src/prefabs/*.cpp",
 		"src/scenes/*.cpp",
@@ -29,7 +31,7 @@ do
 	)
 	remove_files("src/main.cpp")
 	add_files(
-		"src/*.cppm",
+		"src/wey/*.cppm",
 		"src/components/*.cppm",
 		"src/gui/*.cppm",
 		"src/prefabs/*.cppm",

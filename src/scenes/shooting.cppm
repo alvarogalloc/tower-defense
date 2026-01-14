@@ -1,14 +1,11 @@
-export module scenes.shooting;
-import state;
+export module scenes:shooting;
 import std;
 import entt;
 import raylib;
-import systems.enemy;
-import prefabs.stars_particles;
-import scenes.gameover;
-import systems.waves;
-import assets;
-import config;
+import systems;
+import prefabs;
+import :gameover;
+import wey;
 
 export namespace scenes
 {

@@ -19,11 +19,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    add_compile_options (-fdiagnostics-color=always)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
    add_compile_options (-fcolor-diagnostics)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi") # May be needed for Linux
-
 endif ()
-string(APPEND CMAKE_EXE_LINKER_FLAGS " -lc++abi")
 
 # use clang tidy find_program(CLANG_TIDY_EXE NAMES "clang-tidy" QUIET)
 #
@@ -60,7 +56,6 @@ target_sources(
 target_link_libraries(vendor PUBLIC raylib)
 target_link_libraries(vendor PUBLIC glfw)
 target_link_libraries(vendor PUBLIC cpptrace::cpptrace)
-# make these use c++23 
 target_include_directories(vendor SYSTEM PUBLIC ${RAYGUI_INCLUDE_DIRS})# suprress header warnings
 
 target_compile_features(vendor PRIVATE cxx_std_26)

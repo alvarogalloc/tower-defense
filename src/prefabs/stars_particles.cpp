@@ -1,6 +1,6 @@
-module prefabs.stars_particles;
-import game;
-import state;
+module prefabs;
+import wey;
+
 
 namespace
 {

@@ -1,5 +1,5 @@
-export module scenes.gameover;
-import state;
+export module scenes:gameover;
+import wey;
 import raylib;
 import std;
 

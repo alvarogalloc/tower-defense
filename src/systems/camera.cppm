@@ -1,7 +1,7 @@
-export module systems.camera;
-import components.movement;
+export module systems:camera;
+import components;
 import raylib;
-import game;
+import wey;
 import entt;
 
 export namespace systems::camera {

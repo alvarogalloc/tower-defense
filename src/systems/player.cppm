@@ -1,8 +1,8 @@
-export module systems.player;
+export module systems:player;
 import raylib;
 import std;
 import entt;
-import components.movement;
+import components;
 
 export namespace systems::player
 {

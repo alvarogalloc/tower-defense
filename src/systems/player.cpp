@@ -1,6 +1,6 @@
-module systems.player;
-import systems.bullet;
-import components.bullet;
+module systems;
+import :bullet;
+import components;
 using namespace rooster;
 
 namespace {

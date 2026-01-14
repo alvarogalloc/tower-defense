@@ -1,6 +1,6 @@
 module;
 #include <cstdlib>
-module assets;
+module wey;
 
 Texture load_texture_cached(Collection<Texture>& cache, std::string const& p) {
   if (!cache.contains(p)) {

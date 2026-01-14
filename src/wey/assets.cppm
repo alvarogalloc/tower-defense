@@ -1,6 +1,6 @@
-export module assets;
+export module wey:assets;
 import std;
-import debug;
+import :debug;
 import raylib;
 import glaze;
 namespace fs = std::filesystem;

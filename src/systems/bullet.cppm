@@ -1,8 +1,8 @@
-export module systems.bullet;
+export module systems:bullet;
 import raylib;
 import entt;
 import std;
-import components.bullet;
+import components;
 
 export namespace systems::bullet
 {

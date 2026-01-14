@@ -1,8 +1,15 @@
-module gui:label;
+module gui;
+
 namespace gui::v2 {
 void label::draw(Vector2 parent_pos) {
+  auto prev=GuiGetStyle(DEFAULT, TEXT_SIZE);
+  auto prev_color=GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL);
+  GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, ColorToInt(this->color));
+  GuiSetStyle(DEFAULT, TEXT_SIZE, int(this->font_size));
   GuiLabel({parent_pos.x, parent_pos.y, get_size().x, get_size().y},
            str.c_str());
+  GuiSetStyle(DEFAULT, TEXT_SIZE, prev);
+  GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, prev_color);
 }
 
 Vector2 label::get_size() const {

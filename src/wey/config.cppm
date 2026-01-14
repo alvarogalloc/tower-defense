@@ -1,4 +1,4 @@
-export module config;
+export module wey:config;
 import std;
 import raylib;
 export namespace config {

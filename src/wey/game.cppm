@@ -1,12 +1,11 @@
-export module game;
+export module wey:game;
 import entt;
 import raylib;
 import std;
-import config;
-import assets;
-import state_manager;
-import state;
-import debug;
+import :config;
+import :assets;
+import :state_manager;
+import :state;
 
 export {
   struct game_context {
