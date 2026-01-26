@@ -62,6 +62,7 @@ void shooting::on_start() {
     world.emplace<Sound>(m_player_entity, shoot_sfx);
   };
   const auto load_enemies = [&] {
+    std::puts("loading enemies\n");
     auto enemies =
         ctx.assets.get_config<std::vector<systems::enemy::spawner_cfg>>(
             "assets/enemies.json");

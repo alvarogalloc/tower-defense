@@ -13,7 +13,7 @@ void shoot_bullet(entt::registry &db, components::bullet info)
 
 void update(entt::registry &db, float dt, Rectangle )
 {
-    std::vector<entt::entity> entities_to_destroy;
+    std::unordered_set<entt::entity> entities_to_destroy;
     auto view = db.view<components::bullet>();
     view.each([&](entt::entity bullet_id,
                  components::bullet &bullet) {
@@ -36,10 +36,10 @@ void update(entt::registry &db, float dt, Rectangle )
             if (CheckCollisionCircleRec(bullet.position, bullet.radius, box))
             {
                 enemy.health -= bullet.damage;
-                entities_to_destroy.emplace_back(bullet_id);
+                entities_to_destroy.insert(bullet_id);
                 if (enemy.health <= 0)
                 {
-                    entities_to_destroy.emplace_back(enemy_id);
+                    entities_to_destroy.insert(enemy_id);
                 }
             }
         });

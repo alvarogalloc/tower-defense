@@ -8,13 +8,11 @@ import wey;
 import entt;
 
 using namespace rooster;
+
 namespace systems::enemy {
 spawner make_spawner(const spawner_cfg &cfg, context_view ctx) {
-  return [&](entt::registry &db) {
+  return [cfg, ctx](entt::registry &db) {
     auto &[enemy, box, pos, rad] = cfg;
-    std::string pretty;
-    auto _ = glz::write<glz::opts{.prettify = true}>(cfg, pretty);
-    std::println(" loading enemy with info {}", pretty);
 
     // this call represent a new enemy with the 'enemy' preset
     auto id = db.create();
@@ -27,8 +25,8 @@ spawner make_spawner(const spawner_cfg &cfg, context_view ctx) {
     std::println("making a new enemy at {}, {}", new_box.x, new_box.y);
     db.emplace<Rectangle>(id, new_box);
     db.emplace<components::enemy>(id, enemy);
-
-    db.emplace<Texture>(id, ctx.assets.get<asset_type::texture>(enemy.texture_path));
+    auto tex = ctx.assets.get<asset_type::texture>(enemy.texture_path);
+    db.emplace<Texture>(id, tex);
     return id;
   };
 }

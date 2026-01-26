@@ -2,5 +2,6 @@
   "title": "Rooster Space",
   "subtitle": "A Space Adventure",
   "text_key": "Press any key to start",
-  "font_size": 60
+  "title_font_size": 80,
+  "subtitle_font_size": 20
 }

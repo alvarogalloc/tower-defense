@@ -38,9 +38,8 @@
       "y": 200
     },
     "spawn_radius": 100
-
   },
-    {
+  {
     "enemy": {
       "health": 300,
       "max_health": 300,
@@ -59,7 +58,5 @@
       "y": 200
     },
     "spawn_radius": 100
-
   }
-
 ]

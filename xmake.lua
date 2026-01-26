@@ -8,6 +8,7 @@ set_languages("c++latest")
 
 set_toolchains("llvm")
 set_runtimes("c++_shared")
+add_syslinks("c++abi")
 add_requires("raylib", "raygui", "glaze", "glfw", "entt", "cpptrace")
 
 target("vendor")

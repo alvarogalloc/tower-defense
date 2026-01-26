@@ -47,10 +47,10 @@ assets::assets(std::string_view assets_path_env_var) {
   const char* assets_path = ::getenv(assets_path_env_var.data());
   namespace fs = std::filesystem;
 
-  debug::my_assert(
-      assets_path,
-      std::format("the assets path environment variable ({}) does not exist, set it to load your assets",
-                  assets_path_env_var));
+  debug::my_assert(assets_path,
+                   std::format("the assets path environment variable ({}) does "
+                               "not exist, set it to load your assets",
+                               assets_path_env_var));
   const fs::path p{assets_path};
   debug::my_assert(
       fs::exists(p),
@@ -62,14 +62,11 @@ assets::assets(std::string_view assets_path_env_var) {
 assets::~assets() {
   for (const auto& [p, m] : music_cache) {
     UnloadMusicStream(m);
-    std::println("Unloaded music {}", p);
   }
   for (const auto& [p, s] : sfx_cache) {
     UnloadSound(s);
-    std::println("Unloaded sfx {}", p);
   }
   for (const auto& [p, t] : texture_cache) {
     UnloadTexture(t);
-    std::println("Unloaded texture {}", p);
   }
 }

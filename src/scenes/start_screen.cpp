@@ -3,42 +3,32 @@ import :shooting;
 import wey;
 import gui;
 import raylib;
+import glaze;
+import std;
 using namespace rooster;
-inline constexpr int font_size = 48;
-inline constexpr Color base_color{.r = colors::darkpurple.r,
-                                  .g = colors::darkpurple.g,
-                                  .b = colors::darkpurple.b,
-                                  .a = 100};
 
-constexpr auto TITLE_FONT = "assets/monogram.ttf";
-constexpr auto BLUE_GUY_TEXTURE = "assets/blueguy.png";
-constexpr auto MENU_MUSIC = "assets/bgmusic.ogg";
-inline constexpr float text_space = 0.2f;
 namespace scenes {
-
 start_screen::start_screen(context_view view)
     : state(view), m_space_background("assets/space_config.json", view) {}
-struct start_screen_json_data {
-  std::string title;
-  std::string subtitle;
-  std::string text_key;
-  int font_size = 0;
-};
+
 void start_screen::on_start() {
-  m_blue_guy = ctx.assets.get<asset_type::texture>(BLUE_GUY_TEXTURE);
-  m_music = ctx.assets.get<asset_type::music>(MENU_MUSIC);
-  m_title_font = ctx.assets.get<asset_type::font>(TITLE_FONT, font_size);
+  json_cfg =
+      ctx.assets.get_config<start_screen_json_data>("assets/start_screen.json");
+  m_blue_guy = ctx.assets.get<asset_type::texture>("assets/blueguy.png");
+  m_music = ctx.assets.get<asset_type::music>("assets/bgmusic.ogg");
+  m_title_font = ctx.assets.get<asset_type::font>("assets/monogram.ttf",
+                                                  json_cfg.title_font_size);
   PlayMusicStream(m_music);
   GuiSetFont(m_title_font);
   // build gui
-  static const auto json_cfg =
-      ctx.assets.get_config<start_screen_json_data>("assets/start_screen.json");
 
-  gui_root.add_child(gui::v2::label{
-      json_cfg.title, rooster::colors::yellow, font_size, {10, 10}});
+  gui_root.add_child(gui::v2::label{json_cfg.title,
+                                    rooster::colors::yellow,
+                                    static_cast<float>(json_cfg.title_font_size),
+                                    {10, 10}});
 
-  gui_root.add_child(gui::v2::label{
-      json_cfg.subtitle, rooster::colors::yellow, 18, {0, 0}});
+  gui_root.add_child(
+      gui::v2::label{json_cfg.subtitle, json_cfg.text_color, 18, {0, 0}});
   const Vector2 separation{20, 20};
   gui_root.position = separation;
 }
@@ -73,15 +63,16 @@ void start_screen::draw_blending_text() {
         (blending.min + t * (blending.max - blending.min)) * 255);
     return interpolated_alpha;
   };
-  auto color = rooster::colors::yellow;
-  color.a = blendingAlpha(float(GetTime()));
+  json_cfg.text_color.a = blendingAlpha(float(GetTime()));
 
   const Vector2 text_position{20, 100};
-  DrawTextEx(m_title_font, start_text, text_position, font_size, text_space,
-             color);
+  const float text_space = 0.2f;
+
+  DrawTextEx(m_title_font, start_text, text_position,
+             json_cfg.subtitle_font_size, text_space, json_cfg.text_color);
 }
 void start_screen::on_render() {
-  ClearBackground(colors::darkblue);
+  ClearBackground(json_cfg.bg_color);
   m_space_background.draw();
   draw_blending_text();
   gui_root.draw();
